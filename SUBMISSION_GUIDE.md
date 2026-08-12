@@ -27,6 +27,8 @@
 4. 배포 URL을 `README.md`에 추가
 5. Vercel 배포가 성공하면 URL을 `README.md` 상단에 기록
 
+> 배포 완료 URL: https://real-time-visaul-sharing.vercel.app/
+
 ## 필수 체크리스트
 
 - [ ] 3개 이상의 페이지/섹션이 메뉴로 이동 가능

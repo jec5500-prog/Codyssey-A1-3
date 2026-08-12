@@ -1,5 +1,7 @@
 # 제출 준비 계획서
 
+- Vercel 배포 URL: https://real-time-visaul-sharing.vercel.app/
+
 ## 1. 현재 상태 요약
 
 ### 완료된 항목
