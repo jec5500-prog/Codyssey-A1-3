@@ -1,0 +1,27 @@
+# Vercel deployment ignore rules
+
+# Local build artifacts
+.next
+out
+build
+
+# Node
+node_modules
+package-lock.json
+npm-debug.log*
+
+# Git
+.git
+
+# Local environment
+.env*
+
+# Local tool/install artifacts
+.agents/
+agy.exe
+agy.exe.*.old
+install.ps1
+installation-log.txt
+
+# Optional legacy or temporary folders not needed for deployment
+_legacy_shop_savor/

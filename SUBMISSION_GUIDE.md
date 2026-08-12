@@ -25,6 +25,7 @@
 2. Vercel에 연결
 3. Vercel 환경 변수 등록
 4. 배포 URL을 `README.md`에 추가
+5. Vercel 배포가 성공하면 URL을 `README.md` 상단에 기록
 
 ## 필수 체크리스트
 
