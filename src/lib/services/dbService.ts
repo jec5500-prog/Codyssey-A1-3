@@ -1,6 +1,6 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Spot, SpotCategory, ComparisonMetrics, SpatialInsightReport, SaveItem } from '../types';
-import { INITIAL_SPOTS, INITIAL_USER } from '../mockData';
+import { INITIAL_SPOTS } from '../mockData';
 
 // Supabase client instance (if credentials are in environment)
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -332,7 +332,7 @@ export async function toggleSaveSpot(spotId: string, collectionName: string = 'G
   } else {
     saves.push({
       id: `save-${Date.now()}`,
-      user_id: INITIAL_USER.id,
+      user_id: 'active-user',
       spot_id: spotId,
       collection_name: collectionName,
       created_at: new Date().toISOString(),

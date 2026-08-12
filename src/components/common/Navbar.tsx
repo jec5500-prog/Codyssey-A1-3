@@ -53,6 +53,23 @@ export default function Navbar() {
     setDropdownOpen(false);
   };
 
+  // Live GPS User Location State
+  const [userLocation, setUserLocation] = useState<{ city: string; country: string; lat: number; lng: number } | null>(null);
+  const [locating, setLocating] = useState(false);
+
+  const handleDetectLocation = async () => {
+    setLocating(true);
+    try {
+      const { getCurrentUserLocation } = await import('@/lib/services/geoService');
+      const loc = await getCurrentUserLocation();
+      setUserLocation({ city: loc.city, country: loc.country, lat: loc.latitude, lng: loc.longitude });
+    } catch (err) {
+      console.warn('Live location error:', err);
+    } finally {
+      setLocating(false);
+    }
+  };
+
   return (
     <>
       <header className="sticky top-0 z-40 bg-[#121214]/90 backdrop-blur-md border-b border-zinc-800/80 text-white">
@@ -119,8 +136,25 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* Right Section: Language Switcher + User Auth Profile */}
-          <div className="flex items-center gap-3">
+          {/* Right Section: Live GPS Location + Language Switcher + User Auth Profile */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Live GPS Location Button / Badge */}
+            <button
+              onClick={handleDetectLocation}
+              disabled={locating}
+              title="실시간 내 위치 GPS 확인"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#18181b] border border-zinc-800 hover:border-emerald-500/60 text-xs text-zinc-300 hover:text-emerald-400 transition-all cursor-pointer shadow-xs"
+            >
+              <MapPin className={`w-3.5 h-3.5 ${userLocation ? 'text-emerald-400 animate-bounce' : locating ? 'text-amber-400 animate-spin' : 'text-zinc-400'}`} />
+              <span className="hidden lg:inline text-[11px] font-bold">
+                {locating
+                  ? '위치 확인 중...'
+                  : userLocation
+                  ? `${userLocation.city}`
+                  : '내 위치 GPS'}
+              </span>
+            </button>
+
             {/* Multilingual Selector */}
             <div className="relative flex items-center">
               <Globe className="w-3.5 h-3.5 text-zinc-400 absolute left-2.5 pointer-events-none" />

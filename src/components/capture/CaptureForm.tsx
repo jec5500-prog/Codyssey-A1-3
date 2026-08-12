@@ -22,7 +22,6 @@ import { extractExifFromFile, reverseGeocode, getCoordinatesForCity } from '@/li
 import { analyzeSpatialImage } from '@/lib/services/aiService';
 import { createSpot } from '@/lib/services/dbService';
 import VerificationBadge from '../common/VerificationBadge';
-import { INITIAL_USER } from '@/lib/mockData';
 import { compressImageFile } from '@/lib/utils/imageCompressor';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useAuth } from '@/lib/auth/AuthContext';
@@ -59,7 +58,7 @@ const SAMPLE_CAPTURES = [
 export default function CaptureForm() {
   const router = useRouter();
   const { t, language } = useLanguage();
-  const { user } = useAuth();
+  const { user, openAuthModal } = useAuth();
 
   const galleryInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
@@ -67,6 +66,7 @@ export default function CaptureForm() {
   // State workflow
   const [stage, setStage] = useState<'upload' | 'analyzing' | 'verify'>('upload');
   const [locationMode, setLocationMode] = useState<'ai' | 'map'>('ai');
+  const [isDragging, setIsDragging] = useState<boolean>(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [fileName, setFileName] = useState<string>('');
 
@@ -223,11 +223,16 @@ export default function CaptureForm() {
       ? getCoordinatesForCity(city, country)
       : { lat: latitude, lng: longitude };
 
-    const currentUser = user || INITIAL_USER;
+    if (!user) {
+      setSaving(false);
+      openAuthModal('login');
+      return;
+    }
+
     const newSpotData: Omit<Spot, 'id' | 'created_at'> = {
-      user_id: currentUser.id,
-      user_name: currentUser.name,
-      user_avatar: currentUser.avatar,
+      user_id: user.id,
+      user_name: user.name,
+      user_avatar: user.avatar,
       image_url: imagePreview,
       country,
       city,
@@ -390,18 +395,45 @@ export default function CaptureForm() {
           <div className="space-y-4">
             <div
               onClick={() => galleryInputRef.current?.click()}
-              className="relative border-2 border-dashed border-zinc-700 hover:border-orange-500 rounded-2xl p-6 sm:p-10 text-center transition-all bg-[#121214]/80 hover:bg-[#121214] group cursor-pointer"
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsDragging(true);
+              }}
+              onDragEnter={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsDragging(true);
+              }}
+              onDragLeave={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsDragging(false);
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsDragging(false);
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                  handleFileSelect(e.dataTransfer.files[0]);
+                }
+              }}
+              className={`relative border-2 border-dashed rounded-2xl p-6 sm:p-10 text-center transition-all group cursor-pointer ${
+                isDragging
+                  ? 'border-orange-400 bg-orange-950/60 scale-[1.02] shadow-2xl shadow-orange-500/40'
+                  : 'border-zinc-700 hover:border-orange-500 bg-[#121214]/80 hover:bg-[#121214]'
+              }`}
             >
               <div className="flex flex-col items-center gap-3">
                 <div className="w-14 h-14 rounded-2xl bg-orange-950/80 border border-orange-800 flex items-center justify-center text-orange-400 group-hover:scale-110 transition-transform">
-                  <UploadCloud className="w-7 h-7" />
+                  <UploadCloud className={`w-7 h-7 ${isDragging ? 'animate-bounce text-orange-300' : ''}`} />
                 </div>
                 <div>
                   <p className="text-base font-bold text-white">
-                    {t('dropzoneText')}
+                    {isDragging ? '✨ 여기에 사진을 놓으면 즉시 AI 분석이 시작됩니다!' : t('dropzoneText')}
                   </p>
                   <p className="text-xs text-zinc-400 mt-1">
-                    📱 터치하여 갤러리/앨범 사진 선택 또는 핸드폰 카메라로 직접 촬영
+                    📱 드래그 앤 드롭으로 사진을 넣거나, 클릭하여 갤러리/카메라 사진 선택
                   </p>
                 </div>
               </div>

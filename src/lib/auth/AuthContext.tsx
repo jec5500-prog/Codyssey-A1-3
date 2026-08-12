@@ -22,8 +22,8 @@ interface AuthContextType {
   deleteAccount: () => Promise<{ success: boolean; error?: string }>;
 }
 
-const SESSION_STORAGE_KEY = 'spot_user_session';
-const REGISTERED_USERS_KEY = 'spot_registered_users';
+const SESSION_STORAGE_KEY = 'spot_user_session_v3';
+const REGISTERED_USERS_KEY = 'spot_registered_users_v3';
 
 // Safe localStorage wrappers for mobile browsers
 function safeGetItem(key: string): string | null {
@@ -68,7 +68,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (raw) {
       try {
         const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed)) {
+          // Remove any legacy virtual/demo accounts from persisted data
+          return parsed.filter((acc) => {
+            const email = acc.email?.toLowerCase?.() || '';
+            return (
+              acc.name !== 'Elena Rostova' &&
+              acc.id !== 'user-spot-pro-01' &&
+              email !== 'architect@spot.design'
+            );
+          });
+        }
       } catch (e) {
         console.warn('Failed to parse registered users:', e);
       }
@@ -77,27 +87,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    // 1. Restore session from localStorage safely
-    const savedSession = safeGetItem(SESSION_STORAGE_KEY);
-    if (savedSession) {
-      try {
-        setUser(JSON.parse(savedSession));
-      } catch (e) {
-        setUser(null);
-        safeRemoveItem(SESSION_STORAGE_KEY);
-      }
-    } else {
-      const defaultUser: User = {
-        id: 'user-spot-pro-01',
-        name: 'Elena Rostova',
-        email: 'architect@spot.design',
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
-        role: 'Spatial VMD Architect',
-        created_at: '2026-01-15T09:00:00Z',
-      };
-      setUser(defaultUser);
-      safeSetItem(SESSION_STORAGE_KEY, JSON.stringify(defaultUser));
-    }
+    // Purge ALL old legacy session keys from browser cache
+    safeRemoveItem('spot_user_session');
+    safeRemoveItem('spot_user_session_v2');
+    safeRemoveItem('spot_user_session_v3');
+
+    // Default to logged out on fresh app load
+    setUser(null);
 
     // 2. Supabase session listener if Supabase is connected
     if (supabase) {
@@ -112,7 +108,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             created_at: session.user.created_at || new Date().toISOString(),
           };
           setUser(authUser);
-          safeSetItem(SESSION_STORAGE_KEY, JSON.stringify(authUser));
         }
       });
 
@@ -158,6 +153,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!trimmedEmail) {
         return { success: false, error: '이메일 주소를 입력해주세요.' };
       }
+      if (!password) {
+        return { success: false, error: '비밀번호를 입력해주세요.' };
+      }
 
       // 1. Try Supabase Auth if credentials exist in env
       if (supabase && password) {
@@ -176,55 +174,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             created_at: data.user.created_at,
           };
           setUser(loggedInUser);
-          safeSetItem(SESSION_STORAGE_KEY, JSON.stringify(loggedInUser));
           closeAuthModal();
           return { success: true };
         }
       }
 
-      // 2. Persistent Local User database verification
+      // 2. Persistent Local User database verification (Strict real account match)
       const registeredAccounts = getRegisteredAccounts();
       const existingAccount = registeredAccounts.find(
         (acc) => acc.email?.toLowerCase() === trimmedEmail.toLowerCase()
       );
 
-      if (existingAccount) {
-        const loggedInUser: User = {
-          id: existingAccount.id,
-          name: existingAccount.name,
-          email: existingAccount.email,
-          avatar: existingAccount.avatar,
-          role: existingAccount.role,
-          created_at: existingAccount.created_at,
+      if (!existingAccount) {
+        return {
+          success: false,
+          error: '등록된 계정을 찾을 수 없습니다. [회원가입] 탭에서 먼저 계정을 생성해주세요.',
         };
-        // Auto-update password if user typed a new one
-        if (password) {
-          existingAccount.password = password;
-          safeSetItem(REGISTERED_USERS_KEY, JSON.stringify(registeredAccounts));
-        }
-        setUser(loggedInUser);
-        safeSetItem(SESSION_STORAGE_KEY, JSON.stringify(loggedInUser));
-        closeAuthModal();
-        return { success: true };
       }
 
-      // 3. Fallback: If no account registered yet, auto-register and log in on mobile
-      const autoUser: User = {
-        id: `user-spot-${Date.now()}`,
-        name: trimmedEmail.split('@')[0] || 'VMD Architect',
-        email: trimmedEmail,
-        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
-        role: 'Spatial VMD Architect',
-        created_at: new Date().toISOString(),
+      if (existingAccount.password && existingAccount.password !== password) {
+        return { success: false, error: '비밀번호가 일치하지 않습니다.' };
+      }
+
+      const loggedInUser: User = {
+        id: existingAccount.id,
+        name: existingAccount.name,
+        email: existingAccount.email,
+        avatar: existingAccount.avatar,
+        role: existingAccount.role,
+        created_at: existingAccount.created_at,
       };
-      const newStoredAcc: StoredAccount = {
-        ...autoUser,
-        password: password || 'password123',
-      };
-      const updatedAccounts = [...registeredAccounts, newStoredAcc];
-      safeSetItem(REGISTERED_USERS_KEY, JSON.stringify(updatedAccounts));
-      setUser(autoUser);
-      safeSetItem(SESSION_STORAGE_KEY, JSON.stringify(autoUser));
+
+      setUser(loggedInUser);
+      safeSetItem(SESSION_STORAGE_KEY, JSON.stringify(loggedInUser));
       closeAuthModal();
       return { success: true };
     } catch (err: any) {
@@ -245,8 +227,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }) => {
     try {
       const trimmedEmail = email.trim();
+      const trimmedName = name.trim();
+
       if (!trimmedEmail) {
         return { success: false, error: '이메일 주소를 입력해주세요.' };
+      }
+      if (!password) {
+        return { success: false, error: '비밀번호를 입력해주세요.' };
+      }
+      if (!trimmedName) {
+        return { success: false, error: '이름(아키텍트명)을 입력해주세요.' };
+      }
+
+      // Check if email already registered
+      const registeredAccounts = getRegisteredAccounts();
+      const existingAccount = registeredAccounts.find(
+        (acc) => acc.email?.toLowerCase() === trimmedEmail.toLowerCase()
+      );
+
+      if (existingAccount) {
+        return {
+          success: false,
+          error: '이미 등록된 이메일 주소입니다. [로그인] 탭에서 로그인해주세요.',
+        };
       }
 
       if (supabase && password) {
@@ -255,7 +258,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           password,
           options: {
             data: {
-              full_name: name,
+              full_name: trimmedName,
               role: role,
               avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
             },
@@ -269,46 +272,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (data.user) {
           const newUser: User = {
             id: data.user.id,
-            name: name || trimmedEmail.split('@')[0],
+            name: trimmedName,
             email: trimmedEmail,
             avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
             role: role,
             created_at: new Date().toISOString(),
           };
           setUser(newUser);
-          safeSetItem(SESSION_STORAGE_KEY, JSON.stringify(newUser));
           closeAuthModal();
           return { success: true };
         }
       }
 
-      // Local persistent registration
-      const registeredAccounts = getRegisteredAccounts();
-      const existingAccount = registeredAccounts.find(
-        (acc) => acc.email?.toLowerCase() === trimmedEmail.toLowerCase()
-      );
-
-      if (existingAccount) {
-        // Auto-login existing account seamlessly on mobile
-        const loggedInUser: User = {
-          id: existingAccount.id,
-          name: name || existingAccount.name,
-          email: existingAccount.email,
-          avatar: existingAccount.avatar,
-          role: role || existingAccount.role,
-          created_at: existingAccount.created_at,
-        };
-        setUser(loggedInUser);
-        safeSetItem(SESSION_STORAGE_KEY, JSON.stringify(loggedInUser));
-        closeAuthModal();
-        return { success: true };
-      }
-
+      // Local persistent real user registration
       const newAccount: StoredAccount = {
         id: `user-spot-${Date.now()}`,
-        name: name || trimmedEmail.split('@')[0],
+        name: trimmedName,
         email: trimmedEmail,
-        password: password || 'password123',
+        password: password,
         avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
         role: role,
         created_at: new Date().toISOString(),
@@ -327,7 +308,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       };
 
       setUser(newUser);
-      safeSetItem(SESSION_STORAGE_KEY, JSON.stringify(newUser));
       closeAuthModal();
       return { success: true };
     } catch (err: any) {
@@ -360,7 +340,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // 1. Update active session in memory & localStorage
       setUser(updatedUser);
-      safeSetItem(SESSION_STORAGE_KEY, JSON.stringify(updatedUser));
 
       // 2. Update registered accounts DB
       const registeredAccounts = getRegisteredAccounts();
@@ -408,7 +387,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     }
     setUser(null);
-    safeRemoveItem(SESSION_STORAGE_KEY);
+    safeRemoveItem('spot_user_session_v3');
   };
 
   const deleteAccount = async () => {
@@ -437,7 +416,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // 3. Clear session
       setUser(null);
-      safeRemoveItem(SESSION_STORAGE_KEY);
+      safeRemoveItem('spot_user_session_v3');
 
       return { success: true };
     } catch (err: any) {

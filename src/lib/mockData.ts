@@ -1,17 +1,10 @@
 import { Spot, User } from './types';
 
-export const INITIAL_USER: User = {
-  id: 'user-spot-pro-01',
-  name: 'Elena Rostova',
-  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
-  created_at: '2026-01-15T09:00:00Z',
-};
-
 export const INITIAL_SPOTS: Spot[] = [
   {
     id: 'spot-tokyo-01',
-    user_id: 'user-spot-pro-01',
-    user_name: 'Elena Rostova',
+    user_id: 'spot-official-architect',
+    user_name: 'Verified Architect',
     user_avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1555529771-7888783a18d3?auto=format&fit=crop&w=1200&q=80',
     country: 'Japan',
@@ -55,7 +48,7 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-paris-01',
-    user_id: 'user-spot-pro-01',
+    user_id: 'spot-official-architect',
     user_name: 'Jean-Luc Moreau',
     user_avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1541888946425-d0fbb186a5b3?auto=format&fit=crop&w=1200&q=80',
@@ -100,7 +93,7 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-ny-01',
-    user_id: 'user-spot-pro-01',
+    user_id: 'spot-official-architect',
     user_name: 'Marcus Vance',
     user_avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=1200&q=80',
@@ -145,7 +138,7 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-london-01',
-    user_id: 'user-spot-pro-01',
+    user_id: 'spot-official-architect',
     user_name: 'Oliver Wright',
     user_avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1537832816519-689ad163238b?auto=format&fit=crop&w=1200&q=80',
@@ -190,7 +183,7 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-milan-01',
-    user_id: 'user-spot-pro-01',
+    user_id: 'spot-official-architect',
     user_name: 'Sofia Rossi',
     user_avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&w=1200&q=80',
@@ -235,8 +228,8 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-tokyo-02',
-    user_id: 'user-spot-pro-01',
-    user_name: 'Elena Rostova',
+    user_id: 'spot-official-architect',
+    user_name: 'Verified Architect',
     user_avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=1200&q=80',
     country: 'Japan',
@@ -280,7 +273,7 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-paris-02',
-    user_id: 'user-spot-pro-01',
+    user_id: 'spot-official-architect',
     user_name: 'Jean-Luc Moreau',
     user_avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1567401893414-76b7b1e5a7a5?auto=format&fit=crop&w=1200&q=80',
@@ -325,7 +318,7 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-ny-02',
-    user_id: 'user-spot-pro-01',
+    user_id: 'spot-official-architect',
     user_name: 'Marcus Vance',
     user_avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80',
@@ -370,8 +363,8 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-tokyo-03',
-    user_id: 'user-spot-pro-01',
-    user_name: 'Elena Rostova',
+    user_id: 'spot-official-architect',
+    user_name: 'Verified Architect',
     user_avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1578932750294-f5075e85f44a?auto=format&fit=crop&w=1200&q=80',
     country: 'Japan',
@@ -415,7 +408,7 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-paris-03',
-    user_id: 'user-spot-pro-01',
+    user_id: 'spot-official-architect',
     user_name: 'Jean-Luc Moreau',
     user_avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1200&q=80',
@@ -460,7 +453,7 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-ny-03',
-    user_id: 'user-spot-pro-01',
+    user_id: 'spot-official-architect',
     user_name: 'Marcus Vance',
     user_avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80',
@@ -505,7 +498,7 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-london-02',
-    user_id: 'user-spot-pro-01',
+    user_id: 'spot-official-architect',
     user_name: 'Oliver Wright',
     user_avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1200&q=80',
@@ -550,7 +543,7 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-milan-02',
-    user_id: 'user-spot-pro-01',
+    user_id: 'spot-official-architect',
     user_name: 'Sofia Rossi',
     user_avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80',
@@ -595,8 +588,8 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-tokyo-04',
-    user_id: 'user-spot-pro-01',
-    user_name: 'Elena Rostova',
+    user_id: 'spot-official-architect',
+    user_name: 'Verified Architect',
     user_avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=1200&q=80',
     country: 'Japan',
@@ -640,7 +633,7 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-paris-04',
-    user_id: 'user-spot-pro-01',
+    user_id: 'spot-official-architect',
     user_name: 'Jean-Luc Moreau',
     user_avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&w=1200&q=80',
@@ -685,7 +678,7 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-ny-04',
-    user_id: 'user-spot-pro-01',
+    user_id: 'spot-official-architect',
     user_name: 'Marcus Vance',
     user_avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1556905055-8f358a7a47b2?auto=format&fit=crop&w=1200&q=80',
@@ -730,7 +723,7 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-paris-05',
-    user_id: 'user-spot-pro-01',
+    user_id: 'spot-official-architect',
     user_name: 'Jean-Luc Moreau',
     user_avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80',
@@ -775,8 +768,8 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-tokyo-05',
-    user_id: 'user-spot-pro-01',
-    user_name: 'Elena Rostova',
+    user_id: 'spot-official-architect',
+    user_name: 'Verified Architect',
     user_avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1200&q=80',
     country: 'Japan',
@@ -820,7 +813,7 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-ny-05',
-    user_id: 'user-spot-pro-01',
+    user_id: 'spot-official-architect',
     user_name: 'Marcus Vance',
     user_avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1200&q=80',
@@ -865,7 +858,7 @@ export const INITIAL_SPOTS: Spot[] = [
   },
   {
     id: 'spot-milan-03',
-    user_id: 'user-spot-pro-01',
+    user_id: 'spot-official-architect',
     user_name: 'Sofia Rossi',
     user_avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=250&q=80',
     image_url: 'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=1200&q=80',
@@ -909,3 +902,4 @@ export const INITIAL_SPOTS: Spot[] = [
     },
   },
 ];
+

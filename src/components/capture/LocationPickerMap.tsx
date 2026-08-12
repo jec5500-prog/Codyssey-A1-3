@@ -152,11 +152,25 @@ export default function LocationPickerMap({
     }
   };
 
+  // Detect current GPS position
+  const handleDetectGPS = async () => {
+    setLoading(true);
+    try {
+      const { getCurrentUserLocation } = await import('@/lib/services/geoService');
+      const loc = await getCurrentUserLocation();
+      onLocationSelect(loc.latitude, loc.longitude, loc.city, loc.country);
+    } catch (err: any) {
+      alert('위치 권한이 거부되었거나 GPS 위치를 가져올 수 없습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-3">
-      {/* Search Input Bar */}
-      <form onSubmit={handleSearch} className="flex items-center gap-2">
-        <div className="relative flex-1">
+      {/* Search Input Bar & Live GPS Button */}
+      <div className="flex items-center gap-2">
+        <form onSubmit={handleSearch} className="relative flex-1">
           <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-3 pointer-events-none" />
           <input
             type="text"
@@ -165,21 +179,31 @@ export default function LocationPickerMap({
             placeholder="도시나 장소를 검색하세요 (예: 서울 강남, Tokyo Ginza, Paris)"
             className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 pl-9 pr-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 font-medium"
           />
-        </div>
+        </form>
         <button
-          type="submit"
+          type="button"
+          onClick={handleSearch}
           disabled={loading}
-          className="py-2 px-4 rounded-xl bg-orange-500 hover:bg-orange-400 text-white font-extrabold text-xs shadow-md shadow-orange-500/20 cursor-pointer shrink-0"
+          className="py-2 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-extrabold text-xs border border-zinc-700 cursor-pointer shrink-0"
         >
-          {loading ? '검색 중...' : '위치 검색'}
+          {loading ? '검색 중...' : '검색'}
         </button>
-      </form>
+        <button
+          type="button"
+          onClick={handleDetectGPS}
+          disabled={loading}
+          className="py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-extrabold text-xs shadow-md shadow-emerald-500/20 cursor-pointer shrink-0 flex items-center gap-1"
+        >
+          <MapPin className="w-3.5 h-3.5" />
+          <span>내 GPS</span>
+        </button>
+      </div>
 
       {/* Map Picker Container */}
       <div className="relative w-full h-56 rounded-2xl overflow-hidden border border-zinc-800 bg-[#121214]">
         <div ref={mapRef} className="w-full h-full z-10" />
         <div className="absolute top-2 left-2 z-20 px-2.5 py-1 rounded-lg bg-[#18181b]/90 text-orange-400 border border-zinc-700 text-[11px] font-bold shadow-md pointer-events-none">
-          👆 지도를 터치/클릭하여 위치를 지정하세요
+          👆 지도를 터치/클릭하거나 [내 GPS] 버튼을 누르세요
         </div>
       </div>
     </div>

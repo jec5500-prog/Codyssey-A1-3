@@ -27,30 +27,44 @@ export default function AuthModal() {
     setErrorMsg(null);
     setSuccessMsg(null);
 
-    const targetEmail = email.trim() || 'architect@spot.design';
-    setEmail(targetEmail);
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
+      setErrorMsg('이메일 주소를 입력해 주세요.');
+      return;
+    }
+    if (!password) {
+      setErrorMsg('비밀번호를 입력해 주세요.');
+      return;
+    }
+
     setLoading(true);
 
     try {
       if (mode === 'login') {
-        const res = await login(targetEmail, password || 'password123');
+        const res = await login(trimmedEmail, password);
         if (!res.success) {
           setErrorMsg(res.error || '로그인에 실패했습니다.');
         } else {
           setSuccessMsg(t('authSuccessMsg'));
         }
       } else {
-        const finalName = name.trim() || targetEmail.split('@')[0] || 'VMD Architect';
+        const trimmedName = name.trim();
+        if (!trimmedName) {
+          setErrorMsg('이름(아키텍트명)을 입력해 주세요.');
+          setLoading(false);
+          return;
+        }
+
         const res = await signUp({
-          email: targetEmail,
-          password: password || 'password123',
-          name: finalName,
+          email: trimmedEmail,
+          password: password,
+          name: trimmedName,
           role,
         });
         if (!res.success) {
           setErrorMsg(res.error || '회원가입에 실패했습니다.');
         } else {
-          setSuccessMsg('회원가입이 완료되었습니다!');
+          setSuccessMsg('회원가입이 성공적으로 완료되었습니다!');
         }
       }
     } catch (err: any) {
@@ -184,7 +198,7 @@ export default function AuthModal() {
                 <Mail className="w-4 h-4 text-zinc-500 absolute left-3 top-3 pointer-events-none" />
                 <input
                   type="email"
-                  placeholder="architect@spot.design"
+                  placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2.5 pl-9 pr-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 font-medium"

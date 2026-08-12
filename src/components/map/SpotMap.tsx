@@ -93,21 +93,43 @@ export default function SpotMap({
           ))}
         </div>
 
-        {/* City Filter */}
-        <div className="bg-zinc-950/90 backdrop-blur-md p-2 rounded-2xl border border-zinc-800 pointer-events-auto flex items-center gap-2 shadow-lg">
-          <MapPin className="w-4 h-4 text-cyan-400 ml-2" />
-          <select
-            value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value)}
-            className="bg-zinc-900 text-zinc-200 text-xs py-1.5 px-3 rounded-xl border border-zinc-700 focus:outline-none cursor-pointer font-medium"
+        {/* City Filter & Live GPS Button */}
+        <div className="flex items-center gap-2 pointer-events-auto">
+          <button
+            onClick={async () => {
+              try {
+                const { getCurrentUserLocation } = await import('@/lib/services/geoService');
+                const loc = await getCurrentUserLocation();
+                if (loc) {
+                  // Trigger custom location event or view change
+                  const event = new CustomEvent('flyToUserLocation', { detail: loc });
+                  window.dispatchEvent(event);
+                }
+              } catch (e) {
+                alert('GPS 위치 권한을 확인해 주세요.');
+              }
+            }}
+            className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-extrabold text-xs py-1.5 px-3 rounded-2xl flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 cursor-pointer transition-all shrink-0"
           >
-            <option value="All">{t('allCities')} ({filteredSpots.length})</option>
-            {cities.map((city) => (
-              <option key={city} value={city}>
-                {translateCity(city, language)}
-              </option>
-            ))}
-          </select>
+            <MapPin className="w-3.5 h-3.5 animate-bounce text-white" />
+            <span className="hidden sm:inline">내 GPS 위치</span>
+          </button>
+
+          <div className="bg-zinc-950/90 backdrop-blur-md p-2 rounded-2xl border border-zinc-800 flex items-center gap-2 shadow-lg">
+            <MapPin className="w-4 h-4 text-cyan-400 ml-2" />
+            <select
+              value={selectedCity}
+              onChange={(e) => setSelectedCity(e.target.value)}
+              className="bg-zinc-900 text-zinc-200 text-xs py-1.5 px-3 rounded-xl border border-zinc-700 focus:outline-none cursor-pointer font-medium"
+            >
+              <option value="All">{t('allCities')} ({filteredSpots.length})</option>
+              {cities.map((city) => (
+                <option key={city} value={city}>
+                  {translateCity(city, language)}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
@@ -253,6 +275,45 @@ function LeafletMapEngine({
 
     L.control.zoom({ position: 'bottomright' }).addTo(map);
     leafletInstance.current = map;
+
+    // User GPS location event listener
+    let userMarker: any = null;
+    const handleFlyToUser = (e: any) => {
+      const { latitude, longitude, city, country } = e.detail || {};
+      if (latitude && longitude && map) {
+        map.flyTo([latitude, longitude], 15, { duration: 1.2 });
+        if (userMarker) {
+          userMarker.setLatLng([latitude, longitude]);
+        } else {
+          const userIcon = L.divIcon({
+            className: 'user-gps-marker',
+            html: `
+              <div style="
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                background: #3B82F6;
+                border: 3px solid #FFFFFF;
+                box-shadow: 0 0 20px rgba(59, 130, 246, 0.9);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #FFFFFF;
+                font-weight: bold;
+                font-size: 14px;
+              " class="animate-bounce">📍</div>
+            `,
+            iconSize: [28, 28],
+            iconAnchor: [14, 14],
+          });
+          userMarker = L.marker([latitude, longitude], { icon: userIcon })
+            .addTo(map)
+            .bindPopup(`<b>내 실시간 GPS 위치</b><br/>${city}, ${country}`, { openPopup: true });
+        }
+      }
+    };
+
+    window.addEventListener('flyToUserLocation', handleFlyToUser);
 
     // Mobile Leaflet Tile Fix: invalidateSize after mount
     setTimeout(() => {

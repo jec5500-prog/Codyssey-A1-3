@@ -14,6 +14,82 @@ export interface LocationResult {
 }
 
 /**
+ * Real-Time User Geolocation Tracking Engine
+ * Obtains live GPS coordinates of the connected user via HTML5 Geolocation API
+ */
+export async function getCurrentUserLocation(): Promise<LocationResult> {
+  return new Promise((resolve, reject) => {
+    if (typeof window === 'undefined' || !navigator.geolocation) {
+      reject(new Error('Geolocation is not supported by this browser.'));
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        try {
+          const result = await reverseGeocode(lat, lng);
+          resolve(result);
+        } catch (e) {
+          resolve({
+            city: 'My Location',
+            country: 'Live GPS',
+            latitude: lat,
+            longitude: lng,
+          });
+        }
+      },
+      (error) => {
+        console.warn('Geolocation position error:', error.message);
+        reject(error);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 0,
+      }
+    );
+  });
+}
+
+/**
+ * Continuously watches user live GPS position stream
+ */
+export function watchUserLocation(
+  onSuccess: (loc: LocationResult) => void,
+  onError?: (err: GeolocationPositionError) => void
+): number | null {
+  if (typeof window === 'undefined' || !navigator.geolocation) return null;
+
+  return navigator.geolocation.watchPosition(
+    async (position) => {
+      const lat = position.coords.latitude;
+      const lng = position.coords.longitude;
+      try {
+        const result = await reverseGeocode(lat, lng);
+        onSuccess(result);
+      } catch (e) {
+        onSuccess({
+          city: 'My Location',
+          country: 'Live GPS',
+          latitude: lat,
+          longitude: lng,
+        });
+      }
+    },
+    (err) => {
+      console.warn('Watch location error:', err.message);
+      onError?.(err);
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 5000,
+    }
+  );
+}
+
+/**
  * Extracts EXIF location & date metadata from image File
  * Fail-safe for older Android WebViews, Samsung Internet & iOS Safari
  */
