@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local install artifacts
+.agents/
+agy.exe
+agy.exe.*.old
+install.ps1
+installation-log.txt

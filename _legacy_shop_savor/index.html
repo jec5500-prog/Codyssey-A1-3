@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop&Savor | Global K-Shopping & Gourmet Personalized Route Planner</title>
+  <meta name="description" content="Tell us your style, we build your perfect K-Shopping day. Smart AI-curated shopping routes, Michelin & local gourmet, Tax-Free tips and navigation in Seoul.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome & Lucide icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Leaflet CSS for Interactive Map -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  
+  <!-- Chart.js for B2B Analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="navbar">
+    <div class="nav-container">
+      <a href="#" class="logo">
+        <div class="logo-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+        <span class="logo-text">Shop<span class="highlight">&</span>Savor</span>
+        <span class="beta-badge">AI 2.0</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="#planner" class="nav-item active" data-i18n="nav_planner"><i class="fa-solid fa-route"></i> Route Planner</a>
+        <a href="#curation" class="nav-item" data-i18n="nav_curation"><i class="fa-solid fa-compass"></i> Hotspots</a>
+        <a href="#taxfree" class="nav-item" data-i18n="nav_taxfree"><i class="fa-solid fa-receipt"></i> Tax-Free & Pass</a>
+        <a href="#b2b" class="nav-item" data-i18n="nav_b2b"><i class="fa-solid fa-chart-line"></i> B2B Trends</a>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Currency Select -->
+        <div class="dropdown currency-selector">
+          <button class="dropdown-btn" id="currency-btn">
+            <i class="fa-solid fa-coins"></i> <span id="current-currency">USD ($)</span>
+          </button>
+          <div class="dropdown-menu" id="currency-menu">
+            <div class="dropdown-item active" data-currency="USD">USD ($)</div>
+            <div class="dropdown-item" data-currency="KRW">KRW (₩)</div>
+            <div class="dropdown-item" data-currency="EUR">EUR (€)</div>
+            <div class="dropdown-item" data-currency="JPY">JPY (¥)</div>
+            <div class="dropdown-item" data-currency="CNY">CNY (¥)</div>
+          </div>
+        </div>
+
+        <!-- Language Select -->
+        <div class="dropdown lang-selector">
+          <button class="dropdown-btn" id="lang-btn">
+            <i class="fa-solid fa-globe"></i> <span id="current-lang">English</span>
+          </button>
+          <div class="dropdown-menu" id="lang-menu">
+            <div class="dropdown-item active" data-lang="en">🇬🇧 English</div>
+            <div class="dropdown-item" data-lang="ko">🇰🇷 한국어</div>
+            <div class="dropdown-item" data-lang="es">🇪🇸 Español</div>
+            <div class="dropdown-item" data-lang="zh-CN">🇨🇳 中文(简体)</div>
+            <div class="dropdown-item" data-lang="zh-TW">🇭🇰 中文(繁體)</div>
+            <div class="dropdown-item" data-lang="ja">🇯🇵 日本語</div>
+            <div class="dropdown-item" data-lang="fr">🇫🇷 Français</div>
+            <div class="dropdown-item" data-lang="de">🇩🇪 Deutsch</div>
+          </div>
+        </div>
+
+        <button class="theme-toggle-btn" id="theme-toggle" title="Toggle Light/Dark Theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-bg-glow"></div>
+    <div class="hero-content">
+      <div class="hero-badge" data-i18n="hero_badge">
+        <i class="fa-solid fa-sparkles"></i> AI-Powered Seoul Tour & Gourmet Guide
+      </div>
+      <h1 class="hero-title" data-i18n="hero_title">
+        Tell us your style, we build your <span class="gradient-text">perfect K-Shopping day.</span>
+      </h1>
+      <p class="hero-subtitle" data-i18n="hero_subtitle">
+        Zero time wasted searching blogs. Custom route tailored to your budget, culinary taste, and location in Seoul with 1-click tax refund tips.
+      </p>
+
+      <!-- Natural Language AI Prompt Console -->
+      <div class="ai-prompt-box">
+        <div class="prompt-header">
+          <span class="prompt-tag" data-i18n="prompt_tag"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Natural Language Prompt</span>
+          <div class="preset-pills">
+            <span class="preset-label" data-i18n="preset_label">Try Presets:</span>
+            <button class="pill-btn active" data-preset="seongsu" data-i18n="preset_seongsu">📍 Seongsu Hipster (300k KRW / 4h)</button>
+            <button class="pill-btn" data-preset="hongdae" data-i18n="preset_hongdae">📍 Hongdae Vintage & Street (150k KRW / 3h)</button>
+            <button class="pill-btn" data-preset="myeongdong" data-i18n="preset_myeongdong">📍 Myeongdong K-Beauty & TaxFree (500k KRW / 5h)</button>
+            <button class="pill-btn" data-preset="gangnam" data-i18n="preset_gangnam">📍 Gangnam Luxury & Gourmet (1,000k KRW / 6h)</button>
+          </div>
+        </div>
+
+        <div class="prompt-input-wrapper">
+          <textarea id="prompt-input" rows="3" placeholder="e.g. Near Seongsu-dong. Want to spend around 300,000 KRW on hip streetwear. For lunch, neat traditional Korean course meal, and a cozy dessert cafe. Total time available: 4 hours." data-i18n-ph="prompt_ph"></textarea>
+          <div class="prompt-controls">
+            <button class="mic-btn" id="voice-rec-btn" title="Voice Input"><i class="fa-solid fa-microphone"></i></button>
+            <button class="generate-btn" id="generate-route-btn">
+              <i class="fa-solid fa-paper-plane"></i> <span data-i18n="btn_generate">Generate AI Route</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Live Extracted Parameters Drawer -->
+        <div class="extracted-params-bar" id="params-bar">
+          <div class="param-badge"><i class="fa-solid fa-location-dot"></i> <span class="param-label" data-i18n="p_location">Location:</span> <strong id="val-location">Seongsu-dong</strong></div>
+          <div class="param-badge"><i class="fa-solid fa-wallet"></i> <span class="param-label" data-i18n="p_budget">Budget:</span> <strong id="val-budget">₩300,000 (~$225)</strong></div>
+          <div class="param-badge"><i class="fa-solid fa-shirt"></i> <span class="param-label" data-i18n="p_style">Shopping:</span> <strong id="val-style">Hip Streetwear</strong></div>
+          <div class="param-badge"><i class="fa-solid fa-utensils"></i> <span class="param-label" data-i18n="p_food">Gourmet:</span> <strong id="val-food">Korean Course & Dessert Cafe</strong></div>
+          <div class="param-badge"><i class="fa-solid fa-clock"></i> <span class="param-label" data-i18n="p_time">Time:</span> <strong id="val-time">4.0 Hours</strong></div>
+          <button class="tune-btn" id="toggle-tune-modal" data-i18n="btn_fine_tune"><i class="fa-solid fa-sliders"></i> Fine Tune</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Fine Tune Modal -->
+  <div class="modal-overlay" id="tune-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="fa-solid fa-sliders"></i> <span data-i18n="modal_tune_title">Customize Travel Parameters</span></h3>
+        <button class="close-modal" id="close-tune-modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label data-i18n="lbl_district">Target District in Seoul</label>
+          <select id="tune-district" class="form-select">
+            <option value="Seongsu" data-i18n="opt_seongsu">Seongsu-dong (성수동) - Trendy & Craft</option>
+            <option value="Hongdae" data-i18n="opt_hongdae">Hongdae & Yeonnam (홍대) - Youth & Vintage</option>
+            <option value="Myeongdong" data-i18n="opt_myeongdong">Myeongdong (명동) - K-Beauty & TaxFree</option>
+            <option value="Gangnam" data-i18n="opt_gangnam">Gangnam & Apgujeong (강남) - Luxury & K-Pop</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label><span data-i18n="lbl_budget_range">Budget Range:</span> <span id="budget-disp">₩300,000</span></label>
+          <input type="range" id="tune-budget" min="50000" max="2000000" step="50000" value="300000">
+        </div>
+
+        <div class="form-group">
+          <label data-i18n="lbl_shopping_style">Shopping Preference</label>
+          <div class="tag-selector" id="tune-shopping-tags">
+            <span class="tag active" data-val="Streetwear" data-i18n="tag_streetwear">Streetwear & Local Brands</span>
+            <span class="tag" data-val="K-Beauty" data-i18n="tag_kbeauty">K-Beauty & Skincare</span>
+            <span class="tag" data-val="Vintage" data-i18n="tag_vintage">Vintage & Thrift</span>
+            <span class="tag" data-val="Luxury" data-i18n="tag_luxury">Designer & High Fashion</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label data-i18n="lbl_food_pref">Dining & Cafe Preference</label>
+          <div class="tag-selector" id="tune-food-tags">
+            <span class="tag active" data-val="Korean Traditional" data-i18n="tag_hansik">Traditional Korean Course</span>
+            <span class="tag active" data-val="Sensory Dessert Cafe" data-i18n="tag_cafe">Trendy Dessert Cafe</span>
+            <span class="tag" data-val="K-BBQ" data-i18n="tag_bbq">K-BBQ & Pork Belly</span>
+            <span class="tag" data-val="Michelin Local" data-i18n="tag_michelin">Michelin Guide Local</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label><span data-i18n="lbl_time_avail">Total Available Time:</span> <span id="time-disp">4.0 hrs</span></label>
+          <input type="range" id="tune-time" min="2" max="10" step="0.5" value="4">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="cancel-tune" data-i18n="btn_cancel">Cancel</button>
+        <button class="btn btn-primary" id="apply-tune" data-i18n="btn_apply">Apply & Re-Calculate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Route Dashboard & Interactive Map Section -->
+  <section class="main-dashboard" id="planner">
+    <div class="container">
+      
+      <!-- Dashboard Top Header Bar -->
+      <div class="dashboard-header-card">
+        <div class="route-info-summary">
+          <h2 id="route-title"><i class="fa-solid fa-map-location-dot gradient-icon"></i> Seongsu Streetwear & Gourmet 4-Hour Express</h2>
+          <p id="route-desc" class="route-subtitle">Optimized walking path with curated stops. Estimated arrival times & tax refund spots included.</p>
+        </div>
+
+        <div class="route-metrics">
+          <div class="metric-box">
+            <span class="metric-value" id="metric-stops">4</span>
+            <span class="metric-label" data-i18n="m_stops">Curated Stops</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-value" id="metric-distance">1.8 km</span>
+            <span class="metric-label" data-i18n="m_dist">Total Walking</span>
+          </div>
+          <div class="metric-box">
+            <span class="metric-value" id="metric-budget">$225 / ₩300k</span>
+            <span class="metric-label" data-i18n="m_budget">Est. Budget</span>
+          </div>
+          <div class="metric-box highlight-box">
+            <span class="metric-value text-emerald" id="metric-taxfree">+$18 (₩24,000)</span>
+            <span class="metric-label" data-i18n="m_taxrefund">Estimated Tax Refund</span>
+          </div>
+        </div>
+
+        <div class="route-actions">
+          <button class="btn btn-outline" id="share-route-btn"><i class="fa-solid fa-share-nodes"></i> <span data-i18n="btn_share">Share Route</span></button>
+          <button class="btn btn-primary" id="start-nav-btn"><i class="fa-solid fa-diamond-turn-right"></i> <span data-i18n="btn_start_nav">Start Navigation</span></button>
+        </div>
+      </div>
+
+      <!-- Split Layout: Timeline List (Left) + Interactive Map (Right) -->
+      <div class="split-view">
+        
+        <!-- Left: Interactive Timeline & Stop Details -->
+        <div class="timeline-container">
+          <div class="timeline-header">
+            <h3><i class="fa-solid fa-list-check"></i> <span data-i18n="timeline_title">Your Schedule & Itinerary</span></h3>
+            <span class="live-pill" data-i18n="live_pill"><i class="fa-solid fa-bolt"></i> Real-time AI Routing</span>
+          </div>
+
+          <div class="timeline-list" id="timeline-list">
+            <!-- Dynamic stops populated by JS -->
+          </div>
+        </div>
+
+        <!-- Right: Interactive Leaflet Map & Filters -->
+        <div class="map-container">
+          <div class="map-top-bar">
+            <div class="map-filters">
+              <button class="map-filter-chip active" data-filter="all" data-i18n="filter_all"><i class="fa-solid fa-layer-group"></i> All Places</button>
+              <button class="map-filter-chip" data-filter="shopping" data-i18n="filter_shopping"><i class="fa-solid fa-bag-shopping"></i> Shopping</button>
+              <button class="map-filter-chip" data-filter="food" data-i18n="filter_food"><i class="fa-solid fa-utensils"></i> Dining & Cafe</button>
+              <button class="map-filter-chip" data-filter="taxfree" data-i18n="filter_taxfree"><i class="fa-solid fa-receipt"></i> Tax-Free</button>
+            </div>
+            <button class="map-style-toggle" id="toggle-map-style" title="Switch Map View"><i class="fa-solid fa-map"></i> <span data-i18n="btn_view">View</span></button>
+          </div>
+
+          <div id="leaflet-map" class="map-box"></div>
+          
+          <div class="map-bottom-legend">
+            <span><i class="fa-solid fa-circle" style="color: #6366f1;"></i> <span data-i18n="leg_shopping">1. Shopping</span></span>
+            <span><i class="fa-solid fa-circle" style="color: #ef4444;"></i> <span data-i18n="leg_dining">2. Dining</span></span>
+            <span><i class="fa-solid fa-circle" style="color: #f59e0b;"></i> <span data-i18n="leg_cafe">3. Cafe</span></span>
+            <span><i class="fa-solid fa-circle" style="color: #10b981;"></i> <span data-i18n="leg_kbeauty">4. K-Beauty</span></span>
+            <span><i class="fa-solid fa-person-walking" style="color: #3b82f6;"></i> <span data-i18n="leg_walk">Walk Route</span></span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Pinpoint Smart Curation Showcase Section -->
+  <section class="curation-section" id="curation">
+    <div class="container">
+      <div class="section-title-wrap text-center">
+        <span class="sub-tag" data-i18n="tag_curation"><i class="fa-solid fa-sparkles"></i> Pinpoint Smart Curation</span>
+        <h2 data-i18n="title_curation">Featured K-Hotspots & Local Gems</h2>
+        <p data-i18n="desc_curation">Beyond standard maps. We provide english menus, tax-free statuses, waiting tips, and exclusive discount coupons.</p>
+      </div>
+
+      <div class="cards-grid" id="curation-cards-grid">
+        <!-- Populated dynamically by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Tax-Free Refund Calculator & Shop&Savor VIP Pass Section -->
+  <section class="taxfree-section" id="taxfree">
+    <div class="container">
+      <div class="taxfree-card-wrapper">
+        <div class="taxfree-info">
+          <div class="badge-gold" data-i18n="tax_badge"><i class="fa-solid fa-crown"></i> Shop&Savor VIP Tourist Pass</div>
+          <h2 data-i18n="tax_title">Instant Tax Refund & Local Perks</h2>
+          <p data-i18n="tax_desc">Korea provides immediate Tax-Free (7~10% VAT refund) at participating shops for purchases over ₩15,000. Get your pass for zero waiting and partner shop discounts!</p>
+          
+          <ul class="tax-features-list">
+            <li data-i18n="tax_feat_1"><i class="fa-solid fa-circle-check text-emerald"></i> <strong>Immediate On-site Refund:</strong> Show your passport at checkout for instant VAT deduction.</li>
+            <li data-i18n="tax_feat_2"><i class="fa-solid fa-circle-check text-emerald"></i> <strong>VIP Priority Line:</strong> Skip lines at partner cafes & boutiques.</li>
+            <li data-i18n="tax_feat_3"><i class="fa-solid fa-circle-check text-emerald"></i> <strong>Welcome Drink & Free Gifts:</strong> Exclusive gifts at Seongsu & Myeongdong flagship stores.</li>
+          </ul>
+
+          <div class="taxfree-btns">
+            <button class="btn btn-primary btn-lg" id="get-pass-btn"><i class="fa-solid fa-ticket"></i> <span data-i18n="btn_get_pass">Get 1-Day VIP Pass (Free Trial)</span></button>
+            <button class="btn btn-outline btn-lg" id="open-tax-calc-btn"><i class="fa-solid fa-calculator"></i> <span data-i18n="btn_calc_tax">Calculate Tax Refund</span></button>
+          </div>
+        </div>
+
+        <!-- Live Tax Refund Calculator Box -->
+        <div class="taxfree-calc-box">
+          <div class="calc-header">
+            <h3><i class="fa-solid fa-receipt"></i> <span data-i18n="calc_title">Tax Refund Calculator</span></h3>
+            <span class="vat-rate" data-i18n="calc_vat">VAT 10% (Est. 7-8% Refund)</span>
+          </div>
+
+          <div class="calc-body">
+            <div class="form-group">
+              <label data-i18n="lbl_calc_amount">Enter Total Planned Purchases</label>
+              <div class="input-with-currency">
+                <input type="number" id="calc-input-amount" value="500000" step="10000">
+                <span class="currency-tag" id="calc-currency-symbol">KRW (₩)</span>
+              </div>
+            </div>
+
+            <div class="calc-breakdown">
+              <div class="calc-row">
+                <span data-i18n="calc_orig">Original Price:</span>
+                <strong id="calc-orig-disp">₩500,000</strong>
+              </div>
+              <div class="calc-row">
+                <span data-i18n="calc_refund">Estimated VAT Refund:</span>
+                <strong class="text-emerald" id="calc-refund-disp">₩36,000 ($27.00)</strong>
+              </div>
+              <div class="calc-row final-row">
+                <span data-i18n="calc_final">Final Price After Refund:</span>
+                <strong class="text-indigo" id="calc-final-disp">₩464,000 ($348.00)</strong>
+              </div>
+            </div>
+
+            <div class="airport-tip">
+              <i class="fa-solid fa-plane-departure"></i> <span><strong data-i18n="protip_label">Pro Tip:</strong> <span data-i18n="protip_desc">Airport kiosks at Incheon (T1/T2) allow instant cash payout in USD, JPY, or KRW.</span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- B2B Trends & Data Insights Section -->
+  <section class="b2b-section" id="b2b">
+    <div class="container">
+      <div class="section-title-wrap text-center">
+        <span class="sub-tag" data-i18n="b2b_tag"><i class="fa-solid fa-chart-pie"></i> B2B Analytics & RAG Engine</span>
+        <h2 data-i18n="b2b_title">Foreign Tourist Consumption & Route Trends</h2>
+        <p data-i18n="b2b_desc">Real-time data insights on international visitor preferences, hotspot movement, and spending patterns across Seoul.</p>
+      </div>
+
+      <div class="b2b-dashboard-grid">
+        <div class="chart-card">
+          <h3><i class="fa-solid fa-chart-bar"></i> <span data-i18n="chart1_title">Top Preferred Shopping Districts by Nationality</span></h3>
+          <div class="chart-wrapper">
+            <canvas id="districtChart"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card">
+          <h3><i class="fa-solid fa-pie-chart"></i> <span data-i18n="chart2_title">Category Budget Distribution</span></h3>
+          <div class="chart-wrapper">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-content">
+      <div class="footer-brand">
+        <div class="logo">
+          <div class="logo-icon"><i class="fa-solid fa-bag-shopping"></i></div>
+          <span class="logo-text">Shop<span class="highlight">&</span>Savor</span>
+        </div>
+        <p data-i18n="footer_desc">Your ultimate AI-powered K-Shopping & Gourmet itinerary builder. Exploring Seoul with intelligence, ease, and savings.</p>
+      </div>
+
+      <div class="footer-links">
+        <div class="link-group">
+          <h4 data-i18n="ft_platform">Platform</h4>
+          <a href="#planner" data-i18n="nav_planner">AI Route Planner</a>
+          <a href="#curation" data-i18n="nav_curation">Hotspot Curation</a>
+          <a href="#taxfree" data-i18n="nav_taxfree">Tax-Free Pass</a>
+        </div>
+        <div class="link-group">
+          <h4 data-i18n="ft_b2b">B2B Solutions</h4>
+          <a href="#b2b" data-i18n="ft_merchant">Merchant Partnerships</a>
+          <a href="#b2b" data-i18n="ft_reports">Data Analytics Reports</a>
+          <a href="#" data-i18n="ft_taxapi">Tax Refund API</a>
+        </div>
+        <div class="link-group">
+          <h4 data-i18n="ft_contact">Contact & Global</h4>
+          <a href="#" data-i18n="ft_support">Support (EN/KO/ZH/JA)</a>
+          <a href="#" data-i18n="ft_terms">Terms of Service</a>
+          <a href="#" data-i18n="ft_privacy">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom text-center">
+      <p data-i18n="footer_rights">© 2026 Shop&Savor Inc. All rights reserved. Powered by OpenAI / Claude 3.5 & Google Maps RAG Engine.</p>
+    </div>
+  </footer>
+
+  <!-- Detail / Booking Modal -->
+  <div class="modal-overlay" id="detail-modal">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <h3 id="modal-place-title">Place Details</h3>
+        <button class="close-modal" id="close-detail-modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" id="detail-modal-content">
+        <!-- Filled dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="app.js"></script>
+</body>
+</html>
