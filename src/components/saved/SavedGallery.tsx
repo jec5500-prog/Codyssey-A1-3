@@ -55,7 +55,7 @@ export default function SavedGallery() {
             onClick={() => setActiveCollection('All')}
             className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
               activeCollection === 'All'
-                ? 'bg-cyan-500 text-zinc-950 shadow-md shadow-cyan-500/30'
+                ? 'bg-orange-500 text-white shadow-md shadow-orange-500/30'
                 : 'bg-zinc-900 text-zinc-400 hover:text-zinc-200 border border-zinc-800'
             }`}
           >
@@ -67,7 +67,7 @@ export default function SavedGallery() {
               onClick={() => setActiveCollection(col)}
               className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
                 activeCollection === col
-                  ? 'bg-cyan-500 text-zinc-950 shadow-md shadow-cyan-500/30'
+                  ? 'bg-orange-500 text-white shadow-md shadow-orange-500/30'
                   : 'bg-zinc-900 text-zinc-400 hover:text-zinc-200 border border-zinc-800'
               }`}
             >
@@ -98,7 +98,7 @@ export default function SavedGallery() {
           </div>
           <Link
             href="/"
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-cyan-500 text-zinc-950 font-bold text-xs shadow-md shadow-cyan-500/20 hover:bg-cyan-400 transition-colors"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-orange-500 text-white font-bold text-xs shadow-md shadow-orange-500/20 hover:bg-orange-600 transition-colors"
           >
             <Compass className="w-4 h-4" />
             <span>{t('navExplore')}</span>

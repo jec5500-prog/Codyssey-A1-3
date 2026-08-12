@@ -150,7 +150,7 @@ export default function ProfileManager() {
           />
           <div className="absolute inset-0 rounded-full bg-black/50 flex flex-col items-center justify-center text-white opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-xs">
             <Camera className="w-6 h-6 text-orange-400" />
-            <span className="text-[10px] font-bold mt-1">JPG / PNG</span>
+            <span className="text-xs font-bold mt-1">JPG / PNG</span>
           </div>
           <span className="absolute bottom-1 right-1 w-4 h-4 rounded-full bg-emerald-500 border-2 border-[#121214]" title="Online" />
         </div>
@@ -158,7 +158,7 @@ export default function ProfileManager() {
         <div className="text-center sm:text-left space-y-1 flex-1">
           <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
             <h1 className="text-2xl font-extrabold text-white tracking-tight">{user.name}</h1>
-            <span className="px-2.5 py-0.5 rounded text-[10px] font-bold uppercase bg-orange-950/80 text-orange-300 border border-orange-800/60">
+            <span className="px-2.5 py-0.5 rounded text-xs font-mono font-bold uppercase bg-orange-950/80 text-orange-300 border border-orange-800/60">
               {user.role || 'Spatial VMD Architect'}
             </span>
           </div>
@@ -166,7 +166,7 @@ export default function ProfileManager() {
             <Mail className="w-3.5 h-3.5 text-orange-400" />
             <span>{user.email || '등록된 이메일 없음'}</span>
           </p>
-          <p className="text-[11px] text-zinc-500 font-mono pt-1">
+          <p className="text-xs text-zinc-400 font-mono pt-1">
             가입일: {formatDate(user.created_at, language)}
           </p>
 

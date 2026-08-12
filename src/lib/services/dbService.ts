@@ -11,7 +11,7 @@ export const supabase: SupabaseClient | null =
     ? createClient(supabaseUrl, supabaseAnonKey)
     : null;
 
-const LOCAL_SPOTS_KEY = 'spot_spatial_intelligence_db_v11';
+const LOCAL_SPOTS_KEY = 'spot_spatial_intelligence_db_v13';
 const LOCAL_SAVES_KEY = 'spot_spatial_saves_v9';
 
 // Global in-memory cache to guarantee mobile spot creation succeeds even if localStorage fails

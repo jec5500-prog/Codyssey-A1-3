@@ -729,6 +729,102 @@ const DESCRIPTION_MAP: Record<string, Record<Language, string>> = {
     ja: 'ミラノ・ミウミウのパステルイエローの絹ダマスク布地ウィンドウ。',
     fr: 'Vitrine en soie damassée jaune pastel avec cadre en laiton dans le quartier de la mode à Milan.',
   },
+  'Ginza Maison Hermès paper origami installation window with golden sunlight projections.': {
+    ko: '긴자 메종 에르메스 윈도우의 입체 종이 오리가미 조형물과 골드 햇살 투사 연출.',
+    en: 'Ginza Maison Hermès paper origami installation window with golden sunlight projections.',
+    ja: '銀座メゾンエルメスのウィンドウに飾られた和紙折り紙インスタレーションと黄金の光。',
+    fr: 'Vitrine de Maison Hermès à Ginza avec installation d\'origami en papier et projections dorées.',
+  },
+  'Golden paper origami installation in Ginza window display.': {
+    ko: '긴자 윈도우 디스플레이에 연출된 황금빛 한지 종이 오리가미 디스플레이.',
+    en: 'Golden paper origami installation in Ginza window display.',
+    ja: '銀座のウィンドウに輝く金色の和紙折り紙インスタレーション。',
+    fr: 'Installation d\'origami en papier doré dans la vitrine de Ginza.',
+  },
+  'Monolithic noir octagonal storefront framing the historic Place Vendôme column reflection.': {
+    ko: '방돔 광장 기둥이 반사되는 흑색 옥타곤 팔각형 조형의 샤넬 부티크 파사드.',
+    en: 'Monolithic noir octagonal storefront framing the historic Place Vendôme column reflection.',
+    ja: 'ヴァンドーム広場の記念柱が映り込むブラック八角形モチーフのショップ外観。',
+    fr: 'Devanture octogonale noire monolithique encadrant le reflet de la colonne de la Place Vendôme.',
+  },
+  'Blackized steel octagonal storefront on Place Vendôme.': {
+    ko: '방돔 광장에 위치한 블랙 착색 스틸 팔각형 구조의 웅장한 익스테리어.',
+    en: 'Blackized steel octagonal storefront on Place Vendôme.',
+    ja: 'ヴァンドーム広場に位置する黒染めスチール八角形ファサード。',
+    fr: 'Devanture octogonale en acier noirci sur la Place Vendôme.',
+  },
+  'SoHo wave wooden staircase integrated with transparent glass display pods and green marble.': {
+    ko: '소호 프라다 매장 내부에 연출된 웨이브 곡면 원목 계단과 투명 글래스 포드 전시대.',
+    en: 'SoHo wave wooden staircase integrated with transparent glass display pods and green marble.',
+    ja: 'SOHOプラダ店内のウェーブ木製階段と透明ガラスのディスプレイポッド。',
+    fr: 'Escalier en bois ondulé à SoHo intégré à des présentoirs en verre transparent et marbre vert.',
+  },
+  'Iconic wave staircase in SoHo with green marble highlights.': {
+    ko: '그린 대리석 포인트와 소호 프라다의 상징적인 웨이브 원목 계단 연출.',
+    en: 'Iconic wave staircase in SoHo with green marble highlights.',
+    ja: 'SOHOを代表するウェーブ階段とグリーンマーブルのハイライト。',
+    fr: 'Escalier en vague emblématique à SoHo avec des accents de marbre vert.',
+  },
+  'Soaring grand archways lined with living Ficus trees and custom monolithic terrazzo tables.': {
+    ko: '리젠트 스트리트 애플 매장의 생화 피쿠스 나무 및 아치형 테라조 전시대 연출.',
+    en: 'Soaring grand archways lined with living Ficus trees and custom monolithic terrazzo tables.',
+    ja: '本物のフィカスツリーとテラゾーテーブルが並ぶアーチ状のアトリウム。',
+    fr: 'Grands arcs élancés bordés de ficus vivants et de tables monolithiques en terrazzo.',
+  },
+  'Biophilic retail atrium lined with trees and stone arches.': {
+    ko: '나무와 대리석 아치가 어우러진 친환경 바이오필릭 인테리어 아트리움.',
+    en: 'Biophilic retail atrium lined with trees and stone arches.',
+    ja: '樹木と石材アーチが調和するバイオフィリック・リテールアトリウム。',
+    fr: 'Atrium commercial biophilique bordé d\'arbres et d\'arches en pierre.',
+  },
+  'Opulent velvet padded window nook with vintage brass luggage mounts in the Milan Galleria.': {
+    ko: '밀라노 갤러리아 구찌 윈도우의 럭셔리 벨벳 쇼케이스와 빈티지 황동 트렁크 마운트.',
+    en: 'Opulent velvet padded window nook with vintage brass luggage mounts in the Milan Galleria.',
+    ja: 'ミラノ・ヴィットーリオ・エマヌエーレガレリアのベルベットと真鍮トランクのウィンドウ。',
+    fr: 'Niche de vitrine rembourrée en velours avec des supports de bagages en laiton vintage à la Galerie de Milan.',
+  },
+  'Velvet window display with brass luggage fixtures in Milan.': {
+    ko: '밀라노 쇼핑 갤러리아 내 벨벳 및 황동 수화물 가방 디스플레이.',
+    en: 'Velvet window display with brass luggage fixtures in Milan.',
+    ja: 'ミラノのベルベット地に真鍮トランクを飾ったウィンドウディスプレイ。',
+    fr: 'Vitrine en velours avec des éléments de bagages en laiton à Milan.',
+  },
+  'Raw construction scaffolding environment wrapped in heavy industrial plastic curtains.': {
+    ko: '도쿄 발렌시아가 팝업의 공사장 스캐폴딩 스틸 파이프 및 비닐 커튼의 파격적 공간 연출.',
+    en: 'Raw construction scaffolding environment wrapped in heavy industrial plastic curtains.',
+    ja: '渋谷発起の建設足場とビニールシートで構成された発想のバレンシアガ・ポップアップ。',
+    fr: 'Environnement d\'échafaudage de construction enveloppé dans de lourds rideaux plastiques industriels.',
+  },
+  'Raw scaffolding pop-up store environment in Shibuya.': {
+    ko: '시부야에 선보인 공사장 철제 파이프와 인더스트리얼 비닐 팝업 스토어.',
+    en: 'Raw scaffolding pop-up store environment in Shibuya.',
+    ja: '渋谷の足場パイプとビニールシートによるインダストリアル・ポップアップ。',
+    fr: 'Magasin éphémère d\'échafaudage brut à Shibuya.',
+  },
+  'Sculptural Grand Antique marble podiums set against mirrored brass panels and muted plaster.': {
+    ko: '파리 셀린느 매장의 조형적 흑백 그랜드 안티크 마스터 마블 포디움과 황동 미러 패널.',
+    en: 'Sculptural Grand Antique marble podiums set against mirrored brass panels and muted plaster.',
+    ja: 'パリ・セリーヌ店内のグランドアンティーク大理石ポディウムと真鍮ミラー。',
+    fr: 'Piédestaux sculpturaux en marbre Grand Antique sur fond de panneaux en laiton miroir.',
+  },
+  'Sculptural marble podiums with brass mirror panels.': {
+    ko: '조각 같은 마블 포디움과 황동 미러 패널이 조화를 이루는 프리미엄 쇼룸.',
+    en: 'Sculptural marble podiums with brass mirror panels.',
+    ja: '彫刻的な大理石ポディウムと真鍮ミラーパネルで構成された空間。',
+    fr: 'Piédestaux en marbre sculpturaux avec des panneaux miroir en laiton.',
+  },
+  'Custom footwear archway constructed from 500 cast white sneaker molds with marble countertops.': {
+    ko: '뉴욕 키스(Kith) 매장에 설치된 500개의 스니커즈 백색 석고 몰드 아치 및 마블 전시대.',
+    en: 'Custom footwear archway constructed from 500 cast white sneaker molds with marble countertops.',
+    ja: 'ニューヨークKith店舗内の500個のスニーカー金型で作られた彫刻アーチ。',
+    fr: 'Arche de chaussures sur mesure construite à partir de 500 moules de baskets blanches en plâtre.',
+  },
+  'Sneaker mold archway retail layout in Williamsburg.': {
+    ko: '윌리엄스버그 매장의 스니커즈 캐스팅 몰드 아치 입체 디스플레이.',
+    en: 'Sneaker mold archway retail layout in Williamsburg.',
+    ja: 'ウィリアムズバーグの500個のスニーカー金型アーチディスプレイ。',
+    fr: 'Présentation commerciale d\'arche en moule de basket à Williamsburg.',
+  },
 };
 
 export function translateDescription(desc: string, lang: Language): string {

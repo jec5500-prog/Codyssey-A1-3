@@ -57,7 +57,7 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
     <div className="space-y-8">
       {/* Header Banner */}
       <div className="text-center space-y-2 max-w-2xl mx-auto">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-950/80 border border-indigo-800 text-indigo-300 text-xs font-semibold">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-950/80 border border-orange-800 text-orange-300 text-xs font-semibold">
           <Scale className="w-3.5 h-3.5" />
           Dual Spatial Intelligence Matrix
         </div>
@@ -80,7 +80,7 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
             <select
               value={entityA}
               onChange={(e) => setEntityA(e.target.value)}
-              className="w-full bg-zinc-950 text-cyan-300 font-bold text-base px-4 py-3 rounded-2xl border border-zinc-800 focus:border-cyan-500 focus:outline-none cursor-pointer"
+              className="w-full bg-zinc-950 text-orange-300 font-bold text-base px-4 py-3 rounded-2xl border border-zinc-800 focus:border-orange-500 focus:outline-none cursor-pointer"
             >
               {availableLocations.map((loc) => (
                 <option key={loc} value={loc} disabled={loc === entityB}>
@@ -105,7 +105,7 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
             <select
               value={entityB}
               onChange={(e) => setEntityB(e.target.value)}
-              className="w-full bg-zinc-950 text-indigo-300 font-bold text-base px-4 py-3 rounded-2xl border border-zinc-800 focus:border-indigo-500 focus:outline-none cursor-pointer"
+              className="w-full bg-zinc-950 text-amber-300 font-bold text-base px-4 py-3 rounded-2xl border border-zinc-800 focus:border-amber-500 focus:outline-none cursor-pointer"
             >
               {availableLocations.map((loc) => (
                 <option key={loc} value={loc} disabled={loc === entityA}>
@@ -125,7 +125,7 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
               onClick={() => setCategory(cat)}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                 category === cat
-                  ? 'bg-zinc-100 text-zinc-950 shadow-md'
+                  ? 'bg-orange-500 text-white shadow-md'
                   : 'bg-zinc-950 text-zinc-400 hover:text-zinc-200 border border-zinc-800'
               }`}
             >
@@ -146,8 +146,8 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
       {!loading && metrics && (
         <div className="space-y-8">
           {/* Executive Summary Card */}
-          <div className="bg-gradient-to-r from-cyan-950/40 via-zinc-900 to-indigo-950/40 border border-zinc-800 p-6 rounded-3xl space-y-2">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-cyan-400 flex items-center gap-1.5">
+          <div className="bg-gradient-to-r from-orange-950/40 via-zinc-900 to-amber-950/40 border border-zinc-800 p-6 rounded-3xl space-y-2">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-orange-400 flex items-center gap-1.5">
               <Sparkles className="w-4 h-4" />
               {t('summaryTitle')}
             </h3>
@@ -160,10 +160,10 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
             <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 space-y-4">
               <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
                 <div>
-                  <h3 className="font-bold text-lg text-cyan-300">{formatLocName(metrics.entityA.name)}</h3>
+                  <h3 className="font-bold text-lg text-orange-300">{formatLocName(metrics.entityA.name)}</h3>
                   <p className="text-xs text-zinc-400">{metrics.entityA.count} {language === 'ko' ? '개 공간 수집됨' : language === 'ja' ? '件のスポットが記録されました' : language === 'fr' ? 'spots enregistrés' : 'Field Spots Recorded'}</p>
                 </div>
-                <Tag className="w-5 h-5 text-cyan-400" />
+                <Tag className="w-5 h-5 text-orange-400" />
               </div>
 
               <div className="space-y-3">
@@ -175,11 +175,11 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
                     <div key={i} className="space-y-1">
                       <div className="flex justify-between text-xs font-medium text-zinc-200">
                         <span>{translateAttribute(mat.name, language)}</span>
-                        <span className="font-mono text-cyan-400">{mat.percentage}%</span>
+                        <span className="font-mono text-orange-400">{mat.percentage}%</span>
                       </div>
                       <div className="w-full h-2 bg-zinc-950 rounded-full overflow-hidden border border-zinc-800">
                         <div
-                          className="h-full bg-cyan-500 rounded-full"
+                          className="h-full bg-orange-500 rounded-full"
                           style={{ width: `${mat.percentage}%` }}
                         />
                       </div>
@@ -195,8 +195,8 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
                   {metrics.entityA.topColors.map((col, i) => (
                     <div key={i} className="flex items-center gap-1.5 bg-zinc-950 px-2.5 py-1 rounded-xl border border-zinc-800">
                       <span className="w-4 h-4 rounded-full border border-zinc-700 shadow-sm" style={{ backgroundColor: col.hex }} />
-                      <span className="font-mono text-[11px] text-zinc-300">{col.hex}</span>
-                      <span className="text-[10px] text-zinc-500 font-bold">({col.percentage}%)</span>
+                      <span className="font-mono text-xs text-zinc-300">{col.hex}</span>
+                      <span className="text-xs text-zinc-500 font-bold">({col.percentage}%)</span>
                     </div>
                   ))}
                 </div>
@@ -207,10 +207,10 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
             <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 space-y-4">
               <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
                 <div>
-                  <h3 className="font-bold text-lg text-indigo-300">{formatLocName(metrics.entityB.name)}</h3>
+                  <h3 className="font-bold text-lg text-amber-300">{formatLocName(metrics.entityB.name)}</h3>
                   <p className="text-xs text-zinc-400">{metrics.entityB.count} Field Spots Recorded</p>
                 </div>
-                <Tag className="w-5 h-5 text-indigo-400" />
+                <Tag className="w-5 h-5 text-amber-400" />
               </div>
 
               <div className="space-y-3">
@@ -222,11 +222,11 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
                     <div key={i} className="space-y-1">
                       <div className="flex justify-between text-xs font-medium text-zinc-200">
                         <span>{translateAttribute(mat.name, language)}</span>
-                        <span className="font-mono text-indigo-400">{mat.percentage}%</span>
+                        <span className="font-mono text-amber-400">{mat.percentage}%</span>
                       </div>
                       <div className="w-full h-2 bg-zinc-950 rounded-full overflow-hidden border border-zinc-800">
                         <div
-                          className="h-full bg-indigo-500 rounded-full"
+                          className="h-full bg-amber-500 rounded-full"
                           style={{ width: `${mat.percentage}%` }}
                         />
                       </div>
@@ -242,8 +242,8 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
                   {metrics.entityB.topColors.map((col, i) => (
                     <div key={i} className="flex items-center gap-1.5 bg-zinc-950 px-2.5 py-1 rounded-xl border border-zinc-800">
                       <span className="w-4 h-4 rounded-full border border-zinc-700 shadow-sm" style={{ backgroundColor: col.hex }} />
-                      <span className="font-mono text-[11px] text-zinc-300">{col.hex}</span>
-                      <span className="text-[10px] text-zinc-500 font-bold">({col.percentage}%)</span>
+                      <span className="font-mono text-xs text-zinc-300">{col.hex}</span>
+                      <span className="text-xs text-zinc-500 font-bold">({col.percentage}%)</span>
                     </div>
                   ))}
                 </div>

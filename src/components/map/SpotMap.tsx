@@ -77,14 +77,14 @@ export default function SpotMap({
       <div className="absolute top-4 left-4 right-4 z-20 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pointer-events-none">
         {/* Category Pills */}
         <div className="flex items-center gap-1.5 bg-zinc-950/90 backdrop-blur-md p-2 rounded-2xl border border-zinc-800 pointer-events-auto overflow-x-auto max-w-full shadow-lg scrollbar-none">
-          <Filter className="w-4 h-4 text-cyan-400 ml-2 shrink-0 hidden sm:block" />
+          <Filter className="w-4 h-4 text-orange-400 ml-2 shrink-0 hidden sm:block" />
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={`px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all ${
                 selectedCategory === cat
-                  ? 'bg-cyan-500 text-zinc-950 shadow-md shadow-cyan-500/20'
+                  ? 'bg-orange-500 text-white shadow-md shadow-orange-500/20'
                   : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800'
               }`}
             >
@@ -109,14 +109,14 @@ export default function SpotMap({
                 alert('GPS 위치 권한을 확인해 주세요.');
               }
             }}
-            className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-extrabold text-xs py-1.5 px-3 rounded-2xl flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 cursor-pointer transition-all shrink-0"
+            className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-400 hover:to-amber-500 text-white font-extrabold text-xs py-1.5 px-3 rounded-2xl flex items-center gap-1.5 shadow-lg shadow-orange-500/20 cursor-pointer transition-all shrink-0"
           >
-            <MapPin className="w-3.5 h-3.5 animate-bounce text-white" />
+            <MapPin className="w-3.5 h-3.5 animate-pulse text-white" />
             <span className="hidden sm:inline">내 GPS 위치</span>
           </button>
 
           <div className="bg-zinc-950/90 backdrop-blur-md p-2 rounded-2xl border border-zinc-800 flex items-center gap-2 shadow-lg">
-            <MapPin className="w-4 h-4 text-cyan-400 ml-2" />
+            <MapPin className="w-4 h-4 text-orange-400 ml-2" />
             <select
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
@@ -292,16 +292,16 @@ function LeafletMapEngine({
                 width: 28px;
                 height: 28px;
                 border-radius: 50%;
-                background: #3B82F6;
-                border: 3px solid #FFFFFF;
-                box-shadow: 0 0 20px rgba(59, 130, 246, 0.9);
+                background: #f97316;
+                border: 3px solid #ffffff;
+                box-shadow: 0 0 20px rgba(249, 115, 22, 0.9);
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                color: #FFFFFF;
+                color: #ffffff;
                 font-weight: bold;
                 font-size: 14px;
-              " class="animate-bounce">📍</div>
+              " class="animate-pulse">📍</div>
             `,
             iconSize: [28, 28],
             iconAnchor: [14, 14],
@@ -332,20 +332,45 @@ function LeafletMapEngine({
         className: 'custom-map-pin',
         html: `
           <div style="
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            background-image: url('${spot.image_url}');
-            background-size: cover;
-            background-position: center;
-            border: 2px solid ${isVerified ? '#10B981' : '#F59E0B'};
-            box-shadow: 0 0 16px ${isVerified ? 'rgba(16,185,129,0.8)' : 'rgba(245,158,11,0.8)'};
+            width: 40px;
+            height: 40px;
+            position: relative;
             cursor: pointer;
-            transition: transform 0.2s ease-in-out;
-          " class="hover:scale-125"></div>
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+          " class="hover:scale-125" title="${spot.brand || spot.category} — ${isVerified ? 'Verified Spot (검증된 스팟)' : 'AI Field Spot (현장 스팟)'}">
+            <div style="
+              width: 38px;
+              height: 38px;
+              border-radius: ${isVerified ? '10px' : '50%'};
+              background-image: url('${spot.image_url}');
+              background-size: cover;
+              background-position: center;
+              border: 2.5px solid ${isVerified ? '#10B981' : '#f97316'};
+              box-shadow: 0 0 14px ${isVerified ? 'rgba(16,185,129,0.75)' : 'rgba(249,115,22,0.75)'};
+            "></div>
+            <div style="
+              position: absolute;
+              top: -4px;
+              right: -4px;
+              width: 18px;
+              height: 18px;
+              border-radius: 50%;
+              background: ${isVerified ? '#10B981' : '#f97316'};
+              color: #ffffff;
+              border: 2px solid #121214;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 10px;
+              font-weight: 800;
+              box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+            ">
+              ${isVerified ? '✓' : '📷'}
+            </div>
+          </div>
         `,
-        iconSize: [38, 38],
-        iconAnchor: [19, 19],
+        iconSize: [40, 40],
+        iconAnchor: [20, 20],
       });
 
       const marker = L.marker([spot.latitude, spot.longitude], { icon: customIcon }).addTo(map);

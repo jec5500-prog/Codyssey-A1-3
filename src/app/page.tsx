@@ -25,6 +25,9 @@ export default function ExplorePage() {
   const [isVerifiedOnly, setIsVerifiedOnly] = useState<boolean>(false);
   const [sortBy, setSortBy] = useState<'latest' | 'oldest' | 'confidence'>('latest');
 
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const ITEMS_PER_PAGE = 9; // 3 columns x 3 rows = 9 spots per view
+
   // Load spots
   useEffect(() => {
     async function loadData() {
@@ -39,6 +42,7 @@ export default function ExplorePage() {
         sortBy,
       });
       setSpots(data);
+      setCurrentPage(1);
       setLoading(false);
     }
     loadData();
@@ -80,6 +84,8 @@ export default function ExplorePage() {
   }, [country]);
 
   const verifiedCount = spots.filter((s) => s.is_verified).length;
+  const totalPages = Math.ceil(spots.length / ITEMS_PER_PAGE);
+  const visibleSpots = spots.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   return (
     <div className="space-y-8 text-white">
@@ -191,7 +197,7 @@ export default function ExplorePage() {
         totalResults={spots.length}
       />
 
-      {/* Spots Grid View */}
+      {/* Spots Grid View: 3 items per row, 3 rows = 9 spots per grid page */}
       {loading && (
         <div className="p-16 text-center text-zinc-500 bg-[#18181b]/80 rounded-3xl border border-zinc-800 animate-pulse font-medium">
           Fetching structured spatial design records...
@@ -212,15 +218,63 @@ export default function ExplorePage() {
         </div>
       )}
 
-      {!loading && spots.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {spots.map((spot) => (
-            <SpotCard
-              key={spot.id}
-              spot={spot}
-              onSelect={(s) => setSelectedSpot(s)}
-            />
-          ))}
+      {!loading && visibleSpots.length > 0 && (
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {visibleSpots.map((spot) => (
+              <SpotCard
+                key={spot.id}
+                spot={spot}
+                onSelect={(s) => setSelectedSpot(s)}
+              />
+            ))}
+          </div>
+
+          {/* 3x3 Grid Pagination Bar */}
+          {totalPages > 1 && (
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-zinc-800/80 bg-[#18181b]/60 p-4 rounded-2xl border">
+              <span className="text-xs font-semibold text-zinc-400">
+                Displaying <strong className="text-white font-mono">{visibleSpots.length}</strong> of{' '}
+                <strong className="text-orange-400 font-mono">{spots.length}</strong> spots (3×3 grid, Page{' '}
+                <strong className="text-white font-mono">{currentPage}</strong> / {totalPages})
+              </span>
+
+              <div className="flex items-center gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-3 py-1.5 rounded-xl bg-[#121214] border border-zinc-800 text-xs font-bold text-zinc-300 hover:text-white hover:border-orange-500/50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                >
+                  ← Prev
+                </button>
+
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((pg) => (
+                  <button
+                    key={pg}
+                    type="button"
+                    onClick={() => setCurrentPage(pg)}
+                    className={`w-8 h-8 rounded-xl text-xs font-mono font-bold transition-all ${
+                      pg === currentPage
+                        ? 'bg-orange-500 text-white border border-orange-400 shadow-md shadow-orange-500/30'
+                        : 'bg-[#121214] text-zinc-400 border border-zinc-800 hover:text-white hover:border-zinc-700'
+                    }`}
+                  >
+                    {pg}
+                  </button>
+                ))}
+
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-1.5 rounded-xl bg-[#121214] border border-zinc-800 text-xs font-bold text-zinc-300 hover:text-white hover:border-orange-500/50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                >
+                  Next →
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 

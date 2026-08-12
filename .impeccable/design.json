@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-12T21:11:15Z",
+  "title": "Design System: SPOT Global Spatial Design Intelligence",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Neon Telemetry Orange",
+        "canonical": "#f97316",
+        "tonalRamp": ["#451a03", "#7c2d12", "#9a3412", "#c2410c", "#ea580c", "#f97316", "#fb923c", "#fdba74"]
+      },
+      "neutral-bg": {
+        "role": "neutral",
+        "displayName": "Deep Void Dark",
+        "canonical": "#121214",
+        "tonalRamp": ["#09090b", "#121214", "#18181b", "#27272a", "#3f3f46", "#71717a", "#a1a1aa", "#f4f4f5"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero headers and section titles" },
+      "label": { "displayName": "Label Monospace", "purpose": "Telemetry metadata and coordinates" }
+    },
+    "shadows": [
+      { "name": "glow-hover", "value": "0 25px 50px -12px rgba(154, 52, 18, 0.4)", "purpose": "Warm accent glow on hover state" }
+    ],
+    "motion": [
+      { "name": "ease-slide", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Slide up transition for cards and modals" }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary action button with neon orange background.",
+      "html": "<button class=\"ds-btn-primary\">CAPTURE SPOT</button>",
+      "css": ".ds-btn-primary { background: #f97316; color: #ffffff; padding: 10px 20px; font-weight: 600; border: none; border-radius: 12px; font-family: system-ui, sans-serif; cursor: pointer; transition: background 0.2s; } .ds-btn-primary:hover { background: #ea580c; }"
+    },
+    {
+      "name": "Spot Card",
+      "kind": "card",
+      "refersTo": "card-spot",
+      "description": "Dark zinc surface card for spatial spot records.",
+      "html": "<div class=\"ds-card-spot\"><div class=\"ds-card-badge\">RETAIL</div><div class=\"ds-card-title\">Sephora Flagship Store</div></div>",
+      "css": ".ds-card-spot { background: #18181b; border: 1px solid rgba(39, 39, 42, 0.8); border-radius: 16px; padding: 16px; font-family: system-ui, sans-serif; color: #f4f4f5; transition: border-color 0.3s; } .ds-card-spot:hover { border-color: rgba(249, 115, 22, 0.6); } .ds-card-badge { display: inline-block; padding: 4px 8px; border-radius: 8px; background: rgba(18, 18, 20, 0.85); border: 1px solid rgba(154, 52, 18, 0.6); font-family: monospace; font-size: 11px; font-weight: 700; color: #fdba74; margin-bottom: 8px; } .ds-card-title { font-size: 16px; font-weight: 600; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Spatial Design Radar",
+    "overview": "SPOT is a high-contrast dark field intelligence platform designed for spatial design researchers, visual merchandisers, and store planners.",
+    "keyCharacteristics": [
+      "Deep zinc dark theme (#121214)",
+      "Tactile neon orange accents (#f97316)",
+      "Glassmorphic overlay cards",
+      "Dual typography pairing sans-serif with monospace telemetry labels"
+    ],
+    "rules": [
+      { "name": "The Telemetry Rarity Rule", "body": "Neon orange (#f97316) is used on <=10% of any screen.", "section": "colors" },
+      { "name": "The Telemetry Label Rule", "body": "Data attributes are strictly formatted in monospace font.", "section": "typography" }
+    ],
+    "dos": [
+      "Do use #f97316 (Neon Orange) for active states and key metrics.",
+      "Do format technical metadata in uppercase monospace typography."
+    ],
+    "donts": [
+      "Don't use bright high-saturation background colors.",
+      "Don't overuse neon orange on body text."
+    ]
+  }
+}

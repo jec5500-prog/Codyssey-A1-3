@@ -64,7 +64,8 @@ export default function SpotCard({ spot, onSelect, isSavedInitial = false }: Spo
             <button
               onClick={handleBookmark}
               disabled={saving}
-              className={`p-2 rounded-xl backdrop-blur-md border transition-all ${
+              aria-label={saved ? 'Remove Bookmark' : 'Bookmark to Saved Collection'}
+              className={`min-w-[44px] min-h-[44px] flex items-center justify-center p-2 rounded-xl backdrop-blur-md border transition-all ${
                 saved
                   ? 'bg-orange-500 text-white border-orange-400 shadow-md shadow-orange-500/40'
                   : 'bg-[#121214]/75 text-zinc-300 border-zinc-700 hover:bg-zinc-800 hover:text-white'
