@@ -34,7 +34,7 @@ import { formatDate } from '@/lib/i18n/translationUtils';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export default function UserManagement() {
-  const { user, getAllUsers, updateUserByAdmin, deleteUserByAdmin, setDemoAdminUser, openAuthModal } = useAuth();
+  const { user, getAllUsers, updateUserByAdmin, deleteUserByAdmin, openAuthModal } = useAuth();
   const { language } = useLanguage();
 
   const isAdmin = user && (user.role === 'admin' || user.role?.toLowerCase() === 'admin');
@@ -338,13 +338,6 @@ export default function UserManagement() {
           </div>
 
           <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <button
-              onClick={setDemoAdminUser}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 via-amber-500 to-orange-600 hover:from-orange-400 hover:to-amber-500 text-white font-extrabold text-xs shadow-xl shadow-orange-500/30 hover:scale-105 transition-all cursor-pointer"
-            >
-              <ShieldCheck className="w-4 h-4" />
-              <span>[테스트용] 관리자(Admin) 계정으로 전환하기</span>
-            </button>
             <button
               onClick={() => openAuthModal('login')}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 font-semibold text-xs transition-colors cursor-pointer"
