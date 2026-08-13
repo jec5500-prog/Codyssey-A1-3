@@ -135,7 +135,7 @@ export default function Navbar() {
               );
             })}
 
-            {user?.role === 'Admin' || user?.role?.toLowerCase().includes('admin') ? (
+            {user?.role === 'admin' || user?.role?.toLowerCase() === 'admin' ? (
               <Link
                 href="/admin/users"
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${

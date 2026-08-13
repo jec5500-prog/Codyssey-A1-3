@@ -37,7 +37,7 @@ export default function UserManagement() {
   const { user, getAllUsers, updateUserByAdmin, deleteUserByAdmin, setDemoAdminUser, openAuthModal } = useAuth();
   const { language } = useLanguage();
 
-  const isAdmin = user && (user.role === 'Admin' || user.role?.toLowerCase().includes('admin'));
+  const isAdmin = user && (user.role === 'admin' || user.role?.toLowerCase() === 'admin');
 
   // Data state
   const [usersList, setUsersList] = useState<StoredAccount[]>([]);
@@ -128,8 +128,8 @@ export default function UserManagement() {
       // Filter by role
       const matchesRole =
         roleFilter === 'all' ||
-        (roleFilter === 'admin' && (u.role === 'Admin' || u.role?.toLowerCase().includes('admin'))) ||
-        (roleFilter === 'user' && u.role !== 'Admin' && !u.role?.toLowerCase().includes('admin'));
+        (roleFilter === 'admin' && (u.role === 'admin' || u.role?.toLowerCase() === 'admin')) ||
+        (roleFilter === 'user' && u.role !== 'admin' && u.role?.toLowerCase() !== 'admin');
 
       return matchesSearch && matchesStatus && matchesRole;
     });
@@ -600,7 +600,7 @@ export default function UserManagement() {
                         <div>
                           <div className="font-bold text-zinc-100 text-xs flex items-center gap-1.5">
                             <span>{acc.name}</span>
-                            {acc.role === 'Admin' && (
+                            {(acc.role === 'admin' || acc.role?.toLowerCase() === 'admin') && (
                               <span className="px-1.5 py-0.2 rounded text-[9px] font-bold bg-orange-950 text-orange-300 border border-orange-800">
                                 ADMIN
                               </span>
@@ -907,7 +907,7 @@ export default function UserManagement() {
                   onChange={(e) => setEditFormData({ ...editFormData, role: e.target.value })}
                   className="w-full bg-[#121214] border border-zinc-700 rounded-xl px-3.5 py-2.5 text-zinc-100 focus:border-orange-500 focus:outline-none cursor-pointer"
                 >
-                  <option value="Admin">Admin (최고 관리자)</option>
+                  <option value="admin">admin (최고 관리자)</option>
                   <option value="Spatial VMD Architect">Spatial VMD Architect</option>
                   <option value="Lead Store Planner">Lead Store Planner</option>
                   <option value="Visual Merchandiser">Visual Merchandiser</option>
@@ -1050,7 +1050,7 @@ export default function UserManagement() {
                   <option value="Spatial VMD Architect">Spatial VMD Architect</option>
                   <option value="Lead Store Planner">Lead Store Planner</option>
                   <option value="Visual Merchandiser">Visual Merchandiser</option>
-                  <option value="Admin">Admin (관리자)</option>
+                  <option value="admin">admin (관리자)</option>
                 </select>
               </div>
 

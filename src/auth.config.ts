@@ -29,7 +29,7 @@ export const authConfig = {
             name: '김관리 (Admin)',
             email: 'admin@spot.design',
             image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
-            role: 'Admin',
+            role: 'admin',
           };
         }
 

@@ -29,7 +29,7 @@ CREATE POLICY "Allow individual user select access" ON public.users
   FOR SELECT
   USING (
     auth.uid() = id
-    OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'Admin'
+    OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'admin'
   );
 
 -- Policy B: Users can update ONLY their own profile (or admins can update any).
@@ -37,11 +37,11 @@ CREATE POLICY "Allow individual user update access" ON public.users
   FOR UPDATE
   USING (
     auth.uid() = id
-    OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'Admin'
+    OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'admin'
   )
   WITH CHECK (
     auth.uid() = id
-    OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'Admin'
+    OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'admin'
   );
 
 -- Policy C: Users can ONLY insert their own record matching auth.uid() AND role MUST BE 'user'
@@ -57,7 +57,7 @@ CREATE POLICY "Allow individual user delete access" ON public.users
   FOR DELETE
   USING (
     auth.uid() = id
-    OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'Admin'
+    OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'admin'
   );
 
 -- 5. Trigger for automatic profile synchronization when new Supabase Auth user signs up
@@ -90,7 +90,7 @@ CREATE TRIGGER on_auth_user_created
 -- 6. Insert initial seed accounts for instant testing
 INSERT INTO public.users (id, name, email, role, status, created_at)
 VALUES
-  ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', '김관리 (Admin)', 'admin@spot.design', 'Admin', 'active', now()),
+  ('a0eebc99-9c0b-4ef8-bb6d-6bb9bd380a11', '김관리 (Admin)', 'admin@spot.design', 'admin', 'active', now()),
   ('b1eebc99-9c0b-4ef8-bb6d-6bb9bd380a22', '이민수', 'minsoo.kim@spot.design', 'user', 'active', now()),
   ('c2eebc99-9c0b-4ef8-bb6d-6bb9bd380a33', '박지원', 'jiwon.park@spot.design', 'user', 'active', now()),
   ('d3eebc99-9c0b-4ef8-bb6d-6bb9bd380a44', 'Alex Chen', 'alex.chen@spot.design', 'user', 'inactive', now()),
