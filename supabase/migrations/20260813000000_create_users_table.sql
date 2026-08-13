@@ -1,4 +1,4 @@
--- Migration: Create public.users table with RLS Policies & Triggers
+-- Migration: Create public.users table with RLS Policies & Triggers (Hardened Security)
 -- Target: Supabase PostgreSQL Database
 
 -- 1. Create public.users table matching AuthContext.tsx fields
@@ -22,17 +22,17 @@ DROP POLICY IF EXISTS "Allow individual user update access" ON public.users;
 DROP POLICY IF EXISTS "Allow individual user insert access" ON public.users;
 DROP POLICY IF EXISTS "Allow individual user delete access" ON public.users;
 
--- 4. Create RLS Policies for Supabase Auth & Row Isolation
--- Policy A: Users can view their own profile (or admins can view all)
+-- 4. Create Hardened RLS Policies for Supabase Auth & Row Isolation
+
+-- Policy A: Users can view ONLY their own profile (or admins can view all). Anonymous users get NOTHING.
 CREATE POLICY "Allow individual user select access" ON public.users
   FOR SELECT
   USING (
     auth.uid() = id
     OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'Admin'
-    OR auth.role() = 'anon'
   );
 
--- Policy B: Users can update their own profile (or admins can update any)
+-- Policy B: Users can update ONLY their own profile (or admins can update any).
 CREATE POLICY "Allow individual user update access" ON public.users
   FOR UPDATE
   USING (
@@ -44,16 +44,15 @@ CREATE POLICY "Allow individual user update access" ON public.users
     OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'Admin'
   );
 
--- Policy C: Authenticated users can insert their own record on signup
+-- Policy C: Users can ONLY insert their own record matching auth.uid() AND role MUST BE 'user'
 CREATE POLICY "Allow individual user insert access" ON public.users
   FOR INSERT
   WITH CHECK (
     auth.uid() = id
-    OR auth.role() = 'authenticated'
-    OR auth.role() = 'anon'
+    AND role = 'user'
   );
 
--- Policy D: Users can delete their own record (or admins can delete any)
+-- Policy D: Users can delete ONLY their own record (or admins can delete any).
 CREATE POLICY "Allow individual user delete access" ON public.users
   FOR DELETE
   USING (
@@ -71,7 +70,7 @@ BEGIN
     COALESCE(NEW.raw_user_meta_data->>'full_name', SPLIT_PART(NEW.email, '@', 1), 'User'),
     NEW.email,
     COALESCE(NEW.raw_user_meta_data->>'avatar_url', 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80'),
-    COALESCE(NEW.raw_user_meta_data->>'role', 'user'),
+    'user',
     'active'
   )
   ON CONFLICT (id) DO UPDATE SET
