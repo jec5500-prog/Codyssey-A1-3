@@ -11,7 +11,7 @@ import SpotDetailModal from '@/components/explore/SpotDetailModal';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export default function ExplorePage() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [spots, setSpots] = useState<Spot[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
@@ -103,36 +103,106 @@ export default function ExplorePage() {
             {t('exploreDesc')}
           </p>
 
-          {/* Core Workflow Pipeline Pills */}
-          <div className="pt-2 flex flex-wrap items-center gap-2 text-xs">
-            <Link
-              href="/capture"
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 text-white font-bold shadow-lg shadow-orange-500/30 hover:scale-105 transition-transform"
-            >
-              <Camera className="w-4 h-4" />
-              <span>1. {t('navCapture')}</span>
-            </Link>
-            <span className="text-zinc-600 font-bold">→</span>
-            <div className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-zinc-950 border border-zinc-800 text-orange-300 font-bold shadow-xs">
-              <Compass className="w-4 h-4 text-orange-400" />
-              <span>2. {t('navExplore')}</span>
+          {/* Enhanced Core Workflow Pipeline Interactive Bar */}
+          <div className="pt-4">
+            <div className="text-[11px] font-extrabold uppercase tracking-widest text-zinc-400 mb-3 flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-orange-500 animate-pulse" />
+              <span>SPOT Core Workflow Pipeline</span>
             </div>
-            <span className="text-zinc-600 font-bold">→</span>
-            <Link
-              href="/compare"
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#121214] border border-zinc-800 text-zinc-300 hover:text-white font-bold transition-all"
-            >
-              <Scale className="w-4 h-4 text-orange-400" />
-              <span>3. {t('navCompare')}</span>
-            </Link>
-            <span className="text-zinc-600 font-bold">→</span>
-            <Link
-              href="/insight"
-              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#121214] border border-zinc-800 text-zinc-300 hover:text-white font-bold transition-all"
-            >
-              <Sparkles className="w-4 h-4 text-amber-400" />
-              <span>4. {t('navInsight')}</span>
-            </Link>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              {/* Step 1: Capture */}
+              <Link
+                href="/capture"
+                className="group relative bg-[#121214] hover:bg-zinc-900 border border-zinc-800 hover:border-orange-500/60 p-3.5 rounded-2xl transition-all duration-300 flex flex-col justify-between shadow-lg hover:shadow-orange-950/30"
+              >
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-xl bg-orange-950/80 border border-orange-800/60 flex items-center justify-center text-orange-400 group-hover:scale-110 transition-transform">
+                    <Camera className="w-4 h-4" />
+                  </div>
+                  <span className="text-[10px] font-mono font-bold text-zinc-500 group-hover:text-orange-400">
+                    STEP 01
+                  </span>
+                </div>
+                <div>
+                  <div className="font-bold text-xs text-white group-hover:text-orange-300 transition-colors flex items-center justify-between">
+                    <span>1. {t('navCapture')}</span>
+                    <span className="text-zinc-600 group-hover:translate-x-1 transition-transform">→</span>
+                  </div>
+                  <p className="text-[10px] text-zinc-400 mt-0.5 font-medium line-clamp-1">
+                    {language === 'ko' ? '공간 촬영 및 AI 속성 분석' : 'Capture & AI Analysis'}
+                  </p>
+                </div>
+              </Link>
+
+              {/* Step 2: Explore (Current Active Page) */}
+              <div className="relative bg-gradient-to-br from-orange-950/40 via-[#121214] to-amber-950/30 border-2 border-orange-500/80 p-3.5 rounded-2xl shadow-xl shadow-orange-950/40 flex flex-col justify-between">
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-xl bg-orange-500 text-white flex items-center justify-center shadow-md shadow-orange-500/40">
+                    <Compass className="w-4 h-4" />
+                  </div>
+                  <span className="px-2 py-0.5 rounded-md bg-orange-500/20 text-orange-300 border border-orange-500/40 text-[9px] font-bold uppercase tracking-wider">
+                    ACTIVE
+                  </span>
+                </div>
+                <div>
+                  <div className="font-bold text-xs text-orange-300 flex items-center justify-between">
+                    <span>2. {t('navExplore')}</span>
+                    <span className="w-1.5 h-1.5 rounded-full bg-orange-400 animate-ping" />
+                  </div>
+                  <p className="text-[10px] text-zinc-300 mt-0.5 font-medium line-clamp-1">
+                    {language === 'ko' ? '글로벌 공간 DB 스마트 탐색' : 'Global Spatial DB Search'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 3: Compare */}
+              <Link
+                href="/compare"
+                className="group relative bg-[#121214] hover:bg-zinc-900 border border-zinc-800 hover:border-orange-500/60 p-3.5 rounded-2xl transition-all duration-300 flex flex-col justify-between shadow-lg hover:shadow-orange-950/30"
+              >
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-xl bg-orange-950/80 border border-orange-800/60 flex items-center justify-center text-orange-400 group-hover:scale-110 transition-transform">
+                    <Scale className="w-4 h-4" />
+                  </div>
+                  <span className="text-[10px] font-mono font-bold text-zinc-500 group-hover:text-orange-400">
+                    STEP 03
+                  </span>
+                </div>
+                <div>
+                  <div className="font-bold text-xs text-white group-hover:text-orange-300 transition-colors flex items-center justify-between">
+                    <span>3. {t('navCompare')}</span>
+                    <span className="text-zinc-600 group-hover:translate-x-1 transition-transform">→</span>
+                  </div>
+                  <p className="text-[10px] text-zinc-400 mt-0.5 font-medium line-clamp-1">
+                    {language === 'ko' ? '도시/브랜드 교차 비교 분석' : 'City & Brand Cross Compare'}
+                  </p>
+                </div>
+              </Link>
+
+              {/* Step 4: Insight */}
+              <Link
+                href="/insight"
+                className="group relative bg-[#121214] hover:bg-zinc-900 border border-zinc-800 hover:border-amber-500/60 p-3.5 rounded-2xl transition-all duration-300 flex flex-col justify-between shadow-lg hover:shadow-amber-950/30"
+              >
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <div className="w-8 h-8 rounded-xl bg-amber-950/80 border border-amber-800/60 flex items-center justify-center text-amber-400 group-hover:scale-110 transition-transform">
+                    <Sparkles className="w-4 h-4" />
+                  </div>
+                  <span className="text-[10px] font-mono font-bold text-zinc-500 group-hover:text-amber-400">
+                    STEP 04
+                  </span>
+                </div>
+                <div>
+                  <div className="font-bold text-xs text-white group-hover:text-amber-300 transition-colors flex items-center justify-between">
+                    <span>4. {t('navInsight')}</span>
+                    <span className="text-zinc-600 group-hover:translate-x-1 transition-transform">→</span>
+                  </div>
+                  <p className="text-[10px] text-zinc-400 mt-0.5 font-medium line-clamp-1">
+                    {language === 'ko' ? 'VMD / 공간 AI 리포트 생성' : 'VMD & Spatial AI Report'}
+                  </p>
+                </div>
+              </Link>
+            </div>
           </div>
         </div>
 
