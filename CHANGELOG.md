@@ -8,24 +8,29 @@
 
 ## 📋 Recent Commits Overview
 
-### Latest (a2f7447)
+### Latest (9a4045a) ⭐ **CURRENT**
+- **Message:** Remove demo admin account and setDemoAdminUser function
+- **Date:** August 13, 2026
+- **Status:** ✅ Complete - Migrated to Real Supabase Auth
+- **Changes:**
+  - `src/lib/auth/AuthContext.tsx` - Removed INITIAL_DEMO_USERS array (8 demo accounts) and setDemoAdminUser() function
+  - `src/components/admin/UserManagement.tsx` - Removed "[테스트용] 관리자 계정으로 전환하기" button
+  - Removed setDemoAdminUser from AuthContextType interface
+  - Admin status now managed exclusively through Supabase: `role = 'admin'` in public.users table
+  - Prepared for Supabase SQL migration (20260813000000_create_users_table.sql)
+
+**Key Impact:**
+- Demo account bypass removed
+- Real authentication via Supabase Auth enforced
+- Admin role verification via public.users DB table
+- Next steps: Execute SQL migration → Register Vercel env vars → Real signup + set role to 'admin'
+
+### Previous (a2f7447)
 - **Message:** Final UI refinements for SpotCard and homepage
 - **Date:** August 13, 2026
 - **Changes:** 
   - `src/app/page.tsx` - Homepage UI improvements
   - `src/components/explore/SpotCard.tsx` - Spot card refinement
-
-### Previous (a708f63)
-- **Message:** UI/UX improvements and feature updates
-- **Date:** August 12, 2026
-- **Files Changed:** 48 files
-- **Insertions:** 3,781+ lines
-- **Key Updates:**
-  - Design system integration (ui-ux-pro-max skill)
-  - Component styling enhancements across all major views
-  - Database service optimizations
-  - i18n translation utilities improvements
-  - Mock data updates for testing
 
 ---
 

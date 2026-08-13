@@ -4,21 +4,40 @@
 
 ## 1. 현재 상태 요약
 
-### 완료된 항목
+### ✅ 완료된 항목
 - Next.js 기반 웹 앱이 구성되어 있음.
 - 최소 3개 이상의 페이지/섹션이 존재함.
-  - `/` (Explore), `/capture`, `/compare`, `/insight`, `/map`, `/profile`, `/saved` 등.
+  - `/` (Explore), `/capture`, `/compare`, `/insight`, `/map`, `/profile`, `/saved`, `/admin/users` 등.
 - AI 기능이 포함되어 있음.
   - `src/lib/services/aiService.ts`에서 `@google/genai`를 사용한 Gemini 분석 기능이 구현되어 있음.
 - 환경 변수 템플릿 파일 `.env.local.example`이 존재함.
-- 로컬 및 Supabase 연동을 위한 `src/lib/services/dbService.ts`가 있음.
+- Supabase 연동을 위한 `src/lib/services/dbService.ts`가 있음.
+- **[NEW] 인증 시스템 정리 완료** (2026-08-13)
+  - ✅ INITIAL_DEMO_USERS 배열 제거 (로컬 더미 계정)
+  - ✅ setDemoAdminUser() 함수 제거 (테스트용 관리자 전환기)
+  - ✅ AuthContext 인터페이스에서 setDemoAdminUser 제거
+  - ✅ UserManagement.tsx의 "[테스트용] 관리자 계정으로 전환하기" 버튼 제거
+  - ✅ GitHub 커밋: `chore: Remove demo admin account and setDemoAdminUser function` (Commit 9a4045a)
 
-### 미완료/검토가 필요한 항목
+### ⏳ 진행 중인 항목
+- **Supabase 인증 시스템 마이그레이션**
+  - SQL 마이그레이션 준비 완료: `supabase/migrations/20260813000000_create_users_table.sql`
+  - 마이그레이션 내용:
+    - `public.users` 테이블 생성 (id, name, email, avatar, role, status, created_at, last_login)
+    - RLS (Row Level Security) 정책 설정
+    - Supabase Auth 가입 시 자동 프로필 생성 트리거
+    - Admin role 기반 권한 관리 (DB 테이블의 role='admin')
+  - **다음 단계:**
+    1. Supabase 대시보드 → SQL Editor에서 마이그레이션 SQL 실행
+    2. Vercel 환경변수 등록: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+    3. Vercel 재배포
+    4. 앱에서 실제 회원가입 후 admin role로 수정 테스트
+
+### ❌ 미완료/검토가 필요한 항목
 - `README.md`가 기본 Next.js 템플릿 상태로, 서비스 소개 및 배포/환경 변수 정보가 부족함.
 - `src/app/api/` 형태의 명시적인 백엔드 API 엔드포인트가 없음.
   - 최종 제출 조건에서 프론트(HTML/CSS/JS)와 백엔드(`/api/`) 구조 구분이 요구됨.
-- 배포된 Vercel URL이 없음.
-- GitHub 저장소 업로드 여부가 검증되지 않음.
+- Vercel 환경변수 설정 완료 필요.
 - 서비스 기획서(목적, 타겟, 페이지 구성, 핵심 기능, AI 입력/출력/실패 처리 기준)가 없음.
 - 증빙 자료(데스크톱/모바일/AI 기능 스크린샷 + AI 도구 사용 과정)가 없음.
 
