@@ -68,6 +68,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
 
+  // Helper: Fetch user data from Supabase public.users table (latest data)
+  const fetchUserFromDatabase = async (userId: string): Promise<Partial<User> | null> => {
+    if (!supabase) return null;
+
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('id, name, email, avatar, role, status, created_at, last_login')
+        .eq('id', userId)
+        .single();
+
+      if (error) {
+        console.warn('Failed to fetch user from database:', error);
+        return null;
+      }
+
+      return {
+        id: data.id,
+        name: data.name,
+        email: data.email,
+        avatar: data.avatar,
+        role: data.role, // ← Role from DB, not user_metadata
+        status: data.status,
+        created_at: data.created_at,
+      };
+    } catch (err) {
+      console.error('Error in fetchUserFromDatabase:', err);
+      return null;
+    }
+  };
+
   // Helper: get registered accounts array safely
   const getRegisteredAccounts = (): StoredAccount[] => {
     const raw = safeGetItem(REGISTERED_USERS_KEY);
@@ -106,29 +137,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     // 2. Supabase session listener if Supabase is connected
     if (supabase) {
-      supabase.auth.getSession().then(({ data: { session } }) => {
+      supabase.auth.getSession().then(async ({ data: { session } }) => {
         if (session?.user) {
+          // Fetch latest user data from public.users table (including role)
+          const dbUserData = await fetchUserFromDatabase(session.user.id);
+
           const authUser: User = {
             id: session.user.id,
-            name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Architect User',
+            name: dbUserData?.name || session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Architect User',
             email: session.user.email,
-            avatar: session.user.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
-            role: session.user.user_metadata?.role || 'Spatial VMD Architect',
-            created_at: session.user.created_at || new Date().toISOString(),
+            avatar: dbUserData?.avatar || session.user.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
+            role: dbUserData?.role || 'Spatial VMD Architect', // ← Use DB role, not user_metadata
+            status: dbUserData?.status || 'active',
+            created_at: dbUserData?.created_at || session.user.created_at || new Date().toISOString(),
           };
           setUser(authUser);
         }
       });
 
-      const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
+      const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
         if (event === 'SIGNED_IN' && session?.user) {
+          // Fetch latest user data from public.users table (including role)
+          const dbUserData = await fetchUserFromDatabase(session.user.id);
+
           const authUser: User = {
             id: session.user.id,
-            name: session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Architect User',
+            name: dbUserData?.name || session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Architect User',
             email: session.user.email,
-            avatar: session.user.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
-            role: session.user.user_metadata?.role || 'Spatial VMD Architect',
-            created_at: session.user.created_at || new Date().toISOString(),
+            avatar: dbUserData?.avatar || session.user.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
+            role: dbUserData?.role || 'Spatial VMD Architect', // ← Use DB role, not user_metadata
+            status: dbUserData?.status || 'active',
+            created_at: dbUserData?.created_at || session.user.created_at || new Date().toISOString(),
           };
           setUser(authUser);
           safeSetItem(SESSION_STORAGE_KEY, JSON.stringify(authUser));
@@ -174,13 +213,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         });
 
         if (!error && data.user) {
+          // Fetch latest user data from public.users table (including role)
+          const dbUserData = await fetchUserFromDatabase(data.user.id);
+
           const loggedInUser: User = {
             id: data.user.id,
-            name: data.user.user_metadata?.full_name || trimmedEmail.split('@')[0],
+            name: dbUserData?.name || data.user.user_metadata?.full_name || trimmedEmail.split('@')[0],
             email: data.user.email,
-            avatar: data.user.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
-            role: data.user.user_metadata?.role || 'Spatial VMD Architect',
-            created_at: data.user.created_at,
+            avatar: dbUserData?.avatar || data.user.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
+            role: dbUserData?.role || 'Spatial VMD Architect', // ← Use DB role, not user_metadata
+            status: dbUserData?.status || 'active',
+            created_at: dbUserData?.created_at || data.user.created_at,
           };
           setUser(loggedInUser);
           closeAuthModal();
