@@ -91,9 +91,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.warn('Failed to parse registered users:', e);
       }
     }
-    // Seed initial demo users if empty
-    safeSetItem(REGISTERED_USERS_KEY, JSON.stringify(INITIAL_DEMO_USERS));
-    return INITIAL_DEMO_USERS;
+    // No initial demo users - rely on Supabase Auth only
+    return [];
   };
 
   useEffect(() => {
