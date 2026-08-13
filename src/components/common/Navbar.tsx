@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Compass, Camera, MapPin, Scale, Sparkles, Bookmark, Eye, Globe, LogIn, UserPlus, LogOut, ChevronDown, User as UserIcon, UserX, AlertTriangle, Menu, X } from 'lucide-react';
+import { Compass, Camera, MapPin, Scale, Sparkles, Bookmark, Eye, Globe, LogIn, UserPlus, LogOut, ChevronDown, User as UserIcon, UserX, AlertTriangle, Menu, X, ShieldCheck } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { Language } from '@/lib/i18n/translations';
 import { useAuth } from '@/lib/auth/AuthContext';
@@ -134,6 +134,20 @@ export default function Navbar() {
                 </Link>
               );
             })}
+
+            {user?.role === 'Admin' || user?.role?.toLowerCase().includes('admin') ? (
+              <Link
+                href="/admin/users"
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                  pathname === '/admin/users'
+                    ? 'bg-orange-500 text-white shadow-md shadow-orange-500/30'
+                    : 'text-orange-400 hover:bg-orange-950/40 border border-orange-800/60'
+                }`}
+              >
+                <ShieldCheck className="w-4 h-4 text-orange-400" />
+                <span>관리자</span>
+              </Link>
+            ) : null}
           </nav>
 
           {/* Right Section: Live GPS Location + Language Switcher + User Auth Profile */}
@@ -209,6 +223,15 @@ export default function Navbar() {
                       >
                         <UserIcon className="w-4 h-4 text-orange-400" />
                         <span>{t('userProfile')}</span>
+                      </Link>
+
+                      <Link
+                        href="/admin/users"
+                        onClick={() => setDropdownOpen(false)}
+                        className="w-full px-4 py-2 text-xs text-orange-300 hover:text-white hover:bg-orange-950/50 flex items-center gap-2 transition-colors font-bold border-y border-zinc-800/80 my-0.5"
+                      >
+                        <ShieldCheck className="w-4 h-4 text-orange-400 animate-pulse" />
+                        <span>회원 관리 (Admin)</span>
                       </Link>
 
                       <button

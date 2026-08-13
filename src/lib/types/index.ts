@@ -6,6 +6,8 @@ export type SpotCategory =
   | 'Street'
   | 'Exhibition';
 
+export type UserStatus = 'active' | 'inactive' | 'suspended';
+
 export interface User {
   id: string;
   name: string;
@@ -13,6 +15,8 @@ export interface User {
   created_at: string;
   email?: string;
   role?: string;
+  status?: UserStatus;
+  last_login?: string;
 }
 
 export interface DesignAttributes {
