@@ -21,7 +21,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   deleteAccount: () => Promise<{ success: boolean; error?: string }>;
   // Admin Management Methods
-  getAllUsers: () => StoredAccount[];
+  getAllUsers: () => Promise<StoredAccount[]>;
   updateUserByAdmin: (userId: string, data: Partial<StoredAccount>) => Promise<{ success: boolean; error?: string }>;
   deleteUserByAdmin: (userId: string) => Promise<{ success: boolean; error?: string }>;
 }
@@ -442,9 +442,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // --- Admin Management Methods ---
-  const getAllUsers = (): StoredAccount[] => {
-    return getRegisteredAccounts();
+  // --- Admin Management Methods (Supabase-backed) ---
+  const getAllUsers = async (): Promise<StoredAccount[]> => {
+    try {
+      if (!supabase) {
+        console.warn('Supabase not configured, returning empty user list');
+        return [];
+      }
+
+      const { data, error } = await supabase
+        .from('users')
+        .select('id, name, email, avatar, role, status, created_at, last_login')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Failed to fetch users from Supabase:', error);
+        return [];
+      }
+
+      return (data || []) as StoredAccount[];
+    } catch (err: any) {
+      console.error('Error in getAllUsers:', err);
+      return [];
+    }
   };
 
   const updateUserByAdmin = async (
@@ -452,19 +472,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     data: Partial<StoredAccount>
   ): Promise<{ success: boolean; error?: string }> => {
     try {
-      const registeredAccounts = getRegisteredAccounts();
-      const targetIndex = registeredAccounts.findIndex((acc) => acc.id === userId);
-      if (targetIndex === -1) {
-        return { success: false, error: '해당 사용자를 찾을 수 없습니다.' };
+      if (!supabase) {
+        return { success: false, error: 'Supabase 연결이 없습니다.' };
       }
 
-      const updatedAccounts = [...registeredAccounts];
-      updatedAccounts[targetIndex] = {
-        ...updatedAccounts[targetIndex],
-        ...data,
-      };
+      // Prepare update payload (only include updatable fields)
+      const updatePayload: Record<string, any> = {};
+      if (data.name !== undefined) updatePayload.name = data.name;
+      if (data.email !== undefined) updatePayload.email = data.email;
+      if (data.role !== undefined) updatePayload.role = data.role;
+      if (data.status !== undefined) updatePayload.status = data.status;
+      if (data.avatar !== undefined) updatePayload.avatar = data.avatar;
 
-      safeSetItem(REGISTERED_USERS_KEY, JSON.stringify(updatedAccounts));
+      const { error } = await supabase
+        .from('users')
+        .update(updatePayload)
+        .eq('id', userId);
+
+      if (error) {
+        console.error('Failed to update user:', error);
+        return { success: false, error: error.message };
+      }
 
       // If updating currently logged in user, update active user state too
       if (user && user.id === userId) {
@@ -473,6 +501,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       return { success: true };
     } catch (err: any) {
+      console.error('Error in updateUserByAdmin:', err);
       return { success: false, error: err?.message || '회원 정보 수정 중 오류가 발생했습니다.' };
     }
   };
@@ -481,9 +510,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     userId: string
   ): Promise<{ success: boolean; error?: string }> => {
     try {
-      const registeredAccounts = getRegisteredAccounts();
-      const filtered = registeredAccounts.filter((acc) => acc.id !== userId);
-      safeSetItem(REGISTERED_USERS_KEY, JSON.stringify(filtered));
+      if (!supabase) {
+        return { success: false, error: 'Supabase 연결이 없습니다.' };
+      }
+
+      const { error } = await supabase
+        .from('users')
+        .delete()
+        .eq('id', userId);
+
+      if (error) {
+        console.error('Failed to delete user:', error);
+        return { success: false, error: error.message };
+      }
 
       if (user && user.id === userId) {
         setUser(null);
@@ -492,6 +531,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       return { success: true };
     } catch (err: any) {
+      console.error('Error in deleteUserByAdmin:', err);
       return { success: false, error: err?.message || '회원 삭제 중 오류가 발생했습니다.' };
     }
   };

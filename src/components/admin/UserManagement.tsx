@@ -98,11 +98,17 @@ export default function UserManagement() {
   };
 
   // Load registered users on mount or update
-  const refreshUsers = () => {
+  const refreshUsers = async () => {
     setLoading(true);
-    const accounts = getAllUsers();
-    setUsersList(accounts);
-    setLoading(false);
+    try {
+      const accounts = await getAllUsers();
+      setUsersList(accounts);
+    } catch (err) {
+      console.error('Failed to refresh users:', err);
+      setUsersList([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
