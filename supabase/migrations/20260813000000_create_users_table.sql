@@ -1,5 +1,5 @@
--- Migration: Create public.users table with RLS Policies & Triggers (Hardened Security)
--- Target: Supabase PostgreSQL Database
+-- Migration: Create public.users table with RLS Policies & Triggers (Hardened Security & SECURITY DEFINER Guard)
+-- Target: Supabase PostgreSQL Database (Production Ready)
 
 -- 1. Create public.users table matching AuthContext.tsx fields
 CREATE TABLE IF NOT EXISTS public.users (
@@ -13,23 +13,44 @@ CREATE TABLE IF NOT EXISTS public.users (
   last_login TIMESTAMPTZ DEFAULT timezone('utc'::text, now())
 );
 
--- 2. Enable Row Level Security (RLS)
+-- 2. SECURITY DEFINER Helper Function for Admin Check (Prevents RLS Infinite Recursion)
+CREATE OR REPLACE FUNCTION public.is_admin(user_id uuid DEFAULT auth.uid())
+RETURNS boolean
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = public
+STABLE
+AS $$
+  SELECT EXISTS (
+    SELECT 1
+    FROM public.users
+    WHERE id = COALESCE(user_id, auth.uid())
+      AND role = 'admin'
+  );
+$$;
+
+-- Grant execute permissions on is_admin function
+GRANT EXECUTE ON FUNCTION public.is_admin(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.is_admin(uuid) TO anon;
+GRANT EXECUTE ON FUNCTION public.is_admin(uuid) TO service_role;
+
+-- 3. Enable Row Level Security (RLS)
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
 
--- 3. Drop existing policies if any to prevent conflicts
+-- 4. Drop existing policies if any to prevent conflicts
 DROP POLICY IF EXISTS "Allow individual user select access" ON public.users;
 DROP POLICY IF EXISTS "Allow individual user update access" ON public.users;
 DROP POLICY IF EXISTS "Allow individual user insert access" ON public.users;
 DROP POLICY IF EXISTS "Allow individual user delete access" ON public.users;
 
--- 4. Create Hardened RLS Policies for Supabase Auth & Row Isolation
+-- 5. Create Non-Recursive RLS Policies using is_admin()
 
--- Policy A: Users can view ONLY their own profile (or admins can view all). Anonymous users get NOTHING.
+-- Policy A: Users can view ONLY their own profile (or admins can view all).
 CREATE POLICY "Allow individual user select access" ON public.users
   FOR SELECT
   USING (
     auth.uid() = id
-    OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'admin'
+    OR public.is_admin(auth.uid())
   );
 
 -- Policy B: Users can update ONLY their own profile (or admins can update any).
@@ -37,19 +58,19 @@ CREATE POLICY "Allow individual user update access" ON public.users
   FOR UPDATE
   USING (
     auth.uid() = id
-    OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'admin'
+    OR public.is_admin(auth.uid())
   )
   WITH CHECK (
     auth.uid() = id
-    OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'admin'
+    OR public.is_admin(auth.uid())
   );
 
--- Policy C: Users can ONLY insert their own record matching auth.uid() AND role MUST BE 'user'
+-- Policy C: Users can ONLY insert their own record matching auth.uid() AND role MUST BE 'user' (or admins can insert).
 CREATE POLICY "Allow individual user insert access" ON public.users
   FOR INSERT
   WITH CHECK (
-    auth.uid() = id
-    AND role = 'user'
+    (auth.uid() = id AND role = 'user')
+    OR public.is_admin(auth.uid())
   );
 
 -- Policy D: Users can delete ONLY their own record (or admins can delete any).
@@ -57,10 +78,10 @@ CREATE POLICY "Allow individual user delete access" ON public.users
   FOR DELETE
   USING (
     auth.uid() = id
-    OR (SELECT role FROM public.users WHERE id = auth.uid()) = 'admin'
+    OR public.is_admin(auth.uid())
   );
 
--- 5. Trigger for automatic profile synchronization when new Supabase Auth user signs up
+-- 6. Trigger for automatic profile synchronization when new Supabase Auth user signs up
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -86,4 +107,3 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
-
