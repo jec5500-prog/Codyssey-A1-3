@@ -15,43 +15,41 @@ export const authConfig = {
         email: { label: 'Email', type: 'email', placeholder: 'user@spot.design' },
         password: { label: 'Password', type: 'password' },
       },
-      async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
-          return null;
-        }
-        if (!supabase) {
-          console.error('Supabase client not configured');
-          return null;
-        }
+async authorize(credentials) {
+  if (!credentials?.email || !credentials?.password) {
+    return null;
+  }
+  if (!supabase) {
+    console.error('Supabase client not configured');
+    return null;
+  }
 
-        const email = (credentials.email as string).trim().toLowerCase();
-        const password = credentials.password as string;
+  const email = (credentials.email as string).trim().toLowerCase();
+  const password = credentials.password as string;
 
-        // 1. Supabase Auth가 비밀번호를 직접 검증 (우리가 비교하지 않음)
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error || !data.user) {
-          return null;
-        }
+  // 1. 비밀번호 검증
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error || !data.user) {
+    return null;
+  }
 
-        // 2. 로그인 성공한 경우에만, public.users 테이블에서 role 조회
-        const { data: profile, error: profileError } = await supabase
-          .from('users')
-          .select('role, name')
-          .eq('id', data.user.id)
-          .single();
+  // 2. is_admin RPC로 관리자 여부 확인 (SECURITY DEFINER라 권한 문제 우회됨)
+  const { data: isAdmin, error: adminCheckError } = await supabase.rpc('is_admin', {
+    uid: data.user.id,
+  });
 
-        if (profileError) {
-          console.warn('User profile lookup failed:', profileError);
-        }
+  if (adminCheckError) {
+    console.warn('Admin check failed:', adminCheckError);
+  }
 
-        return {
-          id: data.user.id,
-          email: data.user.email ?? email,
-          name: profile?.name ?? email.split('@')[0],
-          image: null,
-          role: profile?.role ?? 'Spatial VMD Architect', // DB에 role이 없으면 절대 admin 아님
-        };
-      },
+  return {
+    id: data.user.id,
+    email: data.user.email ?? email,
+    name: email.split('@')[0],
+    image: null,
+    role: isAdmin ? 'admin' : 'Spatial VMD Architect',
+  };
+},
     }),
   ],
   pages: {
