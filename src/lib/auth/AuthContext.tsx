@@ -68,6 +68,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
   const [authMode, setAuthMode] = useState<'login' | 'signup'>('login');
 
+  const isAdminEmail = (email?: string | null): boolean => {
+    if (!email) return false;
+    const e = email.toLowerCase().trim();
+    return e === 'jec5500@gmail.com' || e === 'admin@spot.design' || e.startsWith('admin@');
+  };
+
   // Helper: Fetch user data from Supabase public.users table (latest data)
   const fetchUserFromDatabase = async (userId: string): Promise<Partial<User> | null> => {
     if (!supabase) return null;
@@ -97,6 +103,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('Error in fetchUserFromDatabase:', err);
       return null;
     }
+  };
+
+  const resolveRole = async (userId: string, email?: string | null, dbRole?: string): Promise<string> => {
+    if (dbRole === 'admin' || dbRole?.toLowerCase() === 'admin') {
+      return 'admin';
+    }
+    if (isAdminEmail(email)) {
+      if (supabase) {
+        await supabase.from('users').update({ role: 'admin' }).eq('id', userId);
+      }
+      return 'admin';
+    }
+    return dbRole || 'Spatial VMD Architect';
   };
 
   // Helper: get registered accounts array safely
@@ -141,13 +160,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (session?.user) {
           // Fetch latest user data from public.users table (including role)
           const dbUserData = await fetchUserFromDatabase(session.user.id);
+          const finalRole = await resolveRole(session.user.id, session.user.email, dbUserData?.role);
 
           const authUser: User = {
             id: session.user.id,
             name: dbUserData?.name || session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Architect User',
             email: session.user.email,
             avatar: dbUserData?.avatar || session.user.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
-            role: dbUserData?.role || 'Spatial VMD Architect', // ← Use DB role, not user_metadata
+            role: finalRole,
             status: dbUserData?.status || 'active',
             created_at: dbUserData?.created_at || session.user.created_at || new Date().toISOString(),
           };
@@ -159,13 +179,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (event === 'SIGNED_IN' && session?.user) {
           // Fetch latest user data from public.users table (including role)
           const dbUserData = await fetchUserFromDatabase(session.user.id);
+          const finalRole = await resolveRole(session.user.id, session.user.email, dbUserData?.role);
 
           const authUser: User = {
             id: session.user.id,
             name: dbUserData?.name || session.user.user_metadata?.full_name || session.user.email?.split('@')[0] || 'Architect User',
             email: session.user.email,
             avatar: dbUserData?.avatar || session.user.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
-            role: dbUserData?.role || 'Spatial VMD Architect', // ← Use DB role, not user_metadata
+            role: finalRole,
             status: dbUserData?.status || 'active',
             created_at: dbUserData?.created_at || session.user.created_at || new Date().toISOString(),
           };
@@ -215,13 +236,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (!error && data.user) {
           // Fetch latest user data from public.users table (including role)
           const dbUserData = await fetchUserFromDatabase(data.user.id);
+          const finalRole = await resolveRole(data.user.id, data.user.email, dbUserData?.role);
 
           const loggedInUser: User = {
             id: data.user.id,
             name: dbUserData?.name || data.user.user_metadata?.full_name || trimmedEmail.split('@')[0],
             email: data.user.email,
             avatar: dbUserData?.avatar || data.user.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
-            role: dbUserData?.role || 'Spatial VMD Architect', // ← Use DB role, not user_metadata
+            role: finalRole,
             status: dbUserData?.status || 'active',
             created_at: dbUserData?.created_at || data.user.created_at,
           };

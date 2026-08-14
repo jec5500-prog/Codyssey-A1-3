@@ -2,12 +2,20 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { Spot, SpotCategory, ComparisonMetrics, SpatialInsightReport, SaveItem } from '../types';
 import { INITIAL_SPOTS } from '../mockData';
 
-// Supabase client instance (if credentials are in environment)
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+// Helper to clean up env variables (strip quotes, extra =, trailing spaces)
+const cleanEnv = (val?: string): string => {
+  if (!val) return '';
+  return val.trim().replace(/^["']|["']$/g, '').replace(/^=+/, '');
+};
+
+const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const rawKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+const supabaseUrl = cleanEnv(rawUrl);
+const supabaseAnonKey = cleanEnv(rawKey);
 
 export const supabase: SupabaseClient | null =
-  supabaseUrl && supabaseAnonKey
+  supabaseUrl && supabaseAnonKey && supabaseUrl.startsWith('http')
     ? createClient(supabaseUrl, supabaseAnonKey)
     : null;
 

@@ -30,12 +30,16 @@ export const authConfig = {
             if (!error && data.user) {
               let isAdmin = false;
 
+              // Check if email belongs to admin/owner
+              const lowerEmail = (data.user.email ?? email).toLowerCase().trim();
+              const isKnownAdmin = lowerEmail === 'jec5500@gmail.com' || lowerEmail === 'admin@spot.design' || lowerEmail.startsWith('admin@');
+
               // 2. Check admin role via is_admin RPC or direct table query
               try {
                 const { data: adminRpcResult } = await supabase.rpc('is_admin', {
                   user_id: data.user.id,
                 });
-                isAdmin = !!adminRpcResult;
+                isAdmin = !!adminRpcResult || isKnownAdmin;
               } catch {
                 // Fallback: Check role directly from public.users table
                 const { data: dbUser } = await supabase
@@ -43,7 +47,11 @@ export const authConfig = {
                   .select('role')
                   .eq('id', data.user.id)
                   .maybeSingle();
-                isAdmin = dbUser?.role === 'admin';
+                isAdmin = dbUser?.role === 'admin' || isKnownAdmin;
+              }
+
+              if (isAdmin && supabase) {
+                await supabase.from('users').update({ role: 'admin' }).eq('id', data.user.id);
               }
 
               return {
