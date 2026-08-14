@@ -1,6 +1,7 @@
 import type { NextAuthConfig } from 'next-auth';
 import Google from 'next-auth/providers/google';
 import Credentials from 'next-auth/providers/credentials';
+import { supabase } from './lib/services/dbService';
 
 export const authConfig = {
   providers: [
@@ -18,33 +19,38 @@ export const authConfig = {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
+        if (!supabase) {
+          console.error('Supabase client not configured');
+          return null;
+        }
 
         const email = (credentials.email as string).trim().toLowerCase();
         const password = credentials.password as string;
 
-        // Admin Account check
-        if (email === 'admin@spot.design' && password === 'password123') {
-          return {
-            id: 'user-admin-01',
-            name: '김관리 (Admin)',
-            email: 'admin@spot.design',
-            image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
-            role: 'admin',
-          };
+        // 1. Supabase Auth가 비밀번호를 직접 검증 (우리가 비교하지 않음)
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error || !data.user) {
+          return null;
         }
 
-        // General Credentials check
-        if (email && password && password.length >= 4) {
-          return {
-            id: `user-spot-${Date.now()}`,
-            name: email.split('@')[0],
-            email: email,
-            image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=250&q=80',
-            role: 'Spatial VMD Architect',
-          };
+        // 2. 로그인 성공한 경우에만, public.users 테이블에서 role 조회
+        const { data: profile, error: profileError } = await supabase
+          .from('users')
+          .select('role, name')
+          .eq('id', data.user.id)
+          .single();
+
+        if (profileError) {
+          console.warn('User profile lookup failed:', profileError);
         }
 
-        return null;
+        return {
+          id: data.user.id,
+          email: data.user.email ?? email,
+          name: profile?.name ?? email.split('@')[0],
+          image: null,
+          role: profile?.role ?? 'Spatial VMD Architect', // DB에 role이 없으면 절대 admin 아님
+        };
       },
     }),
   ],
