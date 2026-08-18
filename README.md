@@ -3,7 +3,7 @@
 A responsive Next.js web service for capturing spatial design data, extracting multimodal AI insights from uploaded photos, and saving location-based spot records.
 
 - GitHub repository: https://github.com/jec5500-prog/Codyssey-A1-3
-- Vercel deployment URL: https://real-time-visaul-sharing.vercel.app/
+- Vercel deployment URL: https://real-time-visual-sharing.vercel.app/
 
 ## 주요 기능
 
