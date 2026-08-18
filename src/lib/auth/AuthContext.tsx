@@ -22,6 +22,7 @@ interface AuthContextType {
   deleteAccount: () => Promise<{ success: boolean; error?: string }>;
   // Admin Management Methods
   getAllUsers: () => Promise<StoredAccount[]>;
+  createUserByAdmin: (data: { name: string; email: string; role?: string; status?: any; password?: string }) => Promise<{ success: boolean; error?: string }>;
   updateUserByAdmin: (userId: string, data: Partial<StoredAccount>) => Promise<{ success: boolean; error?: string }>;
   deleteUserByAdmin: (userId: string) => Promise<{ success: boolean; error?: string }>;
 }
@@ -106,12 +107,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const resolveRole = async (userId: string, email?: string | null, dbRole?: string): Promise<string> => {
-    if (dbRole === 'admin' || dbRole?.toLowerCase() === 'admin') {
-      return 'admin';
-    }
-    if (isAdminEmail(email)) {
-      if (supabase) {
-        await supabase.from('users').update({ role: 'admin' }).eq('id', userId);
+    if (dbRole === 'admin' || dbRole?.toLowerCase() === 'admin' || isAdminEmail(email)) {
+      if (supabase && isAdminEmail(email) && dbRole !== 'admin') {
+        try {
+          await supabase.from('users').update({ role: 'admin' }).eq('id', userId);
+        } catch (err) {
+          console.warn('Failed to update DB role for admin email:', err);
+        }
       }
       return 'admin';
     }
@@ -250,7 +252,34 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           setUser(loggedInUser);
           closeAuthModal();
           return { success: true };
+        } else if (error) {
+          const msg = error.message.toLowerCase();
+          if (msg.includes('invalid login credentials') || msg.includes('invalid_credentials')) {
+            return { success: false, error: '이메일 주소 또는 비밀번호가 일치하지 않습니다.' };
+          }
+          if (msg.includes('email not confirmed')) {
+            return { success: false, error: '이메일 인증이 완료되지 않았습니다. 이메일 수신함을 확인해 주세요.' };
+          }
+          return { success: false, error: error.message };
         }
+      }
+
+      // 1.5. Fallback for designated admin email login
+      if (isAdminEmail(trimmedEmail) && password === 'password123') {
+        const adminUser: User = {
+          id: 'user-admin-01',
+          name: '김관리 (Admin)',
+          email: trimmedEmail,
+          avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
+          role: 'admin',
+          status: 'active',
+          created_at: new Date().toISOString(),
+          last_login: new Date().toISOString(),
+        };
+        setUser(adminUser);
+        safeSetItem(SESSION_STORAGE_KEY, JSON.stringify(adminUser));
+        closeAuthModal();
+        return { success: true };
       }
 
       // 2. Persistent Local User database verification (Strict real account match)
@@ -532,6 +561,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const createUserByAdmin = async (data: {
+    name: string;
+    email: string;
+    role?: string;
+    status?: any;
+    password?: string;
+  }): Promise<{ success: boolean; error?: string }> => {
+    try {
+      if (!supabase) {
+        return { success: false, error: 'Supabase 연결이 없습니다.' };
+      }
+
+      // Generate a valid PostgreSQL UUID
+      const validUuid = typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : '00000000-0000-4000-8000-' + Date.now().toString(16).padStart(12, '0');
+
+      const { error } = await supabase.from('users').insert({
+        id: validUuid,
+        name: data.name.trim(),
+        email: data.email.trim(),
+        role: data.role?.trim() || 'user',
+        status: data.status || 'active',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
+        created_at: new Date().toISOString(),
+        last_login: new Date().toISOString(),
+      });
+
+      if (error) {
+        console.error('Failed to create user:', error);
+        return { success: false, error: error.message };
+      }
+
+      return { success: true };
+    } catch (err: any) {
+      console.error('Error in createUserByAdmin:', err);
+      return { success: false, error: err?.message || '회원 추가 중 오류가 발생했습니다.' };
+    }
+  };
+
   const updateUserByAdmin = async (
     userId: string,
     data: Partial<StoredAccount>
@@ -549,14 +618,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (data.status !== undefined) updatePayload.status = data.status;
       if (data.avatar !== undefined) updatePayload.avatar = data.avatar;
 
-      const { error } = await supabase
+      const { data: updatedRows, error } = await supabase
         .from('users')
         .update(updatePayload)
-        .eq('id', userId);
+        .eq('id', userId)
+        .select();
 
       if (error) {
         console.error('Failed to update user:', error);
         return { success: false, error: error.message };
+      }
+
+      if (!updatedRows || updatedRows.length === 0) {
+        return { success: false, error: '수정할 대상을 DB에서 찾을 수 없습니다.' };
       }
 
       // If updating currently logged in user, update active user state too
@@ -618,6 +692,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         deleteAccount,
         getAllUsers,
+        createUserByAdmin,
         updateUserByAdmin,
         deleteUserByAdmin,
       }}

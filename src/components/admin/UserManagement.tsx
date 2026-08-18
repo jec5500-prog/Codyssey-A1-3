@@ -34,7 +34,7 @@ import { formatDate } from '@/lib/i18n/translationUtils';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export default function UserManagement() {
-  const { user, getAllUsers, updateUserByAdmin, deleteUserByAdmin, openAuthModal } = useAuth();
+  const { user, getAllUsers, createUserByAdmin, updateUserByAdmin, deleteUserByAdmin, openAuthModal } = useAuth();
   const { language } = useLanguage();
 
   const isAdmin = user && (user.role === 'admin' || user.role?.toLowerCase() === 'admin');
@@ -244,20 +244,13 @@ export default function UserManagement() {
     }
 
     setActionLoading(true);
-    const newId = `user-spot-${Date.now()}`;
-    const newAcc: StoredAccount = {
-      id: newId,
+    const res = await createUserByAdmin({
       name: newFormData.name.trim(),
       email: newFormData.email.trim(),
       password: newFormData.password || 'password123',
-      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
       role: newFormData.role.trim(),
       status: newFormData.status,
-      created_at: new Date().toISOString(),
-      last_login: new Date().toISOString(),
-    };
-
-    const res = await updateUserByAdmin(newId, newAcc);
+    });
     setActionLoading(false);
 
     if (res.success) {
