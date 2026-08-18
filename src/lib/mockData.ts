@@ -424,7 +424,7 @@ export const INITIAL_SPOTS: Spot[] = [
     is_verified: true,
     attributes: {
       spot_id: 'spot-paris-03',
-      colors: ['#18181B', '#FFFFFF', '#D4AF37', '#52525B'],
+      colors: ['#2EC4B6', '#00A896', '#18181B', '#E5E5E5'],
       materials: ['Blackized Steel Frames', 'Mirror-polished Chrome', 'White Indiana Limestone'],
       style: 'Neo-Heritage Expressionism',
       lighting: 'Dynamic Spot Accent & Linear Cove',
@@ -442,7 +442,7 @@ export const INITIAL_SPOTS: Spot[] = [
         brand: 'Chanel',
         description: 'Blackized steel octagonal storefront on Place Vendôme.',
         style: 'Neo-Heritage Expressionism',
-        colors: ['#18181B', '#FFFFFF', '#D4AF37', '#52525B'],
+        colors: ['#2EC4B6', '#00A896', '#18181B', '#E5E5E5'],
         materials: ['Blackized Steel Frames', 'White Indiana Limestone'],
         lighting: 'Dynamic Spot Accent & Linear Cove',
         composition: 'Vertical Tower Symmetry',

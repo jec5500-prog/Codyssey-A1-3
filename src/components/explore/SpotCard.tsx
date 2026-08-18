@@ -14,6 +14,7 @@ import {
   translateDescription,
   formatDate,
 } from '@/lib/i18n/translationUtils';
+import { extractColorProportionsFromImage } from '@/lib/utils/colorExtractor';
 
 interface SpotCardProps {
   spot: Spot;
@@ -25,6 +26,23 @@ export default function SpotCard({ spot, onSelect, isSavedInitial = false }: Spo
   const { t, language } = useLanguage();
   const [saved, setSaved] = useState(isSavedInitial);
   const [saving, setSaving] = useState(false);
+
+  // Dynamic Image Color Extraction State
+  const [cardColors, setCardColors] = useState<string[]>(
+    spot.attributes?.colors && spot.attributes.colors.length > 0
+      ? spot.attributes.colors.slice(0, 4)
+      : ['#2EC4B6', '#00A896', '#18181B', '#E5E5E5']
+  );
+
+  React.useEffect(() => {
+    if (spot.image_url) {
+      extractColorProportionsFromImage(spot.image_url, 4).then((proportions) => {
+        if (proportions && proportions.length > 0) {
+          setCardColors(proportions.map((p) => p.hex));
+        }
+      });
+    }
+  }, [spot.image_url]);
 
   const handleBookmark = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -118,14 +136,14 @@ export default function SpotCard({ spot, onSelect, isSavedInitial = false }: Spo
           {/* Structured Spatial Attributes Box */}
           {spot.attributes && (
             <div className="bg-[#121214] border border-zinc-800/90 rounded-xl p-2.5 space-y-2">
-              {/* Color Palette */}
-              {spot.attributes.colors && spot.attributes.colors.length > 0 && (
+              {/* Color Palette (Real-time Extracted Image Colors) */}
+              {cardColors && cardColors.length > 0 && (
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
                     {language === 'ko' ? '컬러 팔레트' : language === 'ja' ? 'パレット' : language === 'fr' ? 'Palette' : 'Palette'}
                   </span>
                   <div className="flex items-center gap-1.5">
-                    {spot.attributes.colors.slice(0, 4).map((hex, idx) => (
+                    {cardColors.slice(0, 4).map((hex, idx) => (
                       <span
                         key={idx}
                         className="w-3.5 h-3.5 rounded-full border border-zinc-700 shadow-xs hover:scale-110 transition-transform"
