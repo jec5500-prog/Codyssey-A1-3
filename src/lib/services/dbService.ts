@@ -21,12 +21,15 @@ const getValidSupabaseUrl = (rawUrl?: string, rawKey?: string): string => {
     try {
       const parts = cleanedKey.split('.');
       if (parts.length >= 2) {
-        const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-        const payload = JSON.parse(
-          typeof window !== 'undefined'
-            ? atob(base64)
-            : Buffer.from(base64, 'base64').toString('utf8')
-        );
+        let base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        while (base64.length % 4 !== 0) {
+          base64 += '=';
+        }
+        const jsonStr =
+          typeof window !== 'undefined' && typeof window.atob === 'function'
+            ? window.atob(base64)
+            : Buffer.from(base64, 'base64').toString('utf8');
+        const payload = JSON.parse(jsonStr);
         if (payload && payload.ref) {
           return `https://${payload.ref}.supabase.co`;
         }
@@ -36,7 +39,7 @@ const getValidSupabaseUrl = (rawUrl?: string, rawKey?: string): string => {
     }
   }
 
-  return cleanedUrl;
+  return cleanedUrl || 'https://ufmtvpmyuhgdgtzfeqmv.supabase.co';
 };
 
 const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
