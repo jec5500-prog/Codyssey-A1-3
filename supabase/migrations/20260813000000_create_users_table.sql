@@ -92,12 +92,14 @@ RETURNS TRIGGER AS $$
 DECLARE
   initial_role TEXT := 'user';
 BEGIN
-  IF LOWER(NEW.email) IN ('jec5500@gmail.com', 'admin@spot.design')
-     OR LOWER(NEW.email) LIKE 'admin@%'
-     OR LOWER(COALESCE(NEW.raw_user_meta_data->>'role', '')) = 'admin' THEN
+  -- STRICT SECURITY GUARD: Only designated owner emails receive admin role
+  IF LOWER(NEW.email) IN ('jec5500@gmail.com', 'admin@spot.design') THEN
     initial_role := 'admin';
   ELSE
     initial_role := COALESCE(NEW.raw_user_meta_data->>'role', 'Spatial VMD Architect');
+    IF LOWER(initial_role) = 'admin' THEN
+      initial_role := 'Spatial VMD Architect'; -- Block self-assigned admin
+    END IF;
   END IF;
 
   INSERT INTO public.users (id, name, email, avatar, role, status)
