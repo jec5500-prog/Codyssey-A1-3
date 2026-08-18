@@ -91,12 +91,19 @@ export async function extractDominantColorsFromImage(
   return proportions.map((p) => p.hex);
 }
 
+const COLOR_CACHE = new Map<string, ColorProportion[]>();
+
 export async function extractColorProportionsFromImage(
   imageSrc: string,
   maxColors: number = 4
 ): Promise<ColorProportion[]> {
   if (!imageSrc) {
     return PRESET_THEMATIC_PALETTES[0];
+  }
+
+  const cacheKey = `${imageSrc}_${maxColors}`;
+  if (COLOR_CACHE.has(cacheKey)) {
+    return COLOR_CACHE.get(cacheKey)!;
   }
 
   const smartFallback = getSmartPaletteFromImageSeed(imageSrc);
@@ -229,10 +236,13 @@ export async function extractColorProportionsFromImage(
           return { hex, percentage: pct };
         });
 
-        resolve(proportions.length > 0 ? proportions : smartFallback);
+        const finalResult = proportions.length > 0 ? proportions : smartFallback;
+        COLOR_CACHE.set(cacheKey, finalResult);
+        resolve(finalResult);
       } catch (err) {
         if (objectUrlToRevoke) URL.revokeObjectURL(objectUrlToRevoke);
         console.warn('Canvas color extraction warning, using smart fallback:', err);
+        COLOR_CACHE.set(cacheKey, smartFallback);
         resolve(smartFallback);
       }
     };

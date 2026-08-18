@@ -66,6 +66,10 @@ let inMemorySaves: SaveItem[] | null = null;
  * Helper to get spots from LocalStorage / memory fallback (Auto-syncs latest INITIAL_SPOTS attributes)
  */
 function getLocalSpots(): Spot[] {
+  if (inMemorySpots && inMemorySpots.length > 0) {
+    return inMemorySpots;
+  }
+
   if (typeof window === 'undefined') {
     inMemorySpots = INITIAL_SPOTS;
     return INITIAL_SPOTS;
