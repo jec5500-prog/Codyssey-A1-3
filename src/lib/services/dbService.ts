@@ -5,7 +5,11 @@ import { INITIAL_SPOTS } from '../mockData';
 // Helper to clean up env variables (strip quotes, extra =, trailing spaces)
 const cleanEnv = (val?: string): string => {
   if (!val) return '';
-  return val.trim().replace(/^["']|["']$/g, '').replace(/^=+/, '');
+  let cleaned = val.trim().replace(/^["']|["']$/g, '').replace(/^=+/, '');
+  if (cleaned.includes('ufmtvpmyuhgdtzfeqmv')) {
+    cleaned = cleaned.replace('ufmtvpmyuhgdtzfeqmv', 'ufmtvpmyuhgdgtzfeqmv');
+  }
+  return cleaned;
 };
 
 /**

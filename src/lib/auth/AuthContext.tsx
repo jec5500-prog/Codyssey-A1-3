@@ -261,10 +261,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else if (error) {
           const msg = error.message.toLowerCase();
           if (msg.includes('invalid login credentials') || msg.includes('invalid_credentials')) {
+            // Auto-recovery for owner email: if account doesn't exist yet, auto-create it
+            if (isAdminEmail(trimmedEmail)) {
+              const signUpRes = await supabase.auth.signUp({
+                email: trimmedEmail,
+                password,
+                options: {
+                  data: {
+                    full_name: trimmedEmail.split('@')[0],
+                    role: 'admin',
+                  },
+                },
+              });
+              if (!signUpRes.error && signUpRes.data.user) {
+                const finalRole = await resolveRole(signUpRes.data.user.id, signUpRes.data.user.email, 'admin');
+                const loggedInUser: User = {
+                  id: signUpRes.data.user.id,
+                  name: signUpRes.data.user.user_metadata?.full_name || trimmedEmail.split('@')[0],
+                  email: signUpRes.data.user.email,
+                  avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
+                  role: finalRole,
+                  status: 'active',
+                  created_at: signUpRes.data.user.created_at,
+                };
+                setUser(loggedInUser);
+                closeAuthModal();
+                return { success: true };
+              }
+            }
             return { success: false, error: '이메일 주소 또는 비밀번호가 일치하지 않습니다.' };
           }
           if (msg.includes('email not confirmed')) {
-            return { success: false, error: '이메일 인증(Email Confirmation)이 필요합니다. Supabase 대시보드의 Auth 설정에서 Confirm email 옵션을 끄거나 수신함의 인증 링크를 클릭해 주세요.' };
+            return { success: false, error: '이메일 인증(Email Confirmation)이 완료되지 않았습니다. 수신함의 인증 링크를 확인하시거나 Supabase 대시보드에서 Confirm Email 설정을 비활성화해 주세요.' };
           }
           return { success: false, error: error.message };
         }
@@ -359,23 +387,55 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           options: {
             data: {
               full_name: trimmedName,
-              role: role,
+              role: isAdminEmail(trimmedEmail) ? 'admin' : role,
               avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
             },
           },
         });
 
         if (error) {
+          const msg = error.message.toLowerCase();
+          // If already registered, attempt seamless login with entered password
+          if (msg.includes('already registered') || msg.includes('already_registered')) {
+            const loginRes = await supabase.auth.signInWithPassword({
+              email: trimmedEmail,
+              password,
+            });
+
+            if (!loginRes.error && loginRes.data.user) {
+              const dbUserData = await fetchUserFromDatabase(loginRes.data.user.id);
+              const finalRole = await resolveRole(loginRes.data.user.id, loginRes.data.user.email, dbUserData?.role);
+
+              const loggedInUser: User = {
+                id: loginRes.data.user.id,
+                name: dbUserData?.name || loginRes.data.user.user_metadata?.full_name || trimmedName || trimmedEmail.split('@')[0],
+                email: loginRes.data.user.email,
+                avatar: dbUserData?.avatar || loginRes.data.user.user_metadata?.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
+                role: finalRole,
+                status: dbUserData?.status || 'active',
+                created_at: dbUserData?.created_at || loginRes.data.user.created_at,
+              };
+              setUser(loggedInUser);
+              closeAuthModal();
+              return { success: true };
+            } else if (loginRes.error) {
+              if (loginRes.error.message.toLowerCase().includes('invalid login credentials')) {
+                return { success: false, error: '이미 가입된 이메일 주소입니다. [로그인] 탭에서 해당 비밀번호로 로그인해 주세요.' };
+              }
+              return { success: false, error: loginRes.error.message };
+            }
+          }
           return { success: false, error: error.message };
         }
 
         if (data.user) {
+          const finalRole = await resolveRole(data.user.id, data.user.email, isAdminEmail(trimmedEmail) ? 'admin' : role);
           const newUser: User = {
             id: data.user.id,
             name: trimmedName,
             email: trimmedEmail,
             avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
-            role: role,
+            role: finalRole,
             created_at: new Date().toISOString(),
           };
           setUser(newUser);
