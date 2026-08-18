@@ -58,6 +58,7 @@ export interface Spot {
   user_id: string;
   user_name?: string;
   user_avatar?: string;
+  user_email?: string;
   image_url: string;
   country: string;
   city: string;

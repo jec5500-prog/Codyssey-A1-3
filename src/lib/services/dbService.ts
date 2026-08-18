@@ -334,16 +334,33 @@ export async function updateSpot(id: string, updatedData: Partial<Spot>): Promis
 }
 
 /**
- * Delete a spot by ID
+ * Delete a spot by ID (Enforces Strict Authorization: Admin or Spot Author Only)
  */
-export async function deleteSpot(id: string): Promise<boolean> {
-  const spots = getLocalSpots();
-  const filtered = spots.filter((s) => s.id !== id);
-
-  if (filtered.length === spots.length) {
+export async function deleteSpot(
+  id: string,
+  currentUser?: { id?: string; email?: string; name?: string; role?: string } | null
+): Promise<boolean> {
+  if (!currentUser) {
+    console.warn('Unauthorized delete attempt: User must be logged in.');
     return false;
   }
 
+  const spots = getLocalSpots();
+  const targetSpot = spots.find((s) => s.id === id);
+
+  const isAdmin = currentUser.role === 'admin';
+  const isAuthor =
+    !targetSpot ||
+    (targetSpot.user_id && currentUser.id && targetSpot.user_id === currentUser.id) ||
+    (targetSpot.user_email && currentUser.email && targetSpot.user_email.toLowerCase() === currentUser.email.toLowerCase()) ||
+    (targetSpot.user_name && currentUser.name && targetSpot.user_name === currentUser.name);
+
+  if (!isAdmin && !isAuthor) {
+    console.warn('Unauthorized delete attempt: Only Admin or Author can delete this spot.');
+    return false;
+  }
+
+  const filtered = spots.filter((s) => s.id !== id);
   saveLocalSpots(filtered);
 
   // Also remove from saved bookmarks

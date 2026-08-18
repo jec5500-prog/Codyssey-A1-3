@@ -28,6 +28,7 @@ import { Spot, SpotCategory } from '@/lib/types';
 import VerificationBadge from '../common/VerificationBadge';
 import { toggleSaveSpot, updateSpot, deleteSpot } from '@/lib/services/dbService';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
+import { useAuth } from '@/lib/auth/AuthContext';
 import {
   translateCategory,
   translateCity,
@@ -55,6 +56,7 @@ export default function SpotDetailModal({
   isSavedInitial = false,
 }: SpotDetailModalProps) {
   const { t, language } = useLanguage();
+  const { user } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [spot, setSpot] = useState<Spot | null>(initialSpot);
@@ -78,6 +80,16 @@ export default function SpotDetailModal({
   const [deleteLoading, setDeleteLoading] = useState(false);
 
   if (!spot) return null;
+
+  // Strict Authorization: Admin or Spot Author ONLY
+  const isAdmin = user?.role === 'admin';
+  const isAuthor =
+    !!user &&
+    ((spot.user_id && user.id === spot.user_id) ||
+      (spot.user_email && user.email && spot.user_email.toLowerCase() === user.email.toLowerCase()) ||
+      (spot.user_name && user.name && spot.user_name === user.name));
+
+  const canModify = isAdmin || isAuthor;
 
   const handleBookmark = async () => {
     setSaving(true);
@@ -381,25 +393,27 @@ export default function SpotDetailModal({
                 </div>
               </div>
 
-              {/* Edit / Delete Quick Toolbar */}
-              <div className="flex items-center gap-2 p-2 rounded-2xl bg-[#121214] border border-zinc-800">
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(true)}
-                  className="flex-1 py-1.5 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-orange-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <Edit className="w-3.5 h-3.5 text-orange-400" />
-                  <span>정보 수정</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setConfirmDeleteOpen(true)}
-                  className="flex-1 py-1.5 px-3 rounded-xl bg-rose-950/70 hover:bg-rose-900 border border-rose-800/80 text-rose-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                >
-                  <Trash2 className="w-3.5 h-3.5 text-rose-400" />
-                  <span>기록 삭제</span>
-                </button>
-              </div>
+              {/* Edit / Delete Quick Toolbar (Strict Authorization: Admin or Author ONLY) */}
+              {canModify && (
+                <div className="flex items-center gap-2 p-2 rounded-2xl bg-[#121214] border border-zinc-800">
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(true)}
+                    className="flex-1 py-1.5 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-orange-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <Edit className="w-3.5 h-3.5 text-orange-400" />
+                    <span>정보 수정</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDeleteOpen(true)}
+                    className="flex-1 py-1.5 px-3 rounded-xl bg-rose-950/70 hover:bg-rose-900 border border-rose-800/80 text-rose-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                    <span>기록 삭제</span>
+                  </button>
+                </div>
+              )}
 
               {/* Description */}
               <div className="p-3.5 rounded-2xl bg-[#121214] border border-zinc-800 text-xs leading-relaxed text-zinc-300 font-medium">
