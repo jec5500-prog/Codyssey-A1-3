@@ -173,18 +173,22 @@ export default function AuthModal() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-zinc-300 mb-1.5 uppercase">
-                    {t('roleLabel')}
+                  <label className="block text-xs font-bold text-zinc-300 mb-1.5 uppercase flex items-center justify-between">
+                    <span>계정 권한 / 역할 (Role)</span>
+                    <span className="text-[10px] text-orange-400 font-normal">어드민 선택 시 즉시 관리자 승인</span>
                   </label>
                   <div className="relative">
-                    <Briefcase className="w-4 h-4 text-zinc-500 absolute left-3 top-3 pointer-events-none" />
-                    <input
-                      type="text"
-                      placeholder="예: Spatial VMD Architect"
+                    <Briefcase className="w-4 h-4 text-orange-400 absolute left-3 top-3 pointer-events-none" />
+                    <select
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
-                      className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2.5 pl-9 pr-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 font-medium"
-                    />
+                      className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2.5 pl-9 pr-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold cursor-pointer"
+                    >
+                      <option value="admin">👑 관리자 (Admin / 최고 관리자)</option>
+                      <option value="Spatial VMD Architect">📐 Spatial VMD Architect (아키텍트)</option>
+                      <option value="Lead Store Planner">🏢 Lead Store Planner (스토어 플래너)</option>
+                      <option value="Retail Spatial Strategist">📊 Retail Spatial Strategist (공간 전략가)</option>
+                    </select>
                   </div>
                 </div>
               </>

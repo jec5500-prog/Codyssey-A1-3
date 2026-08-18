@@ -42,16 +42,17 @@ const getValidSupabaseUrl = (rawUrl?: string, rawKey?: string): string => {
   return cleanedUrl || 'https://ufmtvpmyuhgdgtzfeqmv.supabase.co';
 };
 
-const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const rawKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const DEFAULT_SUPABASE_URL = 'https://ufmtvpmyuhgdgtzfeqmv.supabase.co';
+const DEFAULT_SUPABASE_ANON_KEY =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVmbXR2cG15dWhnZGd0emZlcW12Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY2MDQyMTYsImV4cCI6MjEwMjE4MDIxNn0.lTpVACsvAXpq9LWZb76CbLP6uhtoIhRjz4w2csgUyNE';
 
-const supabaseUrl = getValidSupabaseUrl(rawUrl, rawKey);
-const supabaseAnonKey = cleanEnv(rawKey);
+const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || DEFAULT_SUPABASE_URL;
+const rawKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || DEFAULT_SUPABASE_ANON_KEY;
 
-export const supabase: SupabaseClient | null =
-  supabaseUrl && supabaseAnonKey && supabaseUrl.startsWith('http')
-    ? createClient(supabaseUrl, supabaseAnonKey)
-    : null;
+const supabaseUrl = getValidSupabaseUrl(rawUrl, rawKey) || DEFAULT_SUPABASE_URL;
+const supabaseAnonKey = cleanEnv(rawKey) || DEFAULT_SUPABASE_ANON_KEY;
+
+export const supabase: SupabaseClient = createClient(supabaseUrl, supabaseAnonKey);
 
 const LOCAL_SPOTS_KEY = 'spot_spatial_intelligence_db_v13';
 const LOCAL_SAVES_KEY = 'spot_spatial_saves_v9';
