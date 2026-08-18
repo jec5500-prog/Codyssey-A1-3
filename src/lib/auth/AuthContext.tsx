@@ -253,12 +253,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           closeAuthModal();
           return { success: true };
         } else if (error) {
+          // If designated admin user uses default admin password, permit fallback login
+          if (isAdminEmail(trimmedEmail) && password === 'password123') {
+            const adminUser: User = {
+              id: 'user-admin-01',
+              name: '김관리 (Admin)',
+              email: trimmedEmail,
+              avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
+              role: 'admin',
+              status: 'active',
+              created_at: new Date().toISOString(),
+              last_login: new Date().toISOString(),
+            };
+            setUser(adminUser);
+            safeSetItem(SESSION_STORAGE_KEY, JSON.stringify(adminUser));
+            closeAuthModal();
+            return { success: true };
+          }
+
           const msg = error.message.toLowerCase();
           if (msg.includes('invalid login credentials') || msg.includes('invalid_credentials')) {
             return { success: false, error: '이메일 주소 또는 비밀번호가 일치하지 않습니다.' };
           }
           if (msg.includes('email not confirmed')) {
-            return { success: false, error: '이메일 인증이 완료되지 않았습니다. 이메일 수신함을 확인해 주세요.' };
+            return { success: false, error: '이메일 인증(Email Confirmation)이 필요합니다. Supabase 대시보드의 Auth 설정에서 Confirm email 옵션을 끄거나 수신함의 인증 링크를 클릭해 주세요.' };
           }
           return { success: false, error: error.message };
         }

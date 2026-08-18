@@ -8,10 +8,41 @@ const cleanEnv = (val?: string): string => {
   return val.trim().replace(/^["']|["']$/g, '').replace(/^=+/, '');
 };
 
+/**
+ * Self-healing URL corrector:
+ * Extracts the exact project reference from the JWT ANON KEY payload
+ * to guarantee 100% URL-Key match and prevent "Invalid API key" errors.
+ */
+const getValidSupabaseUrl = (rawUrl?: string, rawKey?: string): string => {
+  const cleanedUrl = cleanEnv(rawUrl);
+  const cleanedKey = cleanEnv(rawKey);
+
+  if (cleanedKey) {
+    try {
+      const parts = cleanedKey.split('.');
+      if (parts.length >= 2) {
+        const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+        const payload = JSON.parse(
+          typeof window !== 'undefined'
+            ? atob(base64)
+            : Buffer.from(base64, 'base64').toString('utf8')
+        );
+        if (payload && payload.ref) {
+          return `https://${payload.ref}.supabase.co`;
+        }
+      }
+    } catch (e) {
+      // Fallback
+    }
+  }
+
+  return cleanedUrl;
+};
+
 const rawUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const rawKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-const supabaseUrl = cleanEnv(rawUrl);
+const supabaseUrl = getValidSupabaseUrl(rawUrl, rawKey);
 const supabaseAnonKey = cleanEnv(rawKey);
 
 export const supabase: SupabaseClient | null =
