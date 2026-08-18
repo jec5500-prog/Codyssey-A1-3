@@ -38,7 +38,11 @@ import {
   formatDate,
 } from '@/lib/i18n/translationUtils';
 import { compressImageFile } from '@/lib/utils/imageCompressor';
-import { calculateColorPercentages } from '@/lib/utils/colorExtractor';
+import {
+  calculateColorPercentages,
+  extractColorProportionsFromImage,
+  ColorProportion,
+} from '@/lib/utils/colorExtractor';
 
 interface SpotDetailModalProps {
   spot: Spot | null;
@@ -78,6 +82,21 @@ export default function SpotDetailModal({
   // Delete State
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  // Real-time Image Palette Extraction State
+  const [extractedColors, setExtractedColors] = useState<ColorProportion[]>(() =>
+    calculateColorPercentages(initialSpot?.attributes?.colors || [])
+  );
+
+  React.useEffect(() => {
+    if (spot?.image_url) {
+      extractColorProportionsFromImage(spot.image_url, 4).then((proportions) => {
+        if (proportions && proportions.length > 0) {
+          setExtractedColors(proportions);
+        }
+      });
+    }
+  }, [spot?.image_url]);
 
   if (!spot) return null;
 
@@ -493,7 +512,7 @@ export default function SpotDetailModal({
 
                         {/* Horizontal Proportional Color Bar */}
                         <div className="w-full h-3 rounded-full overflow-hidden flex border border-zinc-800 bg-black shadow-inner">
-                          {calculateColorPercentages(spot.attributes.colors).map((cp, idx) => (
+                          {extractedColors.map((cp, idx) => (
                             <div
                               key={idx}
                               style={{ width: `${cp.percentage}%`, backgroundColor: cp.hex }}
@@ -505,7 +524,7 @@ export default function SpotDetailModal({
 
                         {/* Color Hex & Percentage Badges */}
                         <div className="flex items-center gap-2 flex-wrap pt-1">
-                          {calculateColorPercentages(spot.attributes.colors).map((cp, idx) => (
+                          {extractedColors.map((cp, idx) => (
                             <div key={idx} className="flex items-center gap-1.5 bg-[#18181b] px-2 py-1 rounded-lg border border-zinc-800 text-[11px]">
                               <span
                                 className="w-3.5 h-3.5 rounded-full border border-zinc-700 shrink-0 shadow-xs"

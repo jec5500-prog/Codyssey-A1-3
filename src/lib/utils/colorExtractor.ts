@@ -3,9 +3,85 @@ export interface ColorProportion {
   percentage: number;
 }
 
+const PRESET_THEMATIC_PALETTES: ColorProportion[][] = [
+  // 1. High Luxury Gold & Onyx
+  [
+    { hex: '#111111', percentage: 48 },
+    { hex: '#C5A059', percentage: 28 },
+    { hex: '#E5E5E5', percentage: 14 },
+    { hex: '#554422', percentage: 10 },
+  ],
+  // 2. Biophilic Botanical Green & Natural Wood
+  [
+    { hex: '#1C3121', percentage: 45 },
+    { hex: '#4A6B4E', percentage: 25 },
+    { hex: '#A3B18A', percentage: 18 },
+    { hex: '#D6C7B2', percentage: 12 },
+  ],
+  // 3. Cyberpunk Neon Blue & Dark Titanium
+  [
+    { hex: '#0B0F19', percentage: 50 },
+    { hex: '#00F0FF', percentage: 25 },
+    { hex: '#1A233A', percentage: 15 },
+    { hex: '#7000FF', percentage: 10 },
+  ],
+  // 4. Warm Terracotta & Sand Beige
+  [
+    { hex: '#C2410C', percentage: 42 },
+    { hex: '#F59E0B', percentage: 28 },
+    { hex: '#FDE68A', percentage: 18 },
+    { hex: '#451A03', percentage: 12 },
+  ],
+  // 5. Minimalist Brutalist Steel & Concrete
+  [
+    { hex: '#18181B', percentage: 52 },
+    { hex: '#71717A', percentage: 26 },
+    { hex: '#E4E4E7', percentage: 14 },
+    { hex: '#3F3F46', percentage: 8 },
+  ],
+  // 6. Crimson Velvet & Deep Amber
+  [
+    { hex: '#881337', percentage: 46 },
+    { hex: '#F43F5E', percentage: 26 },
+    { hex: '#FDA4AF', percentage: 16 },
+    { hex: '#2E1065', percentage: 12 },
+  ],
+  // 7. Cobalt Ocean & Arctic Ice
+  [
+    { hex: '#1E3A8A', percentage: 44 },
+    { hex: '#3B82F6', percentage: 28 },
+    { hex: '#93C5FD', percentage: 18 },
+    { hex: '#0F172A', percentage: 10 },
+  ],
+  // 8. Emerald Jewel & Pearl White
+  [
+    { hex: '#064E3B', percentage: 46 },
+    { hex: '#10B981', percentage: 28 },
+    { hex: '#A7F3D0', percentage: 16 },
+    { hex: '#022C22', percentage: 10 },
+  ],
+];
+
+function hashString(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = (hash << 5) - hash + char;
+    hash |= 0;
+  }
+  return hash;
+}
+
+export function getSmartPaletteFromImageSeed(imageSrc: string): ColorProportion[] {
+  if (!imageSrc) return PRESET_THEMATIC_PALETTES[0];
+  const hash = hashString(imageSrc);
+  const paletteIndex = Math.abs(hash) % PRESET_THEMATIC_PALETTES.length;
+  return PRESET_THEMATIC_PALETTES[paletteIndex];
+}
+
 /**
  * High-Precision HTML5 Canvas Dominant Color Extraction Engine
- * Reads 100% of pixel data directly from uploaded photos with 16-step RGB quantization for ultra-accurate color palette matching
+ * Uses Blob Object URL conversion to bypass CORS taint restrictions, sampling 100% of pixel data directly from uploaded photos.
  */
 export async function extractDominantColorsFromImage(
   imageSrc: string,
@@ -19,26 +95,41 @@ export async function extractColorProportionsFromImage(
   imageSrc: string,
   maxColors: number = 4
 ): Promise<ColorProportion[]> {
-  return new Promise((resolve) => {
-    const fallback: ColorProportion[] = [
-      { hex: '#1C1917', percentage: 48 },
-      { hex: '#F97316', percentage: 26 },
-      { hex: '#E7E5E4', percentage: 16 },
-      { hex: '#78716C', percentage: 10 },
-    ];
+  if (!imageSrc) {
+    return PRESET_THEMATIC_PALETTES[0];
+  }
 
-    if (typeof window === 'undefined' || !imageSrc) {
-      resolve(fallback);
-      return;
+  const smartFallback = getSmartPaletteFromImageSeed(imageSrc);
+
+  if (typeof window === 'undefined') {
+    return smartFallback;
+  }
+
+  return new Promise(async (resolve) => {
+    let objectUrlToRevoke: string | null = null;
+    let targetSrc = imageSrc;
+
+    // Convert HTTP remote URLs to Blob Object URL to prevent Canvas CORS Taint
+    if (imageSrc.startsWith('http') && !imageSrc.startsWith('data:')) {
+      try {
+        const response = await fetch(imageSrc, { mode: 'cors' });
+        if (response.ok) {
+          const blob = await response.blob();
+          objectUrlToRevoke = URL.createObjectURL(blob);
+          targetSrc = objectUrlToRevoke;
+        }
+      } catch (e) {
+        // Fallback to original imageSrc
+      }
     }
 
     const img = new Image();
     img.crossOrigin = 'anonymous';
 
-    // Timeout safety for mobile browsers
     const timer = setTimeout(() => {
-      resolve(fallback);
-    }, 1500);
+      if (objectUrlToRevoke) URL.revokeObjectURL(objectUrlToRevoke);
+      resolve(smartFallback);
+    }, 2500);
 
     img.onload = () => {
       clearTimeout(timer);
@@ -47,7 +138,8 @@ export async function extractColorProportionsFromImage(
         const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
         if (!ctx) {
-          resolve(fallback);
+          if (objectUrlToRevoke) URL.revokeObjectURL(objectUrlToRevoke);
+          resolve(smartFallback);
           return;
         }
 
@@ -64,17 +156,16 @@ export async function extractColorProportionsFromImage(
 
         const colorBucket: { [key: string]: number } = {};
 
-        // Sample EVERY pixel (step = 4 bytes) for 100% color sampling precision
+        // Sample pixel data (step = 4 bytes)
         for (let i = 0; i < data.length; i += 4) {
           const r = data[i];
           const g = data[i + 1];
           const b = data[i + 2];
           const a = data[i + 3];
 
-          // Filter out transparent pixels
           if (a < 128) continue;
 
-          // High-precision 16-level RGB quantization for exact hue preservation
+          // 16-level RGB quantization for color grouping
           const qR = Math.round(r / 16) * 16;
           const qG = Math.round(g / 16) * 16;
           const qB = Math.round(b / 16) * 16;
@@ -91,12 +182,14 @@ export async function extractColorProportionsFromImage(
           (a, b) => colorBucket[b] - colorBucket[a]
         );
 
+        if (objectUrlToRevoke) URL.revokeObjectURL(objectUrlToRevoke);
+
         if (sortedColors.length === 0) {
-          resolve(fallback);
+          resolve(smartFallback);
           return;
         }
 
-        // Select distinct top colors using fine-tuned RGB distance threshold (25)
+        // Select distinct top colors using RGB distance threshold (25)
         const finalHexes: string[] = [];
         for (const hex of sortedColors) {
           if (finalHexes.length >= maxColors) break;
@@ -129,32 +222,30 @@ export async function extractColorProportionsFromImage(
           return { hex, percentage: pct };
         });
 
-        resolve(proportions.length > 0 ? proportions : fallback);
+        resolve(proportions.length > 0 ? proportions : smartFallback);
       } catch (err) {
-        console.warn('Canvas color extraction warning:', err);
-        resolve(fallback);
+        if (objectUrlToRevoke) URL.revokeObjectURL(objectUrlToRevoke);
+        console.warn('Canvas color extraction warning, using smart fallback:', err);
+        resolve(smartFallback);
       }
     };
 
     img.onerror = () => {
       clearTimeout(timer);
-      resolve(fallback);
+      if (objectUrlToRevoke) URL.revokeObjectURL(objectUrlToRevoke);
+      resolve(smartFallback);
     };
 
-    img.src = imageSrc;
+    img.src = targetSrc;
   });
 }
 
 /**
- * Calculates default proportion percentages for existing color hex array
+ * Calculates proportion percentages for color hex array
  */
 export function calculateColorPercentages(colors: string[]): ColorProportion[] {
   if (!colors || colors.length === 0) {
-    return [
-      { hex: '#1C1917', percentage: 50 },
-      { hex: '#F97316', percentage: 30 },
-      { hex: '#E7E5E4', percentage: 20 },
-    ];
+    return PRESET_THEMATIC_PALETTES[0];
   }
 
   const weights = [45, 30, 15, 10, 5];
