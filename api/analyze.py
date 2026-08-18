@@ -1,0 +1,108 @@
+import json
+import os
+import base64
+from http.server import BaseHTTPRequestHandler
+from google import genai
+from google.genai import types
+
+class handler(BaseHTTPRequestHandler):
+    def do_POST(self):
+        try:
+            content_length = int(self.headers.get('Content-Length', 0))
+            if content_length <= 0:
+                self._send_json({"error": True, "code": "EMPTY_REQUEST", "message": "이미지 데이터가 전달되지 않았습니다."}, 400)
+                return
+
+            body = self.rfile.read(content_length)
+            payload = json.loads(body.decode('utf-8'))
+            
+            image_base64 = payload.get('image', '')
+            if not image_base64 or not isinstance(image_base64, str):
+                self._send_json({"error": True, "code": "INVALID_IMAGE", "message": "올바른 Base64 이미지 데이터가 필요합니다."}, 400)
+                return
+
+            # Check for server-side API Key secret
+            api_key = os.environ.get('GEMINI_API_KEY')
+            if not api_key:
+                self._send_json({"error": True, "code": "MISSING_SERVER_KEY", "message": "서버 환경변수에 API 키가 설정되지 않았습니다. 후속 보안 조치 필요."}, 500)
+                return
+
+            # Parse base64 header if present
+            mime_type = "image/jpeg"
+            raw_b64 = image_base64
+            if "," in image_base64:
+                header, raw_b64 = image_base64.split(",", 1)
+                if "image/png" in header:
+                    mime_type = "image/png"
+                elif "image/webp" in header:
+                    mime_type = "image/webp"
+
+            try:
+                img_bytes = base64.b64decode(raw_b64)
+            except Exception:
+                self._send_json({"error": True, "code": "DECODE_ERROR", "message": "이미지 디코딩에 실패했습니다."}, 400)
+                return
+
+            # Call Gemini AI Client (Server Side Only)
+            client = genai.Client(api_key=api_key)
+            prompt = """You are a world-class Spatial Design & Retail Visual Merchandising (VMD) AI Architect.
+Analyze this spatial design photo and output strict valid JSON only with no markdown formatting.
+
+JSON Schema:
+{
+  "category": "Window" | "Store Interior" | "Store Exterior" | "Pop-up Store" | "Street" | "Exhibition",
+  "brand": "Estimated Brand name or 'Independent Design'",
+  "description": "2-sentence concise professional summary of the architectural and spatial design concept",
+  "style": "Exact style term (e.g. Minimalist Brutalism, Biophilic Luxury, Cyberpunk Industrial, Neo-Heritage Expressionism)",
+  "colors": ["#HEX1", "#HEX2", "#HEX3", "#HEX4"],
+  "materials": ["Material 1", "Material 2", "Material 3"],
+  "lighting": "Lighting setup description (e.g. Dynamic Spot Accent, Warm Ambient Cove, Linear LED Outline)",
+  "composition": "Compositional balance (e.g. Monolithic Center, Asymmetrical Grid, Layered Depth)",
+  "objects": ["Object/Prop 1", "Object/Prop 2", "Object/Prop 3"],
+  "theme": "Spatial Design Theme Title",
+  "confidence": 0.92
+}"""
+
+            response = client.models.generate_content(
+                model='gemini-2.5-flash',
+                contents=[
+                    types.Part.from_bytes(
+                        data=img_bytes,
+                        mime_type=mime_type,
+                    ),
+                    prompt,
+                ]
+            )
+
+            response_text = response.text or ""
+            json_start = response_text.find('{')
+            json_end = response_text.rfind('}') + 1
+
+            if json_start != -1 and json_end > json_start:
+                parsed_json = json.loads(response_text[json_start:json_end])
+                result = {
+                    "category": parsed_json.get("category", "Store Interior"),
+                    "brand": parsed_json.get("brand", "Luxury Concept"),
+                    "description": parsed_json.get("description", "Spatial interior layout displaying structured materiality."),
+                    "style": parsed_json.get("style", "Modern Architectural Minimalist"),
+                    "colors": parsed_json.get("colors", ["#1E1E1E", "#E5E5E5", "#C0C0C0"]),
+                    "materials": parsed_json.get("materials", ["Brushed Steel", "Glass"]),
+                    "lighting": parsed_json.get("lighting", "Ambient Spot Cove"),
+                    "composition": parsed_json.get("composition", "Asymmetrical Grid"),
+                    "objects": parsed_json.get("objects", ["Display Counter", "Lighting Grid"]),
+                    "theme": parsed_json.get("theme", "Modern Retail Experience"),
+                    "confidence": float(parsed_json.get("confidence", 0.92)),
+                }
+                self._send_json(result, 200)
+            else:
+                self._send_json({"error": True, "code": "PARSE_ERROR", "message": "AI 응답 결과를 파싱할 수 없습니다."}, 500)
+
+        except Exception:
+            # Generic safe error message (Never expose internal exception details or key info)
+            self._send_json({"error": True, "code": "AI_SERVER_ERROR", "message": "AI 공간 분석 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."}, 500)
+
+    def _send_json(self, data, status_code):
+        self.send_response(status_code)
+        self.send_header('Content-Type', 'application/json; charset=utf-8')
+        self.end_headers()
+        self.wfile.write(json.dumps(data, ensure_ascii=False).encode('utf-8'))

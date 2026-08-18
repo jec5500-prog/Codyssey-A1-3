@@ -16,6 +16,7 @@ import {
   Camera,
   Map as MapIcon,
   Bot,
+  AlertTriangle,
 } from 'lucide-react';
 import { SpotCategory, Spot } from '@/lib/types';
 import { extractExifFromFile, reverseGeocode, getCoordinatesForCity } from '@/lib/services/geoService';
@@ -91,10 +92,38 @@ export default function CaptureForm() {
   const [aiConfidence, setAiConfidence] = useState<number>(0.92);
   const [isVerified, setIsVerified] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [lastCaptureArgs, setLastCaptureArgs] = useState<{
+    imgSrc: string;
+    file?: File;
+    sampleOverride?: typeof SAMPLE_CAPTURES[0];
+  } | null>(null);
+
+  // Client-side Sample Image URL to Base64 converter
+  const sampleUrlToBase64 = async (url: string): Promise<string> => {
+    const response = await fetch(url, { mode: 'cors' });
+    if (!response.ok) throw new Error('CORS_FETCH_FAILED');
+    const blob = await response.blob();
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  };
 
   // File Handler for Android & iOS
   const handleFileSelect = async (file: File) => {
     if (!file) return;
+    setAnalysisError(null);
+
+    // Pre-validation: Max 3MB raw file size limit
+    if (file.size > 3 * 1024 * 1024) {
+      setAnalysisError('이미지 크기를 3MB 이하로 줄인 뒤 다시 시도해 주세요.');
+      setStage('upload');
+      return;
+    }
+
     setFileName(file.name || 'Android_Captured_Photo.jpg');
     setStage('analyzing');
 
@@ -121,14 +150,22 @@ export default function CaptureForm() {
   };
 
   // Sample Selection Handler
-  const handleSampleSelect = (sample: typeof SAMPLE_CAPTURES[0]) => {
+  const handleSampleSelect = async (sample: typeof SAMPLE_CAPTURES[0]) => {
+    setAnalysisError(null);
     setFileName(sample.name);
     setImagePreview(sample.url);
     setLatitude(sample.lat);
     setLongitude(sample.lng);
     setCity(sample.city);
     setCountry(sample.country);
-    processCapture(sample.url, undefined, sample);
+
+    try {
+      const b64Data = await sampleUrlToBase64(sample.url);
+      processCapture(b64Data, undefined, sample);
+    } catch (e) {
+      setAnalysisError('샘플 이미지를 분석할 수 없습니다. 직접 이미지를 업로드해 주세요.');
+      setStage('upload');
+    }
   };
 
   // Processing pipeline
@@ -137,6 +174,16 @@ export default function CaptureForm() {
     file?: File,
     sampleOverride?: typeof SAMPLE_CAPTURES[0]
   ) => {
+    setAnalysisError(null);
+    setLastCaptureArgs({ imgSrc, file, sampleOverride });
+
+    // Pre-send validation: Max Base64 + JSON payload limit (4MB chars)
+    if (imgSrc && imgSrc.length > 4 * 1024 * 1024) {
+      setAnalysisError('이미지 크기를 3MB 이하로 줄인 뒤 다시 시도해 주세요.');
+      setStage('upload');
+      return;
+    }
+
     setStage('analyzing');
 
     // 1. Location Processing based on selected mode
@@ -167,7 +214,7 @@ export default function CaptureForm() {
       }
     } catch (e) {}
 
-    // 3. Multimodal AI Analysis for Design Attributes
+    // 3. Multimodal AI Analysis via Vercel Python API (/api/analyze)
     try {
       const aiResult = await analyzeSpatialImage(imgSrc, file?.name || sampleOverride?.name);
       setCategory(aiResult.category);
@@ -179,10 +226,10 @@ export default function CaptureForm() {
       setComposition(aiResult.composition);
       setTheme(aiResult.theme);
       setAiConfidence(aiResult.confidence);
-    } catch (err) {
-      console.warn('AI analysis error, proceeding with defaults:', err);
-    } finally {
       setStage('verify');
+    } catch (err: any) {
+      setAnalysisError(err?.message || 'AI 공간 분석 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+      setStage('upload');
     }
   };
 
@@ -322,6 +369,29 @@ export default function CaptureForm() {
       {/* STAGE 1: UPLOAD & LOCATION MODE CHOICE */}
       {stage === 'upload' && (
         <div className="bg-[#18181b] border border-zinc-800 rounded-3xl p-6 sm:p-10 space-y-8 backdrop-blur-md shadow-2xl">
+          {/* Analysis Error & Retry Box */}
+          {analysisError && (
+            <div className="p-4 rounded-2xl bg-rose-950/80 border border-rose-800 text-rose-200 text-xs flex items-center justify-between gap-4 shadow-lg animate-in fade-in">
+              <div className="flex items-center gap-2.5 font-medium">
+                <AlertTriangle className="w-5 h-5 text-rose-400 shrink-0 animate-pulse" />
+                <span>{analysisError}</span>
+              </div>
+              {lastCaptureArgs && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAnalysisError(null);
+                    processCapture(lastCaptureArgs.imgSrc, lastCaptureArgs.file, lastCaptureArgs.sampleOverride);
+                  }}
+                  className="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs flex items-center gap-1.5 shadow-md shrink-0 cursor-pointer transition-colors"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>다시 시도 (Retry)</span>
+                </button>
+              )}
+            </div>
+          )}
+
           {/* REGISTRATION MODE SELECTOR */}
           <div className="space-y-3 p-4 rounded-2xl bg-[#121214] border border-zinc-800">
             <label className="block text-xs font-extrabold text-orange-400 uppercase tracking-wider">
