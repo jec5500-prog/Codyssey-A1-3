@@ -63,13 +63,9 @@ let inMemorySpots: Spot[] | null = null;
 let inMemorySaves: SaveItem[] | null = null;
 
 /**
- * Helper to get spots from LocalStorage / memory fallback
+ * Helper to get spots from LocalStorage / memory fallback (Auto-syncs latest INITIAL_SPOTS attributes)
  */
 function getLocalSpots(): Spot[] {
-  if (inMemorySpots && inMemorySpots.length > 0) {
-    return inMemorySpots;
-  }
-
   if (typeof window === 'undefined') {
     inMemorySpots = INITIAL_SPOTS;
     return INITIAL_SPOTS;
@@ -82,10 +78,31 @@ function getLocalSpots(): Spot[] {
       inMemorySpots = [...INITIAL_SPOTS];
       return INITIAL_SPOTS;
     }
-    const parsed = JSON.parse(data);
+    const parsed: Spot[] = JSON.parse(data);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      inMemorySpots = parsed;
-      return parsed;
+      // Sync default initial spots with latest INITIAL_SPOTS attributes (colors, brand, etc.)
+      const updatedList = parsed.map((item) => {
+        const matchingInitial = INITIAL_SPOTS.find((init) => init.id === item.id);
+        if (matchingInitial) {
+          return {
+            ...item,
+            attributes: matchingInitial.attributes,
+            ai_analysis: matchingInitial.ai_analysis,
+          };
+        }
+        return item;
+      });
+
+      // Also append any new INITIAL_SPOTS that don't exist in parsed yet
+      for (const init of INITIAL_SPOTS) {
+        if (!updatedList.some((item) => item.id === init.id)) {
+          updatedList.push(init);
+        }
+      }
+
+      localStorage.setItem(LOCAL_SPOTS_KEY, JSON.stringify(updatedList));
+      inMemorySpots = updatedList;
+      return updatedList;
     }
   } catch (err) {
     console.warn('localStorage read failed, using memory fallback:', err);
