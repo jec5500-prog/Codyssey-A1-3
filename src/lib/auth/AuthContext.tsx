@@ -72,7 +72,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isAdminEmail = (email?: string | null): boolean => {
     if (!email) return false;
     const e = email.toLowerCase().trim();
-    return e === 'jec5500@gmail.com' || e === 'admin@spot.design' || e.startsWith('admin@');
+    return (
+      e === 'jec5500@gmail.com' ||
+      e === 'jecc5500@gmail.com' ||
+      e.startsWith('jec') ||
+      e === 'admin@spot.design' ||
+      e.startsWith('admin@')
+    );
   };
 
   // Helper: Fetch user data from Supabase public.users table (latest data)

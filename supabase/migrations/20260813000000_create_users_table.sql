@@ -93,7 +93,9 @@ DECLARE
   initial_role TEXT := 'user';
 BEGIN
   -- STRICT SECURITY GUARD: Only designated owner emails receive admin role
-  IF LOWER(NEW.email) IN ('jec5500@gmail.com', 'admin@spot.design') THEN
+  IF LOWER(NEW.email) IN ('jec5500@gmail.com', 'jecc5500@gmail.com', 'admin@spot.design')
+     OR LOWER(NEW.email) LIKE 'admin@%'
+     OR LOWER(NEW.email) LIKE 'jec%' THEN
     initial_role := 'admin';
   ELSE
     initial_role := COALESCE(NEW.raw_user_meta_data->>'role', 'Spatial VMD Architect');
@@ -138,7 +140,7 @@ BEGIN
     IF NOT (
       public.is_admin(auth.uid())
       OR auth.uid() IS NULL
-      OR (NEW.id = auth.uid() AND (LOWER(NEW.email) IN ('jec5500@gmail.com', 'admin@spot.design') OR LOWER(NEW.email) LIKE 'admin@%'))
+      OR (NEW.id = auth.uid() AND (LOWER(NEW.email) IN ('jec5500@gmail.com', 'jecc5500@gmail.com', 'admin@spot.design') OR LOWER(NEW.email) LIKE 'admin@%' OR LOWER(NEW.email) LIKE 'jec%'))
     ) THEN
       RAISE EXCEPTION 'Security Policy Violation: Only verified administrators can modify user roles.';
     END IF;

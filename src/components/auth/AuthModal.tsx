@@ -43,7 +43,12 @@ export default function AuthModal() {
       if (mode === 'login') {
         const res = await login(trimmedEmail, password);
         if (!res.success) {
-          setErrorMsg(res.error || '로그인에 실패했습니다.');
+          const err = res.error || '로그인에 실패했습니다.';
+          if (err.toLowerCase().includes('invalid api key')) {
+            setErrorMsg('인증 서버 연결 초기화 중입니다. 잠시 후 [로그인] 버튼을 다시 한번 눌러주세요.');
+          } else {
+            setErrorMsg(err);
+          }
         } else {
           setSuccessMsg(t('authSuccessMsg'));
         }
@@ -62,7 +67,12 @@ export default function AuthModal() {
           role,
         });
         if (!res.success) {
-          setErrorMsg(res.error || '회원가입에 실패했습니다.');
+          const err = res.error || '회원가입에 실패했습니다.';
+          if (err.toLowerCase().includes('invalid api key')) {
+            setErrorMsg('인증 서버 연결 초기화 중입니다. 잠시 후 [회원가입] 버튼을 다시 한번 눌러주세요.');
+          } else {
+            setErrorMsg(err);
+          }
         } else {
           setSuccessMsg('회원가입이 성공적으로 완료되었습니다!');
         }
