@@ -83,20 +83,22 @@ export default function SpotDetailModal({
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
 
-  // Real-time Image Palette Extraction State
+  // Real-time Image Palette Extraction State (Preserves complete multi-color spot attributes)
   const [extractedColors, setExtractedColors] = useState<ColorProportion[]>(() =>
     calculateColorPercentages(initialSpot?.attributes?.colors || [])
   );
 
   React.useEffect(() => {
-    if (spot?.image_url) {
+    if (spot?.attributes?.colors && spot.attributes.colors.length >= 2) {
+      setExtractedColors(calculateColorPercentages(spot.attributes.colors));
+    } else if (spot?.image_url) {
       extractColorProportionsFromImage(spot.image_url, 4).then((proportions) => {
         if (proportions && proportions.length > 0) {
           setExtractedColors(proportions);
         }
       });
     }
-  }, [spot?.image_url]);
+  }, [spot?.image_url, spot?.attributes?.colors]);
 
   if (!spot) return null;
 

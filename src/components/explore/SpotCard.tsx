@@ -27,22 +27,11 @@ export default function SpotCard({ spot, onSelect, isSavedInitial = false }: Spo
   const [saved, setSaved] = useState(isSavedInitial);
   const [saving, setSaving] = useState(false);
 
-  // Dynamic Image Color Extraction State
-  const [cardColors, setCardColors] = useState<string[]>(
+  // Directly preserve and display complete 4-color palette attributes (Turquoise, Teal, Black, White)
+  const cardColors =
     spot.attributes?.colors && spot.attributes.colors.length > 0
       ? spot.attributes.colors.slice(0, 4)
-      : ['#2EC4B6', '#00A896', '#18181B', '#E5E5E5']
-  );
-
-  React.useEffect(() => {
-    if (spot.image_url) {
-      extractColorProportionsFromImage(spot.image_url, 4).then((proportions) => {
-        if (proportions && proportions.length > 0) {
-          setCardColors(proportions.map((p) => p.hex));
-        }
-      });
-    }
-  }, [spot.image_url]);
+      : ['#2EC4B6', '#00A896', '#18181B', '#E5E5E5'];
 
   const handleBookmark = async (e: React.MouseEvent) => {
     e.stopPropagation();

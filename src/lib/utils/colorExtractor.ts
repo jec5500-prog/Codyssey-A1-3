@@ -199,8 +199,15 @@ export async function extractColorProportionsFromImage(
           }
         }
 
-        while (finalHexes.length < maxColors && sortedColors[finalHexes.length]) {
-          finalHexes.push(sortedColors[finalHexes.length]);
+        // Fill to maxColors with distinct structural tones (Black/White/Silver) if needed
+        let fallbackIndex = 0;
+        while (finalHexes.length < maxColors) {
+          const candidate = smartFallback[fallbackIndex]?.hex || (finalHexes.includes('#18181B') ? '#FFFFFF' : '#18181B');
+          if (!finalHexes.includes(candidate)) {
+            finalHexes.push(candidate);
+          }
+          fallbackIndex++;
+          if (fallbackIndex > 10) break;
         }
 
         // Calculate exact pixel proportion %
