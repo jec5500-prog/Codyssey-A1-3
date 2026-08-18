@@ -67,17 +67,6 @@ export const authConfig = {
           console.warn('Supabase Auth error in NextAuth authorize handler:', err);
         }
 
-        // Demo / fallback admin account check when Supabase client is not connected
-        if (email === 'admin@spot.design' && password === 'password123') {
-          return {
-            id: 'user-admin-01',
-            name: '김관리 (Admin)',
-            email: 'admin@spot.design',
-            image: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=250&q=80',
-            role: 'admin',
-          };
-        }
-
         return null;
       },
     }),

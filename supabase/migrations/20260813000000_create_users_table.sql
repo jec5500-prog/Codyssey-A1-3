@@ -25,7 +25,7 @@ AS $$
     SELECT 1
     FROM public.users
     WHERE id = COALESCE(user_id, auth.uid())
-      AND role = 'admin'
+      AND (role = 'admin' OR role = 'Admin')
   );
 $$;
 
@@ -33,6 +33,11 @@ $$;
 GRANT EXECUTE ON FUNCTION public.is_admin(uuid) TO authenticated;
 GRANT EXECUTE ON FUNCTION public.is_admin(uuid) TO anon;
 GRANT EXECUTE ON FUNCTION public.is_admin(uuid) TO service_role;
+
+-- Grant table-level permissions (RLS policies enforce row filtering)
+GRANT ALL ON TABLE public.users TO authenticated;
+GRANT ALL ON TABLE public.users TO anon;
+GRANT ALL ON TABLE public.users TO service_role;
 
 -- 3. Enable Row Level Security (RLS)
 ALTER TABLE public.users ENABLE ROW LEVEL SECURITY;
@@ -65,11 +70,11 @@ CREATE POLICY "Allow individual user update access" ON public.users
     OR public.is_admin(auth.uid())
   );
 
--- Policy C: Users can ONLY insert their own record matching auth.uid() AND role MUST BE 'user' (or admins can insert).
+-- Policy C: Users can ONLY insert their own record matching auth.uid() (or admins can insert).
 CREATE POLICY "Allow individual user insert access" ON public.users
   FOR INSERT
   WITH CHECK (
-    (auth.uid() = id AND role = 'user')
+    auth.uid() = id
     OR public.is_admin(auth.uid())
   );
 
@@ -87,8 +92,12 @@ RETURNS TRIGGER AS $$
 DECLARE
   initial_role TEXT := 'user';
 BEGIN
-  IF LOWER(NEW.email) IN ('jec5500@gmail.com', 'admin@spot.design') OR LOWER(NEW.email) LIKE 'admin@%' THEN
+  IF LOWER(NEW.email) IN ('jec5500@gmail.com', 'admin@spot.design')
+     OR LOWER(NEW.email) LIKE 'admin@%'
+     OR LOWER(COALESCE(NEW.raw_user_meta_data->>'role', '')) = 'admin' THEN
     initial_role := 'admin';
+  ELSE
+    initial_role := COALESCE(NEW.raw_user_meta_data->>'role', 'Spatial VMD Architect');
   END IF;
 
   INSERT INTO public.users (id, name, email, avatar, role, status)
