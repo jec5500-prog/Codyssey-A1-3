@@ -80,20 +80,46 @@ JSON Schema:
 
             if json_start != -1 and json_end > json_start:
                 parsed_json = json.loads(response_text[json_start:json_end])
-                result = {
-                    "category": parsed_json.get("category", "Store Interior"),
-                    "brand": parsed_json.get("brand", "Luxury Concept"),
-                    "description": parsed_json.get("description", "Spatial interior layout displaying structured materiality."),
-                    "style": parsed_json.get("style", "Modern Architectural Minimalist"),
-                    "colors": parsed_json.get("colors", ["#1E1E1E", "#E5E5E5", "#C0C0C0"]),
-                    "materials": parsed_json.get("materials", ["Brushed Steel", "Glass"]),
-                    "lighting": parsed_json.get("lighting", "Ambient Spot Cove"),
-                    "composition": parsed_json.get("composition", "Asymmetrical Grid"),
-                    "objects": parsed_json.get("objects", ["Display Counter", "Lighting Grid"]),
-                    "theme": parsed_json.get("theme", "Modern Retail Experience"),
-                    "confidence": float(parsed_json.get("confidence", 0.92)),
-                }
-                self._send_json(result, 200)
+
+                # Strict Schema & Data Type Validation for all 11 required fields
+                required_str_fields = ["category", "brand", "description", "style", "lighting", "composition", "theme"]
+                required_list_fields = ["colors", "materials", "objects"]
+
+                # 1. Check string fields
+                is_valid = all(
+                    field in parsed_json and isinstance(parsed_json[field], str) and len(parsed_json[field].strip()) > 0
+                    for field in required_str_fields
+                )
+
+                # 2. Check list fields
+                if is_valid:
+                    is_valid = all(
+                        field in parsed_json and isinstance(parsed_json[field], list)
+                        for field in required_list_fields
+                    )
+
+                # 3. Check confidence field (must be float or int)
+                if is_valid:
+                    conf = parsed_json.get("confidence")
+                    is_valid = isinstance(conf, (int, float)) and not isinstance(conf, bool)
+
+                if is_valid:
+                    result = {
+                        "category": str(parsed_json["category"]),
+                        "brand": str(parsed_json["brand"]),
+                        "description": str(parsed_json["description"]),
+                        "style": str(parsed_json["style"]),
+                        "colors": [str(c) for c in parsed_json["colors"]],
+                        "materials": [str(m) for m in parsed_json["materials"]],
+                        "lighting": str(parsed_json["lighting"]),
+                        "composition": str(parsed_json["composition"]),
+                        "objects": [str(o) for o in parsed_json["objects"]],
+                        "theme": str(parsed_json["theme"]),
+                        "confidence": float(parsed_json["confidence"]),
+                    }
+                    self._send_json(result, 200)
+                else:
+                    self._send_json({"error": True, "code": "PARSE_ERROR", "message": "AI 응답 결과를 파싱할 수 없습니다."}, 500)
             else:
                 self._send_json({"error": True, "code": "PARSE_ERROR", "message": "AI 응답 결과를 파싱할 수 없습니다."}, 500)
 
