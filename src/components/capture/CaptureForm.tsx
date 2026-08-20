@@ -78,18 +78,20 @@ export default function CaptureForm() {
   const [city, setCity] = useState<string>('Seoul');
   const [capturedAt, setCapturedAt] = useState<string>(new Date().toISOString().slice(0, 10));
 
-  // AI & User Editable attributes
+  // AI & User Editable attributes (Initialized strictly empty; filled dynamically by AI API)
   const [category, setCategory] = useState<SpotCategory>('Window');
   const [brand, setBrand] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [style, setStyle] = useState<string>('');
-  const [colors, setColors] = useState<string[]>(['#121212', '#F5F5F0', '#C0C0C0']);
-  const [materials, setMaterials] = useState<string[]>(['Brushed Steel', 'Glass']);
+  const [colors, setColors] = useState<string[]>([]);
+  const [materials, setMaterials] = useState<string[]>([]);
   const [newMaterialInput, setNewMaterialInput] = useState<string>('');
-  const [lighting, setLighting] = useState<string>('Dynamic Spot Accent');
-  const [composition, setComposition] = useState<string>('Monolithic Center');
-  const [theme, setTheme] = useState<string>('Future Concept');
-  const [aiConfidence, setAiConfidence] = useState<number>(0.92);
+  const [lighting, setLighting] = useState<string>('');
+  const [composition, setComposition] = useState<string>('');
+  const [objects, setObjects] = useState<string[]>([]);
+  const [newObjectInput, setNewObjectInput] = useState<string>('');
+  const [theme, setTheme] = useState<string>('');
+  const [aiConfidence, setAiConfidence] = useState<number>(0);
   const [isVerified, setIsVerified] = useState<boolean>(true);
   const [saving, setSaving] = useState<boolean>(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
@@ -98,6 +100,21 @@ export default function CaptureForm() {
     file?: File;
     sampleOverride?: typeof SAMPLE_CAPTURES[0];
   } | null>(null);
+
+  // Helper to purge all analysis states before a new analysis run
+  const resetAnalysisStates = () => {
+    setAnalysisError(null);
+    setBrand('');
+    setDescription('');
+    setStyle('');
+    setColors([]);
+    setMaterials([]);
+    setLighting('');
+    setComposition('');
+    setObjects([]);
+    setTheme('');
+    setAiConfidence(0);
+  };
 
   // Client-side Sample Image URL to Base64 converter
   const sampleUrlToBase64 = async (url: string): Promise<string> => {
@@ -115,7 +132,7 @@ export default function CaptureForm() {
   // File Handler for Android & iOS
   const handleFileSelect = async (file: File) => {
     if (!file) return;
-    setAnalysisError(null);
+    resetAnalysisStates();
 
     // Pre-validation: Max 3MB raw file size limit
     if (file.size > 3 * 1024 * 1024) {
@@ -151,7 +168,7 @@ export default function CaptureForm() {
 
   // Sample Selection Handler
   const handleSampleSelect = async (sample: typeof SAMPLE_CAPTURES[0]) => {
-    setAnalysisError(null);
+    resetAnalysisStates();
     setFileName(sample.name);
     setImagePreview(sample.url);
     setLatitude(sample.lat);
@@ -217,15 +234,19 @@ export default function CaptureForm() {
     // 3. Multimodal AI Analysis via Vercel Python API (/api/analyze)
     try {
       const aiResult = await analyzeSpatialImage(imgSrc, file?.name || sampleOverride?.name);
-      setCategory(aiResult.category);
-      setBrand(aiResult.brand);
-      setDescription(aiResult.description);
-      setStyle(aiResult.style);
-      setMaterials(aiResult.materials);
-      setLighting(aiResult.lighting);
-      setComposition(aiResult.composition);
-      setTheme(aiResult.theme);
-      setAiConfidence(aiResult.confidence);
+      setCategory(aiResult.category || 'Store Interior');
+      setBrand(aiResult.brand || '');
+      setDescription(aiResult.description || '');
+      setStyle(aiResult.style || '');
+      if (Array.isArray(aiResult.colors) && aiResult.colors.length > 0) {
+        setColors(aiResult.colors);
+      }
+      setMaterials(Array.isArray(aiResult.materials) ? aiResult.materials : []);
+      setLighting(aiResult.lighting || '');
+      setComposition(aiResult.composition || '');
+      setObjects(Array.isArray(aiResult.objects) ? aiResult.objects : []);
+      setTheme(aiResult.theme || '');
+      setAiConfidence(typeof aiResult.confidence === 'number' ? aiResult.confidence : 0.9);
       setStage('verify');
     } catch (err: any) {
       setAnalysisError(err?.message || 'AI 공간 분석 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
@@ -243,6 +264,18 @@ export default function CaptureForm() {
 
   const removeMaterial = (index: number) => {
     setMaterials(materials.filter((_, i) => i !== index));
+  };
+
+  // Object & Prop Tag actions
+  const addObject = () => {
+    if (newObjectInput.trim() && !objects.includes(newObjectInput.trim())) {
+      setObjects([...objects, newObjectInput.trim()]);
+      setNewObjectInput('');
+    }
+  };
+
+  const removeObject = (index: number) => {
+    setObjects(objects.filter((_, i) => i !== index));
   };
 
   // City & Country Change Handler with Coordinate Sync
@@ -788,6 +821,86 @@ export default function CaptureForm() {
                     <Plus className="w-3.5 h-3.5" />
                   </button>
                 </div>
+              </div>
+
+              {/* Lighting & Composition */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <div>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">
+                    조명 설계 (Lighting)
+                  </label>
+                  <input
+                    type="text"
+                    value={lighting}
+                    onChange={(e) => setLighting(e.target.value)}
+                    placeholder="예: Warm Cove Ambient & Narrow Spot"
+                    className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">
+                    공간 구도 (Composition)
+                  </label>
+                  <input
+                    type="text"
+                    value={composition}
+                    onChange={(e) => setComposition(e.target.value)}
+                    placeholder="예: Asymmetrical Monolithic Grid"
+                    className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
+                  />
+                </div>
+              </div>
+
+              {/* Objects & Props Tags */}
+              <div>
+                <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase flex items-center gap-1">
+                  <Tag className="w-3.5 h-3.5 text-orange-400" />
+                  Objects & Display Props
+                </label>
+                <div className="flex items-center gap-1.5 flex-wrap mb-2">
+                  {objects.map((obj, idx) => (
+                    <span
+                      key={idx}
+                      className="px-2 py-1 rounded bg-[#121214] border border-zinc-700 text-xs font-bold flex items-center gap-1 text-white"
+                    >
+                      {obj}
+                      <button onClick={() => removeObject(idx)} className="text-zinc-400 hover:text-white">
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="text"
+                    value={newObjectInput}
+                    onChange={(e) => setNewObjectInput(e.target.value)}
+                    placeholder="오브제/집기 추가 (예: Glass Pedestal, Animatronic)"
+                    onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addObject())}
+                    className="flex-1 bg-[#121214] border border-zinc-800 rounded-xl py-1.5 px-3 text-xs text-white focus:outline-none focus:border-orange-500"
+                  />
+                  <button
+                    type="button"
+                    onClick={addObject}
+                    className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xs border border-zinc-700"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Theme Title */}
+              <div>
+                <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">
+                  공간 테마 (Spatial Theme)
+                </label>
+                <input
+                  type="text"
+                  value={theme}
+                  onChange={(e) => setTheme(e.target.value)}
+                  placeholder="예: Organic Heritage Craftsmanship"
+                  className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
+                />
               </div>
 
               {/* Submit / Save Button */}
