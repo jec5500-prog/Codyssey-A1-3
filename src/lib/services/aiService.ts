@@ -23,7 +23,7 @@ export async function analyzeSpatialImage(
   fileName?: string
 ): Promise<SpatialAIAnalysisResult> {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 15000);
+  const timeoutId = setTimeout(() => controller.abort(), 45000);
 
   try {
     const response = await fetch('/api/analyze', {
@@ -48,7 +48,7 @@ export async function analyzeSpatialImage(
     return data as SpatialAIAnalysisResult;
   } catch (err: any) {
     if (err.name === 'AbortError') {
-      throw new Error('분석 시간이 초과되었습니다. (15초 타임아웃)');
+      throw new Error('분석 시간이 초과되었습니다. (45초 타임아웃)');
     }
     throw err instanceof Error ? err : new Error('AI 분석 중 오류가 발생했습니다.');
   } finally {

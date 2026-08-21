@@ -1,12 +1,15 @@
 import json
 import os
 import base64
+import time
 from http.server import BaseHTTPRequestHandler
 from google import genai
 from google.genai import types
 
 class handler(BaseHTTPRequestHandler):
     def do_POST(self):
+        t_start = time.time()
+        print(f"[TIMING 1/5] API handler started: t=0.000s")
         try:
             content_length = int(self.headers.get('Content-Length', 0))
             if content_length <= 0:
@@ -63,6 +66,9 @@ JSON Schema:
   "confidence": 0.92
 }"""
 
+            t_before_api = time.time()
+            print(f"[TIMING 2/5] Gemini API call starting: elapsed={t_before_api - t_start:.3f}s")
+
             response = client.models.generate_content(
                 model='gemini-3.6-flash',
                 contents=[
@@ -73,6 +79,9 @@ JSON Schema:
                     prompt,
                 ]
             )
+
+            t_after_api = time.time()
+            print(f"[TIMING 3/5] Gemini API responded: api_latency={t_after_api - t_before_api:.3f}s, elapsed={t_after_api - t_start:.3f}s")
 
             response_text = response.text or ""
             json_start = response_text.find('{')
@@ -103,6 +112,9 @@ JSON Schema:
                     conf = parsed_json.get("confidence")
                     is_valid = isinstance(conf, (int, float)) and not isinstance(conf, bool)
 
+                t_after_parse = time.time()
+                print(f"[TIMING 4/5] JSON parsing & validation complete: parse_duration={t_after_parse - t_after_api:.3f}s, elapsed={t_after_parse - t_start:.3f}s")
+
                 if is_valid:
                     result = {
                         "category": str(parsed_json["category"]),
@@ -117,6 +129,8 @@ JSON Schema:
                         "theme": str(parsed_json["theme"]),
                         "confidence": float(parsed_json["confidence"]),
                     }
+                    t_before_send = time.time()
+                    print(f"[TIMING 5/5] Sending final HTTP 200 response: total_handler_duration={t_before_send - t_start:.3f}s")
                     self._send_json(result, 200)
                 else:
                     self._send_json({"error": True, "code": "PARSE_ERROR", "message": "AI 응답 결과를 파싱할 수 없습니다."}, 500)
