@@ -233,7 +233,7 @@ export default function CaptureForm() {
 
     // 3. Multimodal AI Analysis via Vercel Python API (/api/analyze)
     try {
-      const aiResult = await analyzeSpatialImage(imgSrc, file?.name || sampleOverride?.name);
+      const aiResult = await analyzeSpatialImage(imgSrc, file?.name || sampleOverride?.name, language);
       setCategory(aiResult.category || 'Store Interior');
       setBrand(aiResult.brand || '');
       setDescription(aiResult.description || '');

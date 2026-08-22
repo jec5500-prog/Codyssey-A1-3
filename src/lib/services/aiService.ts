@@ -20,7 +20,8 @@ export interface SpatialAIAnalysisResult {
  */
 export async function analyzeSpatialImage(
   imageBase64OrUrl: string,
-  fileName?: string
+  fileName?: string,
+  lang: string = 'ko'
 ): Promise<SpatialAIAnalysisResult> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 45000);
@@ -34,6 +35,7 @@ export async function analyzeSpatialImage(
       body: JSON.stringify({
         image: imageBase64OrUrl,
         fileName: fileName || 'uploaded_spatial_photo.jpg',
+        lang: lang || 'ko',
       }),
       signal: controller.signal,
     });

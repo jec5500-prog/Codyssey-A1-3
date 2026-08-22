@@ -46,13 +46,27 @@ class handler(BaseHTTPRequestHandler):
                 self._send_json({"error": True, "code": "DECODE_ERROR", "message": "이미지 디코딩에 실패했습니다."}, 400)
                 return
 
+            # Extract requested language (default: 'ko')
+            lang = payload.get('lang') or payload.get('language') or 'ko'
+            lang_map = {
+                'ko': 'Korean',
+                'en': 'English',
+                'ja': 'Japanese',
+                'fr': 'French'
+            }
+            target_lang = lang_map.get(str(lang).lower(), 'Korean')
+
             # Call Gemini AI Client (Server Side Only)
             client = genai.Client(api_key=api_key)
-            prompt = """You are a world-class Spatial Design & Retail Visual Merchandising (VMD) AI Architect.
+            prompt = f"""You are a world-class Spatial Design & Retail Visual Merchandising (VMD) AI Architect.
 Analyze this spatial design photo and output strict valid JSON only with no markdown formatting.
 
+CRITICAL LANGUAGE INSTRUCTIONS:
+1. 'brand': Keep in original international proper noun format in English / Latin / original brand name (e.g. 'Gentle Monster', 'Chanel', 'Acne Studios', 'Independent Design'). Do NOT translate brand names.
+2. All other text fields ('category', 'description', 'style', 'materials', 'lighting', 'composition', 'objects', 'theme'): Output fluently and professionally in {target_lang}.
+
 JSON Schema:
-{
+{{
   "category": "Window" | "Store Interior" | "Store Exterior" | "Pop-up Store" | "Street" | "Exhibition",
   "brand": "Estimated Brand name or 'Independent Design'",
   "description": "2-sentence concise professional summary of the architectural and spatial design concept",
@@ -64,7 +78,7 @@ JSON Schema:
   "objects": ["Object/Prop 1", "Object/Prop 2", "Object/Prop 3"],
   "theme": "Spatial Design Theme Title",
   "confidence": 0.92
-}"""
+}}"""
 
             t_before_api = time.time()
             print(f"[TIMING 2/5] Gemini API call starting: elapsed={t_before_api - t_start:.3f}s")
