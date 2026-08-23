@@ -221,7 +221,7 @@ export default function ExplorePage() {
           </div>
           <div>
             <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider block">
-              Global Hub Cities
+              {language === 'ko' ? '글로벌 거점 도시' : language === 'ja' ? 'グローバル拠点都市' : language === 'fr' ? 'Villes Hub Mondiales' : language === 'zh' ? '全球枢纽城市' : language === 'es' ? 'Ciudades Hub Globales' : 'Global Hub Cities'}
             </span>
             <span className="text-xl font-extrabold text-orange-400 font-mono">
               {allCities.length > 0 ? allCities.length : 6}
@@ -229,7 +229,7 @@ export default function ExplorePage() {
           </div>
           <div>
             <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider block">
-              Human Verified Ratio
+              {language === 'ko' ? '휴먼 검증비율' : language === 'ja' ? '人間検証比率' : language === 'fr' ? 'Ratio de Vérification' : language === 'zh' ? '人工验证比例' : language === 'es' ? 'Ratio de Verificación Humana' : 'Human Verified Ratio'}
             </span>
             <span className="text-xl font-extrabold text-emerald-400 font-mono">
               {spots.length > 0 ? Math.round((verifiedCount / spots.length) * 100) : 100}%
@@ -237,7 +237,7 @@ export default function ExplorePage() {
           </div>
           <div>
             <span className="text-[10px] uppercase font-bold text-zinc-500 tracking-wider block">
-              Map Pins Active
+              {language === 'ko' ? '지도 핀 활성화' : language === 'ja' ? 'マップピン有効' : language === 'fr' ? 'Repères Carte Actifs' : language === 'zh' ? '地图标记点' : language === 'es' ? 'Pines de Mapa Activos' : 'Map Pins Active'}
             </span>
             <Link
               href="/map"
@@ -275,7 +275,7 @@ export default function ExplorePage() {
       {/* Spots Grid View: 3 items per row, 3 rows = 9 spots per grid page */}
       {loading && (
         <div className="p-16 text-center text-zinc-500 bg-[#18181b]/80 rounded-3xl border border-zinc-800 animate-pulse font-medium">
-          Fetching structured spatial design records...
+          {language === 'ko' ? '공간디자인 DB 레코드를 불러오는 중...' : language === 'ja' ? '空間デザインDBレコードを読み込み中...' : language === 'fr' ? 'Chargement des enregistrements spatiaux...' : language === 'zh' ? '正在获取空间设计数据库记录...' : language === 'es' ? 'Cargando registros de diseño espacial...' : 'Fetching spatial design records...'}
         </div>
       )}
 
@@ -285,9 +285,11 @@ export default function ExplorePage() {
             <Compass className="w-7 h-7" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-white">No Spatial Spots Found</h3>
+            <h3 className="text-lg font-bold text-white">
+              {language === 'ko' ? '검색된 공간 스팟이 없습니다' : language === 'ja' ? '空間スポットが見つかりません' : language === 'fr' ? 'Aucun spot spatial trouvé' : language === 'zh' ? '未找到空间点' : language === 'es' ? 'No se encontraron espacios' : 'No Spatial Spots Found'}
+            </h3>
             <p className="text-xs text-zinc-400 mt-1">
-              Try adjusting your category pills, city filters, or search terms.
+              {language === 'ko' ? '카테고리, 도시 필터 또는 검색어를 변경해 보세요.' : language === 'ja' ? 'カテゴリ、都市フィルター、または検索語を変更してみてください。' : language === 'fr' ? 'Essayez de modifier la catégorie, les filtres de ville ou les termes de recherche.' : language === 'zh' ? '请尝试调整类别、城市筛选或搜索关键词。' : language === 'es' ? 'Intente cambiar las categorías, filtros de ciudad o términos de búsqueda.' : 'Try adjusting category pills, city filters, or search terms.'}
             </p>
           </div>
         </div>
@@ -309,9 +311,7 @@ export default function ExplorePage() {
           {totalPages > 1 && (
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4 border-t border-zinc-800/80 bg-[#18181b]/60 p-4 rounded-2xl border">
               <span className="text-xs font-semibold text-zinc-400">
-                Displaying <strong className="text-white font-mono">{visibleSpots.length}</strong> of{' '}
-                <strong className="text-orange-400 font-mono">{spots.length}</strong> spots (3×3 grid, Page{' '}
-                <strong className="text-white font-mono">{currentPage}</strong> / {totalPages})
+                {language === 'ko' ? `총 ${spots.length}개 스팟 중 ${visibleSpots.length}개 표시 (3×3 그리드, ${currentPage} / ${totalPages} 페이지)` : language === 'ja' ? `全${spots.length}件中${visibleSpots.length}件を表示 (${currentPage} / ${totalPages} ページ)` : language === 'fr' ? `Affichage de ${visibleSpots.length} sur ${spots.length} spots (Page ${currentPage} / ${totalPages})` : language === 'zh' ? `显示 ${spots.length} 个空间点中的 ${visibleSpots.length} 个（第 ${currentPage} / ${totalPages} 页）` : language === 'es' ? `Mostrando ${visibleSpots.length} de ${spots.length} espacios (Página ${currentPage} / ${totalPages})` : `Displaying ${visibleSpots.length} of ${spots.length} spots (Page ${currentPage} / ${totalPages})`}
               </span>
 
               <div className="flex items-center gap-1.5">
@@ -321,7 +321,7 @@ export default function ExplorePage() {
                   disabled={currentPage === 1}
                   className="px-3 py-1.5 rounded-xl bg-[#121214] border border-zinc-800 text-xs font-bold text-zinc-300 hover:text-white hover:border-orange-500/50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                 >
-                  ← Prev
+                  {language === 'ko' ? '← 이전' : language === 'ja' ? '← 前へ' : language === 'fr' ? '← Préc' : language === 'zh' ? '← 上一页' : language === 'es' ? '← Anterior' : '← Prev'}
                 </button>
 
                 {Array.from({ length: totalPages }, (_, i) => i + 1).map((pg) => (
@@ -345,7 +345,7 @@ export default function ExplorePage() {
                   disabled={currentPage === totalPages}
                   className="px-3 py-1.5 rounded-xl bg-[#121214] border border-zinc-800 text-xs font-bold text-zinc-300 hover:text-white hover:border-orange-500/50 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                 >
-                  Next →
+                  {language === 'ko' ? '다음 →' : language === 'ja' ? '次へ →' : language === 'fr' ? 'Suiv →' : language === 'zh' ? '下一页 →' : language === 'es' ? 'Siguiente →' : 'Next →'}
                 </button>
               </div>
             </div>

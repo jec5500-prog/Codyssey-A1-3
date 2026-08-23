@@ -487,7 +487,7 @@ export default function CaptureForm() {
                   }}
                 />
                 <div className="mt-2 p-2.5 rounded-xl bg-orange-950/40 border border-orange-800/60 text-xs text-orange-300 flex items-center justify-between font-mono">
-                  <span>선택된 좌표 및 장소:</span>
+                  <span>{language === 'ko' ? '선택된 좌표 및 장소:' : language === 'ja' ? '選択された座標と場所:' : language === 'fr' ? 'Coordonnées et lieu sélectionnés :' : language === 'zh' ? '已选择的坐标与地点：' : language === 'es' ? 'Coordenadas y lugar seleccionados:' : 'Selected Coordinates & Location:'}</span>
                   <span className="font-bold text-white">
                     {city}, {country} ({latitude.toFixed(4)}, {longitude.toFixed(4)})
                   </span>
@@ -534,10 +534,10 @@ export default function CaptureForm() {
                 </div>
                 <div>
                   <p className="text-base font-bold text-white">
-                    {isDragging ? '✨ 여기에 사진을 놓으면 즉시 AI 분석이 시작됩니다!' : t('dropzoneText')}
+                    {isDragging ? (language === 'ko' ? '✨ 여기에 사진을 놓으면 즉시 AI 분석이 시작됩니다!' : language === 'ja' ? '✨ ここに写真をドロップするとAI解析が始まります！' : language === 'fr' ? '✨ Déposez la photo ici pour lancer l\'analyse IA !' : language === 'zh' ? '✨ 拖放照片至此立即开始 AI 分析！' : language === 'es' ? '✨ ¡Suelte la foto aquí para iniciar el análisis IA!' : '✨ Drop photo here to start instant AI analysis!') : t('dropzoneText')}
                   </p>
                   <p className="text-xs text-zinc-400 mt-1">
-                    📱 드래그 앤 드롭으로 사진을 넣거나, 클릭하여 갤러리/카메라 사진 선택
+                    {language === 'ko' ? '📱 드래그 앤 드롭으로 사진을 넣거나, 클릭하여 갤러리/카메라 사진 선택' : language === 'ja' ? '📱 ドラッグ＆ドロップまたはクリックで写真を選択' : language === 'fr' ? '📱 Glissez-déposez ou cliquez pour choisir une photo' : language === 'zh' ? '📱 拖放照片或点击选择相册/相机照片' : language === 'es' ? '📱 Arrastre y suelte o haga clic para seleccionar una foto' : '📱 Drag & drop or click to choose gallery / camera photo'}
                   </p>
                 </div>
               </div>
@@ -552,7 +552,7 @@ export default function CaptureForm() {
                 className="py-3.5 px-4 rounded-xl bg-zinc-800 hover:bg-zinc-700 border border-zinc-700 text-white font-extrabold text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md active:scale-95"
               >
                 <UploadCloud className="w-4 h-4 text-orange-400" />
-                <span>🖼️ 안드로이드 갤러리/앨범 사진 선택</span>
+                <span>🖼️ {language === 'ko' ? '갤러리/앨범 사진 선택' : language === 'ja' ? 'ギャラリー/アルバム写真を選択' : language === 'fr' ? 'Choisir dans la galerie' : language === 'zh' ? '从相册选择照片' : language === 'es' ? 'Seleccionar foto de galería' : 'Choose Gallery Photo'}</span>
               </button>
 
               {/* Button 2: Direct Native Camera Trigger */}
@@ -562,7 +562,7 @@ export default function CaptureForm() {
                 className="py-3.5 px-4 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-400 hover:to-amber-500 text-white font-extrabold text-xs shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-95"
               >
                 <Camera className="w-4 h-4" />
-                <span>📷 핸드폰 카메라로 직접 촬영</span>
+                <span>📷 {language === 'ko' ? '핸드폰 카메라로 직접 촬영' : language === 'ja' ? 'カメラで撮影' : language === 'fr' ? 'Prendre une photo avec l\'appareil' : language === 'zh' ? '用相机直接拍摄' : language === 'es' ? 'Tomar foto con la cámara' : 'Take Photo with Camera'}</span>
               </button>
             </div>
           </div>
@@ -602,9 +602,11 @@ export default function CaptureForm() {
             <Loader2 className="w-10 h-10 animate-spin" />
           </div>
           <div className="space-y-2">
-            <h2 className="text-xl font-bold text-white">AI Multimodal Spatial Analysis in Progress</h2>
+            <h2 className="text-xl font-bold text-white">
+              {language === 'ko' ? 'AI 멀티모달 공간 분석 진행 중' : language === 'ja' ? 'AIマルチモーダル空間解析進行中' : language === 'fr' ? 'Analyse Spatiale IA en Cours' : language === 'zh' ? 'AI 多模态空间分析进行中' : language === 'es' ? 'Análisis Espacial IA en Proceso' : 'AI Multimodal Spatial Analysis in Progress'}
+            </h2>
             <p className="text-xs text-zinc-400 max-w-sm mx-auto">
-              Extracting category, materials, lighting, style, color palette, and spatial concept from picture...
+              {language === 'ko' ? '이미지에서 카테고리, 자재, 조명, 구도, 컬러 팔레트 및 공간 컨셉을 추출하는 중입니다...' : language === 'ja' ? '画像からカテゴリ、資材、ライティング、構図、カラーパレット、空間コンセプトを抽出中...' : language === 'fr' ? 'Extraction de la catégorie, des matériaux, de l\'éclairage, du style et de la palette...' : language === 'zh' ? '正在从图片中提取类别、材质、照明、构图、色彩搭配与空间概念...' : language === 'es' ? 'Extrayendo categoría, materiales, iluminación, composición y paleta de colores...' : 'Extracting category, materials, lighting, style, color palette, and spatial concept...'}
             </p>
           </div>
         </div>
@@ -631,7 +633,7 @@ export default function CaptureForm() {
               <div className="flex items-center justify-between border-b border-zinc-800 pb-2">
                 <span className="text-orange-400 font-bold flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5" />
-                  등록 위치 및 좌표 정보
+                  {language === 'ko' ? '등록 위치 및 좌표 정보' : language === 'ja' ? '登録位置および座標情報' : language === 'fr' ? 'Localisation et coordonnées' : language === 'zh' ? '注册位置与坐标信息' : language === 'es' ? 'Ubicación y coordenadas' : 'Location & Coordinates'}
                 </span>
                 <span className="font-mono text-zinc-400 text-[11px]">
                   ({latitude.toFixed(4)}, {longitude.toFixed(4)})
@@ -640,7 +642,7 @@ export default function CaptureForm() {
 
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-[11px] font-bold text-zinc-400 mb-1">도시 (City) *</label>
+                  <label className="block text-[11px] font-bold text-zinc-400 mb-1">{language === 'ko' ? '도시 (City) *' : language === 'ja' ? '都市 (City) *' : language === 'fr' ? 'Ville (City) *' : language === 'zh' ? '城市 (City) *' : language === 'es' ? 'Ciudad (City) *' : 'City *'}</label>
                   <input
                     type="text"
                     value={city}
@@ -649,7 +651,7 @@ export default function CaptureForm() {
                   />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-zinc-400 mb-1">국가 (Country) *</label>
+                  <label className="block text-[11px] font-bold text-zinc-400 mb-1">{language === 'ko' ? '국가 (Country) *' : language === 'ja' ? '国 (Country) *' : language === 'fr' ? 'Pays (Country) *' : language === 'zh' ? '国家 (Country) *' : language === 'es' ? 'País (Country) *' : 'Country *'}</label>
                   <input
                     type="text"
                     value={country}
@@ -667,7 +669,7 @@ export default function CaptureForm() {
               <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
                 <h3 className="text-sm font-extrabold text-white flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-orange-400" />
-                  AI 분석 공간 정보
+                  {language === 'ko' ? 'AI 분석 공간 정보' : language === 'ja' ? 'AI解析空間情報' : language === 'fr' ? 'Informations Spatiales IA' : language === 'zh' ? 'AI 分析空间信息' : language === 'es' ? 'Atributos Espaciales IA' : 'AI Spatial Attributes'}
                 </h3>
                 <button
                   type="button"
@@ -675,7 +677,7 @@ export default function CaptureForm() {
                   className="text-zinc-400 hover:text-white flex items-center gap-1 text-xs"
                 >
                   <RefreshCw className="w-3.5 h-3.5 text-orange-400" />
-                  <span>다시 선택</span>
+                  <span>{language === 'ko' ? '다시 선택' : language === 'ja' ? '再選択' : language === 'fr' ? 'Rechoisir' : language === 'zh' ? '重新选择' : language === 'es' ? 'Reelegir' : 'Reselect'}</span>
                 </button>
               </div>
 
@@ -688,7 +690,7 @@ export default function CaptureForm() {
                   type="text"
                   value={brand}
                   onChange={(e) => setBrand(e.target.value)}
-                  placeholder="예: Gentle Monster, Louis Vuitton, Glossier"
+                  placeholder={language === 'ko' ? '예: Gentle Monster, Louis Vuitton' : language === 'ja' ? '例: Gentle Monster, Louis Vuitton' : language === 'fr' ? 'ex: Gentle Monster, Louis Vuitton' : language === 'zh' ? '例：Gentle Monster, Louis Vuitton' : language === 'es' ? 'ej: Gentle Monster, Louis Vuitton' : 'e.g. Gentle Monster, Louis Vuitton'}
                   className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
                 />
               </div>
@@ -707,7 +709,7 @@ export default function CaptureForm() {
                   <option value="Store Interior">Store Interior</option>
                   <option value="Store Exterior">Store Exterior</option>
                   <option value="Pop-up Store">Pop-up Store</option>
-                  <option value="Street">Street Facade</option>
+                  <option value="Street">Street / Urban</option>
                   <option value="Exhibition">Exhibition Space</option>
                 </select>
               </div>
@@ -728,13 +730,13 @@ export default function CaptureForm() {
               {/* Style */}
               <div>
                 <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">
-                  디자인 스타일 (Style)
+                  {language === 'ko' ? '디자인 스타일 (Style)' : language === 'ja' ? 'デザインスタイル' : language === 'fr' ? 'Style de Design' : language === 'zh' ? '设计风格' : language === 'es' ? 'Estilo de Diseño' : 'Design Style'}
                 </label>
                 <input
                   type="text"
                   value={style}
                   onChange={(e) => setStyle(e.target.value)}
-                  placeholder="예: Minimalist Brutalism"
+                  placeholder={language === 'ko' ? '예: Minimalist Brutalism' : language === 'ja' ? '例: Minimalist Brutalism' : language === 'fr' ? 'ex: Minimalist Brutalism' : language === 'zh' ? '例：Minimalist Brutalism' : language === 'es' ? 'ej: Minimalist Brutalism' : 'e.g. Minimalist Brutalism'}
                   className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
                 />
               </div>
@@ -744,7 +746,7 @@ export default function CaptureForm() {
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-bold text-zinc-300 uppercase flex items-center gap-1">
                     <Palette className="w-3.5 h-3.5 text-orange-400" />
-                    Color Palette 및 픽셀 점유 비중 (%)
+                    {language === 'ko' ? '컬러 팔레트 및 점유 비중 (%)' : language === 'ja' ? 'カラーパレットと占有比率 (%)' : language === 'fr' ? 'Palette de Couleurs (%)' : language === 'zh' ? '色彩搭配与占比 (%)' : language === 'es' ? 'Paleta de Colores y Proporciones (%)' : 'Color Palette & Proportions (%)'}
                   </label>
                   <span className="text-[10px] font-mono text-zinc-500">Live Canvas Analysis</span>
                 </div>
@@ -810,7 +812,7 @@ export default function CaptureForm() {
                     type="text"
                     value={newMaterialInput}
                     onChange={(e) => setNewMaterialInput(e.target.value)}
-                    placeholder="자재 추가 (예: Marble, Neon)"
+                    placeholder={language === 'ko' ? '자재 추가 (예: Marble, Neon)' : language === 'ja' ? '資材追加 (例: Marble, Neon)' : language === 'fr' ? 'Ajouter un matériau (ex: Marble)' : language === 'zh' ? '添加材质（例如：Marble, Neon）' : language === 'es' ? 'Agregar material (ej: Marble)' : 'Add material (e.g. Marble, Neon)'}
                     onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addMaterial())}
                     className="flex-1 bg-[#121214] border border-zinc-800 rounded-xl py-1.5 px-3 text-xs text-white focus:outline-none focus:border-orange-500"
                   />
@@ -828,25 +830,25 @@ export default function CaptureForm() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
                   <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">
-                    조명 설계 (Lighting)
+                    {language === 'ko' ? '조명 설계 (Lighting)' : language === 'ja' ? 'ライティング設計' : language === 'fr' ? 'Conception d\'éclairage' : language === 'zh' ? '照明设计' : language === 'es' ? 'Diseño de Iluminación' : 'Lighting Design'}
                   </label>
                   <input
                     type="text"
                     value={lighting}
                     onChange={(e) => setLighting(e.target.value)}
-                    placeholder="예: Warm Cove Ambient & Narrow Spot"
+                    placeholder={language === 'ko' ? '예: Warm Cove Ambient' : language === 'ja' ? '例: Warm Cove Ambient' : language === 'fr' ? 'ex: Warm Cove Ambient' : language === 'zh' ? '例：Warm Cove Ambient' : language === 'es' ? 'ej: Warm Cove Ambient' : 'e.g. Warm Cove Ambient'}
                     className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">
-                    공간 구도 (Composition)
+                    {language === 'ko' ? '공간 구도 (Composition)' : language === 'ja' ? '空間構図' : language === 'fr' ? 'Composition spatiale' : language === 'zh' ? '空间构图' : language === 'es' ? 'Composición espacial' : 'Spatial Composition'}
                   </label>
                   <input
                     type="text"
                     value={composition}
                     onChange={(e) => setComposition(e.target.value)}
-                    placeholder="예: Asymmetrical Monolithic Grid"
+                    placeholder={language === 'ko' ? '예: Asymmetrical Monolithic Grid' : language === 'ja' ? '例: Asymmetrical Monolithic Grid' : language === 'fr' ? 'ex: Asymmetrical Monolithic Grid' : language === 'zh' ? '例：Asymmetrical Monolithic Grid' : language === 'es' ? 'ej: Asymmetrical Monolithic Grid' : 'e.g. Asymmetrical Monolithic Grid'}
                     className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
                   />
                 </div>
@@ -876,7 +878,7 @@ export default function CaptureForm() {
                     type="text"
                     value={newObjectInput}
                     onChange={(e) => setNewObjectInput(e.target.value)}
-                    placeholder="오브제/집기 추가 (예: Glass Pedestal, Animatronic)"
+                    placeholder={language === 'ko' ? '오브제/집기 추가 (예: Glass Pedestal)' : language === 'ja' ? 'オブジェクト追加 (例: Glass Pedestal)' : language === 'fr' ? 'Ajouter un objet (ex: Glass Pedestal)' : language === 'zh' ? '添加陈列道具（例如：Glass Pedestal）' : language === 'es' ? 'Agregar objeto (ej: Glass Pedestal)' : 'Add object/prop (e.g. Glass Pedestal)'}
                     onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addObject())}
                     className="flex-1 bg-[#121214] border border-zinc-800 rounded-xl py-1.5 px-3 text-xs text-white focus:outline-none focus:border-orange-500"
                   />
@@ -893,13 +895,13 @@ export default function CaptureForm() {
               {/* Theme Title */}
               <div>
                 <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">
-                  공간 테마 (Spatial Theme)
+                  {language === 'ko' ? '공간 테마 (Spatial Theme)' : language === 'ja' ? '空間テーマ' : language === 'fr' ? 'Thème Spatial' : language === 'zh' ? '空间主题' : language === 'es' ? 'Tema Espacial' : 'Spatial Theme'}
                 </label>
                 <input
                   type="text"
                   value={theme}
                   onChange={(e) => setTheme(e.target.value)}
-                  placeholder="예: Organic Heritage Craftsmanship"
+                  placeholder={language === 'ko' ? '예: Organic Heritage Craftsmanship' : language === 'ja' ? '例: Organic Heritage Craftsmanship' : language === 'fr' ? 'ex: Organic Heritage Craftsmanship' : language === 'zh' ? '例：Organic Heritage Craftsmanship' : language === 'es' ? 'ej: Organic Heritage Craftsmanship' : 'e.g. Organic Heritage Craftsmanship'}
                   className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
                 />
               </div>
@@ -915,7 +917,7 @@ export default function CaptureForm() {
                   {saving ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Saving Spatial Intelligence Record...</span>
+                      <span>{language === 'ko' ? '저장 중...' : language === 'ja' ? '保存中...' : language === 'fr' ? 'Enregistrement...' : language === 'zh' ? '保存中...' : language === 'es' ? 'Guardando...' : 'Saving...'}</span>
                     </>
                   ) : (
                     <>
