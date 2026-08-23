@@ -20,7 +20,7 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   useEffect(() => {
     const saved = localStorage.getItem('spot_language_v1') as Language;
-    if (saved && (saved === 'ko' || saved === 'en' || saved === 'ja' || saved === 'fr')) {
+    if (saved && (saved === 'ko' || saved === 'en' || saved === 'ja' || saved === 'fr' || saved === 'zh' || saved === 'es')) {
       setLanguageState(saved);
     }
   }, []);

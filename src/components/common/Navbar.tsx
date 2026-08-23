@@ -32,6 +32,8 @@ export default function Navbar() {
     { code: 'en', label: '🇺🇸 English' },
     { code: 'ja', label: '🇯🇵 日本語' },
     { code: 'fr', label: '🇫🇷 Français' },
+    { code: 'zh', label: '🇨🇳 中文' },
+    { code: 'es', label: '🇪🇸 Español' },
   ];
 
   // Close dropdown on click outside

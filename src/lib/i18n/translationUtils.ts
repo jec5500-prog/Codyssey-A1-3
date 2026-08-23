@@ -3,7 +3,7 @@ import { Language } from './translations';
 /**
  * Category Translations
  */
-const CATEGORY_MAP: Record<string, Record<Language, string>> = {
+const CATEGORY_MAP: Record<string, Partial<Record<Language, string>>> = {
   All: {
     ko: '전체 카테고리',
     en: 'All Categories',
@@ -51,7 +51,7 @@ const CATEGORY_MAP: Record<string, Record<Language, string>> = {
 /**
  * Country Translations
  */
-const COUNTRY_MAP: Record<string, Record<Language, string>> = {
+const COUNTRY_MAP: Record<string, Partial<Record<Language, string>>> = {
   All: {
     ko: '글로벌 (전체 국가)',
     en: 'Global (All Countries)',
@@ -105,7 +105,7 @@ const COUNTRY_MAP: Record<string, Record<Language, string>> = {
 /**
  * City Translations
  */
-const CITY_MAP: Record<string, Record<Language, string>> = {
+const CITY_MAP: Record<string, Partial<Record<Language, string>>> = {
   All: {
     ko: '전체 도시',
     en: 'All Cities',
@@ -153,7 +153,7 @@ const CITY_MAP: Record<string, Record<Language, string>> = {
 /**
  * Design Material / Style / Lighting / Composition term Translations
  */
-const ATTRIBUTE_MAP: Record<string, Record<Language, string>> = {
+const ATTRIBUTE_MAP: Record<string, Partial<Record<Language, string>>> = {
   // Styles
   'Cyberpunk Industrial': {
     ko: '사이버펑크 인더스트리얼',
@@ -644,7 +644,7 @@ export function translateAttribute(term: string, lang: Language): string {
 /**
  * Description & Notes Multilingual Translation Map
  */
-const DESCRIPTION_MAP: Record<string, Record<Language, string>> = {
+const DESCRIPTION_MAP: Record<string, Partial<Record<Language, string>>> = {
   'Hyper-real kinetic sculpture installation integrated with brushed steel retail counters in Ginza.': {
     ko: '긴자 매장에 설치된 극실사 키네틱 조형물 및 헤어라인 스틸 전시대의 미래지향적 공간 디스플레이.',
     en: 'Hyper-real kinetic sculpture installation integrated with brushed steel retail counters in Ginza.',

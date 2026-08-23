@@ -1,4 +1,4 @@
-export type Language = 'ko' | 'en' | 'ja' | 'fr';
+export type Language = 'ko' | 'en' | 'ja' | 'fr' | 'zh' | 'es';
 
 export const translations = {
   ko: {
@@ -565,4 +565,10 @@ export const translations = {
     profileRequireAuthTitle: 'Connexion requise',
     profileRequireAuthDesc: 'Veuillez vous connecter pour gérer votre profil.',
   },
+  zh: {} as any,
+  es: {} as any,
 };
+
+// Fallback runtime assignment to English dictionary
+(translations as any).zh = translations.en;
+(translations as any).es = translations.en;

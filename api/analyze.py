@@ -52,7 +52,9 @@ class handler(BaseHTTPRequestHandler):
                 'ko': 'Korean',
                 'en': 'English',
                 'ja': 'Japanese',
-                'fr': 'French'
+                'fr': 'French',
+                'zh': 'Chinese',
+                'es': 'Spanish'
             }
             target_lang = lang_map.get(str(lang).lower(), 'Korean')
 
@@ -63,7 +65,8 @@ Analyze this spatial design photo and output strict valid JSON only with no mark
 
 CRITICAL LANGUAGE INSTRUCTIONS:
 1. 'brand': Keep in original international proper noun format in English / Latin / original brand name (e.g. 'Gentle Monster', 'Chanel', 'Acne Studios', 'Independent Design'). Do NOT translate brand names.
-2. All other text fields ('category', 'description', 'style', 'materials', 'lighting', 'composition', 'objects', 'theme'): Output fluently and professionally in {target_lang}.
+2. All other natural language text fields ('category', 'description', 'style', 'materials', 'lighting', 'composition', 'objects', 'theme'): Output fluently and professionally in {target_lang}. Ensure that 'category' and 'style' are fully translated into {target_lang} (do NOT leave them in English).
+3. Non-text data (e.g., 'colors' HEX codes, 'confidence' numeric scores) must retain standard format.
 
 JSON Schema:
 {{
