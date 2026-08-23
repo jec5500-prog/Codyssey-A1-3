@@ -585,6 +585,8 @@ export function getLocale(lang: Language): string {
     case 'ko': return 'ko-KR';
     case 'ja': return 'ja-JP';
     case 'fr': return 'fr-FR';
+    case 'zh': return 'zh-CN';
+    case 'es': return 'es-ES';
     default: return 'en-US';
   }
 }

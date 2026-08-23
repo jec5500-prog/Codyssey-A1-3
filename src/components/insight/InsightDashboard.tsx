@@ -110,8 +110,8 @@ export default function InsightDashboard({ availableCountries }: InsightDashboar
 
       {/* LOADING */}
       {loading && (
-        <div className="p-12 text-center text-zinc-500 bg-zinc-900/50 rounded-3xl border border-zinc-800">
-          {language === 'ko' ? '데이터베이스 기록을 분석 중입니다...' : 'Analyzing database records...'}
+        <div className="p-12 text-center text-zinc-500 bg-zinc-900/50 rounded-3xl border border-zinc-800 font-medium">
+          {language === 'ko' ? '데이터베이스 기록을 분석 중입니다...' : language === 'ja' ? 'データベースの記録を分析中...' : language === 'fr' ? 'Analyse des données en cours...' : language === 'zh' ? '正在分析数据库记录...' : language === 'es' ? 'Analizando registros de base de datos...' : 'Analyzing database records...'}
         </div>
       )}
 
@@ -157,13 +157,13 @@ export default function InsightDashboard({ availableCountries }: InsightDashboar
                   {report.scope}
                 </span>
                 <h2 className="text-2xl font-extrabold text-white tracking-tight mt-0.5">
-                  {language === 'ko' ? '글로벌 공간디자인 트렌드 분석 리포트' : 'Spatial Design Trend Report'}
+                  {language === 'ko' ? '글로벌 공간디자인 트렌드 분석 리포트' : language === 'ja' ? 'グローバル空間デザイントレンド分析レポート' : language === 'fr' ? 'Rapport de Tendances du Design Spatial Global' : language === 'zh' ? '全球空间设计趋势分析报告' : language === 'es' ? 'Informe de Tendencias de Diseño Espacial Global' : 'Spatial Design Trend Report'}
                 </h2>
               </div>
               <div className="flex items-center gap-2 bg-zinc-950 px-3 py-1.5 rounded-xl border border-zinc-800 text-xs text-zinc-300">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                 <span>
-                  {language === 'ko' ? `총 ${report.spotCount}개 검증 데이터 집계` : `Aggregated from ${report.spotCount} DB Records`}
+                  {language === 'ko' ? `총 ${report.spotCount}개 검증 데이터 집계` : language === 'ja' ? `計${report.spotCount}件の検証済みデータを集計` : language === 'fr' ? `Agrégé à partir de ${report.spotCount} enregistrements` : language === 'zh' ? `已汇总 ${report.spotCount} 条验证数据` : language === 'es' ? `Agregado de ${report.spotCount} registros verificados` : `Aggregated from ${report.spotCount} DB Records`}
                 </span>
               </div>
             </div>

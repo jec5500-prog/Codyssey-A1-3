@@ -419,7 +419,7 @@ export default function CaptureForm() {
                   className="px-3.5 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-extrabold text-xs flex items-center gap-1.5 shadow-md shrink-0 cursor-pointer transition-colors"
                 >
                   <RefreshCw className="w-3.5 h-3.5" />
-                  <span>다시 시도 (Retry)</span>
+                  <span>{language === 'ko' ? '다시 시도 (Retry)' : language === 'ja' ? '再試行 (Retry)' : language === 'fr' ? 'Réessayer (Retry)' : language === 'zh' ? '重试 (Retry)' : language === 'es' ? 'Reintentar (Retry)' : 'Retry'}</span>
                 </button>
               )}
             </div>
@@ -428,7 +428,7 @@ export default function CaptureForm() {
           {/* REGISTRATION MODE SELECTOR */}
           <div className="space-y-3 p-4 rounded-2xl bg-[#121214] border border-zinc-800">
             <label className="block text-xs font-extrabold text-orange-400 uppercase tracking-wider">
-              ⚙️ {language === 'ko' ? '위치 및 공간 정보 등록 방식 선택' : language === 'ja' ? '位置および空間情報登録方式の選択' : language === 'fr' ? 'Mode d\'enregistrement de la localisation' : 'Select Registration Mode'}
+              ⚙️ {language === 'ko' ? '위치 및 공간 정보 등록 방식 선택' : language === 'ja' ? '位置および空間情報登録方式の選択' : language === 'fr' ? 'Mode d\'enregistrement de la localisation' : language === 'zh' ? '选择位置与空间信息注册模式' : language === 'es' ? 'Seleccionar Modo de Registro de Ubicación' : 'Select Registration Mode'}
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <button
@@ -446,7 +446,7 @@ export default function CaptureForm() {
                 <div>
                   <h4 className="text-xs font-bold text-white">{t('modeAiExif')}</h4>
                   <p className="text-[11px] text-zinc-400 mt-0.5">
-                    {language === 'ko' ? '사진의 EXIF GPS 데이터와 시각 디자인 요소를 AI가 자동으로 추출합니다.' : language === 'ja' ? '写真のEXIF GPSデータとデザイン要素をAIが自動抽出します。' : language === 'fr' ? 'L\'IA extrait automatiquement les données EXIF GPS et les éléments visuels.' : 'AI automatically extracts EXIF GPS and visual design attributes.'}
+                    {language === 'ko' ? '사진의 EXIF GPS 데이터와 시각 디자인 요소를 AI가 자동으로 추출합니다.' : language === 'ja' ? '写真のEXIF GPSデータとデザイン要素をAIが自動抽出します。' : language === 'fr' ? 'L\'IA extrait automatiquement les données EXIF GPS et les éléments visuels.' : language === 'zh' ? 'AI 自动提取照片 EXIF GPS 数据与视觉设计要素。' : language === 'es' ? 'La IA extrae automáticamente datos GPS EXIF y atributos visuales.' : 'AI automatically extracts EXIF GPS and visual design attributes.'}
                   </p>
                 </div>
               </button>
@@ -464,8 +464,9 @@ export default function CaptureForm() {
                   <MapIcon className="w-4 h-4" />
                 </div>
                 <div>
+                  <h4 className="text-xs font-bold text-white">{t('modeDirectMap')}</h4>
                   <p className="text-[11px] text-zinc-400 mt-0.5">
-                    {language === 'ko' ? '지도를 직접 클릭하거나 드래그하여 정확한 위치 핀을 지정합니다.' : language === 'ja' ? 'マップをクリックして正確なピン位置を指定します。' : language === 'fr' ? 'Cliquez sur la carte pour placer précisément le repère.' : 'Click or drag on the map to set exact GPS pin coordinates.'}
+                    {language === 'ko' ? '지도를 직접 클릭하거나 드래그하여 정확한 위치 핀을 지정합니다.' : language === 'ja' ? 'マップをクリックして正確なピン位置を指定します。' : language === 'fr' ? 'Cliquez sur la carte pour placer précisément le repère.' : language === 'zh' ? '在地图上点击或拖拽以指定精确位置标记。' : language === 'es' ? 'Haga clic o arrastre en el mapa para establecer el pin de ubicación exacto.' : 'Click or drag on the map to set exact GPS pin coordinates.'}
                   </p>
                 </div>
               </button>

@@ -135,10 +135,10 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
         </div>
       </div>
 
-      {/* LOADING STATE */}
+      {/* LOADING STATE MATRIX */}
       {loading && (
-        <div className="p-12 text-center text-zinc-500 bg-zinc-900/50 rounded-3xl border border-zinc-800 font-medium">
-          {language === 'ko' ? '글로벌 데이터베이스 매트릭스 분석 중...' : language === 'ja' ? 'グローバルデータベースの比較メトリクスを収集中...' : language === 'fr' ? 'Agrégation des métriques en cours...' : 'Aggregating field database metrics...'}
+        <div className="w-full py-20 flex items-center justify-center text-sm text-zinc-400 bg-zinc-900/50 rounded-3xl border border-zinc-800 font-medium">
+          {language === 'ko' ? '글로벌 데이터베이스 매트릭스 분석 중...' : language === 'ja' ? 'グローバルデータベースの比較メトリクスを収集中...' : language === 'fr' ? 'Agrégation des métriques en cours...' : language === 'zh' ? '正在聚合全球数据库对比指标...' : language === 'es' ? 'Agregando métricas comparativas...' : 'Aggregating field database metrics...'}
         </div>
       )}
 
@@ -161,7 +161,7 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
               <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
                 <div>
                   <h3 className="font-bold text-lg text-orange-300">{formatLocName(metrics.entityA.name)}</h3>
-                  <p className="text-xs text-zinc-400">{metrics.entityA.count} {language === 'ko' ? '개 공간 수집됨' : language === 'ja' ? '件のスポットが記録されました' : language === 'fr' ? 'spots enregistrés' : 'Field Spots Recorded'}</p>
+                  <p className="text-xs text-zinc-400">{metrics.entityA.count} {language === 'ko' ? '개 공간 수집됨' : language === 'ja' ? '件のスポットが記録されました' : language === 'fr' ? 'spots enregistrés' : language === 'zh' ? '个已记录空间' : language === 'es' ? 'espacios registrados' : 'Field Spots Recorded'}</p>
                 </div>
                 <Tag className="w-5 h-5 text-orange-400" />
               </div>
@@ -169,7 +169,7 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
               <div className="space-y-3">
                 <p className="text-xs font-bold text-zinc-400 uppercase">{t('topMaterials')}</p>
                 {metrics.entityA.topMaterials.length === 0 ? (
-                  <p className="text-xs text-zinc-500 italic">{language === 'ko' ? '기록된 자재 데이터가 없습니다.' : language === 'ja' ? '記録された素材データはありません。' : language === 'fr' ? 'Aucune donnée de matériau.' : 'No material data recorded yet.'}</p>
+                  <p className="text-xs text-zinc-500 italic">{language === 'ko' ? '기록된 자재 데이터가 없습니다.' : language === 'ja' ? '記録された素材データはありません。' : language === 'fr' ? 'Aucune donnée de matériau.' : language === 'zh' ? '暂无记录的材质数据。' : language === 'es' ? 'Sin datos de materiales aún.' : 'No material data recorded yet.'}</p>
                 ) : (
                   metrics.entityA.topMaterials.map((mat, i) => (
                     <div key={i} className="space-y-1">
@@ -208,7 +208,7 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
               <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
                 <div>
                   <h3 className="font-bold text-lg text-amber-300">{formatLocName(metrics.entityB.name)}</h3>
-                  <p className="text-xs text-zinc-400">{metrics.entityB.count} Field Spots Recorded</p>
+                  <p className="text-xs text-zinc-400">{metrics.entityB.count} {language === 'ko' ? '개 공간 수집됨' : language === 'ja' ? '件のスポットが記録されました' : language === 'fr' ? 'spots enregistrés' : language === 'zh' ? '个已记录空间' : language === 'es' ? 'espacios registrados' : 'Field Spots Recorded'}</p>
                 </div>
                 <Tag className="w-5 h-5 text-amber-400" />
               </div>
@@ -216,7 +216,7 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
               <div className="space-y-3">
                 <p className="text-xs font-bold text-zinc-400 uppercase">{t('topMaterials')}</p>
                 {metrics.entityB.topMaterials.length === 0 ? (
-                  <p className="text-xs text-zinc-500 italic">No material data recorded yet.</p>
+                  <p className="text-xs text-zinc-500 italic">{language === 'ko' ? '기록된 자재 데이터가 없습니다.' : language === 'ja' ? '記録された素材データはありません。' : language === 'fr' ? 'Aucune donnée de matériau.' : language === 'zh' ? '暂无记录的材质数据。' : language === 'es' ? 'Sin datos de materiales aún.' : 'No material data recorded yet.'}</p>
                 ) : (
                   metrics.entityB.topMaterials.map((mat, i) => (
                     <div key={i} className="space-y-1">

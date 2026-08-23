@@ -134,7 +134,7 @@ export default function ExplorePage() {
                   <span className="text-orange-500 group-hover:translate-x-1 transition-transform font-bold">→</span>
                 </div>
                 <p className="text-xs text-zinc-400 font-medium">
-                  {language === 'ko' ? '현장 공간 촬영 및 AI 자동 속성 추출' : 'Capture Spatial Photos & AI Attributes'}
+                  {language === 'ko' ? '현장 공간 촬영 및 AI 자동 속성 추출' : language === 'ja' ? '現場の空間撮影およびAI自動属性抽出' : language === 'fr' ? 'Capture photo sur le terrain & extraction IA' : language === 'zh' ? '现场空间拍摄与 AI 自动属性提取' : language === 'es' ? 'Captura espacial de campo y extracción IA' : 'Capture Spatial Photos & AI Attributes'}
                 </p>
               </div>
             </Link>
@@ -156,7 +156,7 @@ export default function ExplorePage() {
                   <span className="text-xs font-mono font-bold text-orange-400">CURRENT</span>
                 </div>
                 <p className="text-xs text-zinc-300 font-medium">
-                  {language === 'ko' ? '글로벌 공간 DB 다차원 스마트 탐색' : 'Global Spatial DB Smart Exploration'}
+                  {language === 'ko' ? '글로벌 공간 DB 다차원 스마트 탐색' : language === 'ja' ? 'グローバル空間DB多次元スマート探索' : language === 'fr' ? 'Exploration intelligente de la base spatiale' : language === 'zh' ? '全球空间数据库多维智能探索' : language === 'es' ? 'Exploración inteligente de base espacial global' : 'Global Spatial DB Smart Exploration'}
                 </p>
               </div>
             </div>
@@ -180,7 +180,7 @@ export default function ExplorePage() {
                   <span className="text-orange-500 group-hover:translate-x-1 transition-transform font-bold">→</span>
                 </div>
                 <p className="text-xs text-zinc-400 font-medium">
-                  {language === 'ko' ? '도시/브랜드 교차 데이터 비교 분석' : 'City & Brand Cross-Data Comparison'}
+                  {language === 'ko' ? '도시/브랜드 교차 데이터 비교 분석' : language === 'ja' ? '都市・ブランドのクロスデータ比較分析' : language === 'fr' ? 'Analyse comparative entre villes et marques' : language === 'zh' ? '城市与品牌交叉数据对比分析' : language === 'es' ? 'Análisis comparativo cruzado de ciudades y marcas' : 'City & Brand Cross-Data Comparison'}
                 </p>
               </div>
             </Link>
@@ -204,7 +204,7 @@ export default function ExplorePage() {
                   <span className="text-amber-500 group-hover:translate-x-1 transition-transform font-bold">→</span>
                 </div>
                 <p className="text-xs text-zinc-400 font-medium">
-                  {language === 'ko' ? 'VMD & 공간 지능 AI 리포트 생성' : 'VMD & Spatial AI Report Generator'}
+                  {language === 'ko' ? 'VMD & 공간 지능 AI 리포트 생성' : language === 'ja' ? 'VMD＆空間インテリジェンスAIレポート生成' : language === 'fr' ? 'Générateur de rapports IA VMD & Spatiaux' : language === 'zh' ? 'VMD 与空间智能 AI 报告生成' : language === 'es' ? 'Generador de informes IA de VMD e Inteligencia Espacial' : 'VMD & Spatial AI Report Generator'}
                 </p>
               </div>
             </Link>

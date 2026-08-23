@@ -452,6 +452,10 @@ export default function SpotDetailModal({
                       ? 'AIマルチモーダル空間情報'
                       : language === 'fr'
                       ? 'Informations Spatiales IA'
+                      : language === 'zh'
+                      ? 'AI 多模态空间属性'
+                      : language === 'es'
+                      ? 'Atributos Espaciales Multimodales IA'
                       : 'AI Multimodal Spatial Attributes'}
                   </h3>
 
@@ -461,7 +465,7 @@ export default function SpotDetailModal({
                       <div className="p-2.5 rounded-xl bg-[#121214] border border-zinc-800 flex items-center justify-between">
                         <span className="text-zinc-400 flex items-center gap-1.5 font-bold">
                           <Layers className="w-3.5 h-3.5 text-orange-400" />
-                          {language === 'ko' ? '스타일 (Style)' : language === 'ja' ? 'スタイル' : language === 'fr' ? 'Style' : 'Style'}
+                          {language === 'ko' ? '스타일 (Style)' : language === 'ja' ? 'スタイル' : language === 'fr' ? 'Style' : language === 'zh' ? '风格' : language === 'es' ? 'Estilo' : 'Style'}
                         </span>
                         <span className="font-bold text-white">
                           {translateAttribute(spot.attributes.style, language)}
@@ -474,7 +478,7 @@ export default function SpotDetailModal({
                       <div className="p-2.5 rounded-xl bg-[#121214] border border-zinc-800 flex items-center justify-between">
                         <span className="text-zinc-400 flex items-center gap-1.5 font-bold">
                           <Sun className="w-3.5 h-3.5 text-orange-400" />
-                          {language === 'ko' ? '조명 (Lighting)' : language === 'ja' ? 'ライティング' : language === 'fr' ? 'Éclairage' : 'Lighting'}
+                          {language === 'ko' ? '조명 (Lighting)' : language === 'ja' ? 'ライティング' : language === 'fr' ? 'Éclairage' : language === 'zh' ? '照明' : language === 'es' ? 'Iluminación' : 'Lighting'}
                         </span>
                         <span className="font-semibold text-white">
                           {translateAttribute(spot.attributes.lighting, language)}
@@ -487,7 +491,7 @@ export default function SpotDetailModal({
                       <div className="p-2.5 rounded-xl bg-[#121214] border border-zinc-800 flex items-center justify-between">
                         <span className="text-zinc-400 flex items-center gap-1.5 font-bold">
                           <Box className="w-3.5 h-3.5 text-orange-400" />
-                          {language === 'ko' ? '구도 (Composition)' : language === 'ja' ? '構図' : language === 'fr' ? 'Composition' : 'Composition'}
+                          {language === 'ko' ? '구도 (Composition)' : language === 'ja' ? '構図' : language === 'fr' ? 'Composition' : language === 'zh' ? '构图' : language === 'es' ? 'Composición' : 'Composition'}
                         </span>
                         <span className="font-semibold text-white">
                           {translateAttribute(spot.attributes.composition, language)}
@@ -507,6 +511,10 @@ export default function SpotDetailModal({
                               ? 'カラーパレットと占有比率 (%)'
                               : language === 'fr'
                               ? 'Palette de Couleurs (%)'
+                              : language === 'zh'
+                              ? '色彩搭配与占比 (%)'
+                              : language === 'es'
+                              ? 'Paleta de Colores y Proporciones (%)'
                               : 'Color Palette & Proportions (%)'}
                           </span>
                           <span className="text-[10px] text-zinc-500 font-mono">Pixel Distribution</span>
@@ -547,7 +555,7 @@ export default function SpotDetailModal({
                       <div className="p-2.5 rounded-xl bg-[#121214] border border-zinc-800 space-y-1.5">
                         <span className="text-zinc-400 flex items-center gap-1.5 font-bold">
                           <Tag className="w-3.5 h-3.5 text-orange-400" />
-                          {language === 'ko' ? '사용 자재 (Materials)' : language === 'ja' ? '使用資材' : language === 'fr' ? 'Matériaux Utilisés' : 'Materials & Elements'}
+                          {language === 'ko' ? '사용 자재 (Materials)' : language === 'ja' ? '使用資材' : language === 'fr' ? 'Matériaux Utilisés' : language === 'zh' ? '主要材质' : language === 'es' ? 'Materiales Utilizados' : 'Materials & Elements'}
                         </span>
                         <div className="flex items-center gap-1.5 flex-wrap">
                           {spot.attributes.materials.map((mat, idx) => (

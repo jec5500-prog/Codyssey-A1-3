@@ -59,7 +59,7 @@ export default function SavedGallery() {
                 : 'bg-zinc-900 text-zinc-400 hover:text-zinc-200 border border-zinc-800'
             }`}
           >
-            {language === 'ko' ? `전체 저장목록 (${savedItems.length})` : language === 'ja' ? `すべての保存 (${savedItems.length})` : language === 'fr' ? `Tous Enregistrés (${savedItems.length})` : `All Saved (${savedItems.length})`}
+            {language === 'ko' ? `전체 저장목록 (${savedItems.length})` : language === 'ja' ? `すべての保存 (${savedItems.length})` : language === 'fr' ? `Tous Enregistrés (${savedItems.length})` : language === 'zh' ? `所有已保存 (${savedItems.length})` : language === 'es' ? `Todos los Guardados (${savedItems.length})` : `All Saved (${savedItems.length})`}
           </button>
           {collections.map((col) => (
             <button
@@ -80,7 +80,7 @@ export default function SavedGallery() {
       {/* LOADING */}
       {loading && (
         <div className="p-12 text-center text-zinc-500 bg-zinc-900/50 rounded-3xl border border-zinc-800">
-          {language === 'ko' ? '저장된 공간을 불러오는 중입니다...' : 'Loading saved spatial spots...'}
+          {language === 'ko' ? '저장된 공간을 불러오는 중입니다...' : language === 'ja' ? '保存されたスポットを読み込み中...' : language === 'fr' ? 'Chargement des spots enregistrés...' : language === 'zh' ? '正在加载已保存的空间...' : language === 'es' ? 'Cargando espacios guardados...' : 'Loading saved spatial spots...'}
         </div>
       )}
 

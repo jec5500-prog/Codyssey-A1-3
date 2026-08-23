@@ -130,7 +130,7 @@ export default function SpotCard({ spot, onSelect, isSavedInitial = false }: Spo
               {cardColors && cardColors.length > 0 && (
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
-                    {language === 'ko' ? '컬러 팔레트' : language === 'ja' ? 'パレット' : language === 'fr' ? 'Palette' : 'Palette'}
+                    {language === 'ko' ? '컬러 팔레트' : language === 'ja' ? 'パレット' : language === 'fr' ? 'Palette' : language === 'zh' ? '色彩搭配' : language === 'es' ? 'Paleta de Colores' : 'Palette'}
                   </span>
                   <div className="flex items-center gap-1.5">
                     {cardColors.slice(0, 4).map((hex, idx) => (
