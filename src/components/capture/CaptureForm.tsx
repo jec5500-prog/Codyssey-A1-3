@@ -330,7 +330,7 @@ export default function CaptureForm() {
         style,
         lighting,
         composition,
-        objects: materials,
+        objects,
         theme,
       },
       ai_analysis: {
@@ -347,7 +347,7 @@ export default function CaptureForm() {
           materials,
           lighting,
           composition,
-          objects: materials,
+          objects,
           theme,
         },
       },
