@@ -272,13 +272,13 @@ export default function UserManagement() {
   const getStatusLabel = (status?: UserStatus) => {
     switch (status) {
       case 'active':
-        return '활성 (Active)';
+        return language === 'ko' ? '활성 (Active)' : language === 'ja' ? 'アクティブ' : language === 'fr' ? 'Actif' : language === 'zh' ? '活跃' : language === 'es' ? 'Activo' : 'Active';
       case 'inactive':
-        return '비활성 (Inactive)';
+        return language === 'ko' ? '비활성 (Inactive)' : language === 'ja' ? '非アクティブ' : language === 'fr' ? 'Inactif' : language === 'zh' ? '未激活' : language === 'es' ? 'Inactivo' : 'Inactive';
       case 'suspended':
-        return '정지 (Suspended)';
+        return language === 'ko' ? '정지 (Suspended)' : language === 'ja' ? '停止中' : language === 'fr' ? 'Suspendu' : language === 'zh' ? '已封禁' : language === 'es' ? 'Suspendido' : 'Suspended';
       default:
-        return '활성 (Active)';
+        return language === 'ko' ? '활성 (Active)' : language === 'ja' ? 'アクティブ' : language === 'fr' ? 'Actif' : language === 'zh' ? '活跃' : language === 'es' ? 'Activo' : 'Active';
     }
   };
 
@@ -288,28 +288,28 @@ export default function UserManagement() {
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800/80">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            활성
+            {language === 'ko' ? '활성' : language === 'ja' ? 'アクティブ' : language === 'fr' ? 'Actif' : language === 'zh' ? '活跃' : language === 'es' ? 'Activo' : 'Active'}
           </span>
         );
       case 'inactive':
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-zinc-800 text-zinc-400 border border-zinc-700">
             <span className="w-1.5 h-1.5 rounded-full bg-zinc-500"></span>
-            비활성
+            {language === 'ko' ? '비활성' : language === 'ja' ? '非アクティブ' : language === 'fr' ? 'Inactif' : language === 'zh' ? '未激活' : language === 'es' ? 'Inactivo' : 'Inactive'}
           </span>
         );
       case 'suspended':
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-rose-950/80 text-rose-400 border border-rose-800/80">
-            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span>
-            정지
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+            {language === 'ko' ? '정지' : language === 'ja' ? '停止中' : language === 'fr' ? 'Suspendu' : language === 'zh' ? '已封禁' : language === 'es' ? 'Suspendido' : 'Suspended'}
           </span>
         );
       default:
         return (
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-950/80 text-emerald-400 border border-emerald-800/80">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-            활성
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+            {language === 'ko' ? '활성' : language === 'ja' ? 'アクティブ' : language === 'fr' ? 'Actif' : language === 'zh' ? '活跃' : language === 'es' ? 'Activo' : 'Active'}
           </span>
         );
     }
@@ -329,10 +329,10 @@ export default function UserManagement() {
 
           <div className="space-y-2 max-w-lg mx-auto">
             <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              관리자 전용 페이지 접근 권한 안내
+              {language === 'ko' ? '관리자 전용 페이지 접근 권한 안내' : language === 'ja' ? '管理者専用ページ アクセス権限のご案内' : language === 'fr' ? 'Accès Réservé aux Administrateurs' : language === 'zh' ? '管理员专用页面访问权限提示' : language === 'es' ? 'Acceso Reservado a Administradores' : 'Admin Access Required'}
             </h1>
             <p className="text-xs sm:text-sm text-zinc-400 leading-relaxed">
-              본 회원관리 페이지는 <span className="text-orange-400 font-bold">Admin 권한</span>을 보유한 사용자만 접근 및 조회가 가능합니다. 현재 로그인된 사용자({user?.name || '비로그인'})는 관리자 권한이 없습니다.
+              {language === 'ko' ? `본 회원관리 페이지는 Admin 권한을 보유한 사용자만 접근이 가능합니다. (현재 사용자: ${user?.name || '비로그인'})` : language === 'ja' ? `本ページは管理者権限(Admin)をお持ちの方のみアクセス可能です。(現在のユーザー: ${user?.name || '未ログイン'})` : language === 'fr' ? `Cette page est réservée aux administrateurs. (Utilisateur actuel : ${user?.name || 'Non connecté'})` : language === 'zh' ? `本页面仅限具有 Admin 权限的用户访问。（当前用户：${user?.name || '未登录'}）` : language === 'es' ? `Esta página está reservada a administradores. (Usuario actual: ${user?.name || 'No conectado'})` : `This member management dashboard requires Admin privileges. (Current user: ${user?.name || 'Not logged in'})`}
             </p>
           </div>
 
@@ -342,7 +342,7 @@ export default function UserManagement() {
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 border border-zinc-700 font-semibold text-xs transition-colors cursor-pointer"
             >
               <UserIcon className="w-4 h-4 text-zinc-400" />
-              <span>로그인 화면 열기</span>
+              <span>{language === 'ko' ? '로그인 화면 열기' : language === 'ja' ? 'ログイン画面を開く' : language === 'fr' ? 'Ouvrir la connexion' : language === 'zh' ? '打开登录界面' : language === 'es' ? 'Abrir inicio de sesión' : 'Open Login'}</span>
             </button>
           </div>
         </div>

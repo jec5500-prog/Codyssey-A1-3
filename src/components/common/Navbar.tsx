@@ -147,7 +147,7 @@ export default function Navbar() {
                 }`}
               >
                 <ShieldCheck className="w-4 h-4 text-orange-400" />
-                <span>관리자</span>
+                <span>{language === 'ko' ? '관리자' : language === 'ja' ? '管理者' : language === 'fr' ? 'Admin' : language === 'zh' ? '管理员' : language === 'es' ? 'Admin' : 'Admin'}</span>
               </Link>
             ) : null}
           </nav>
@@ -158,16 +158,16 @@ export default function Navbar() {
             <button
               onClick={handleDetectLocation}
               disabled={locating}
-              title="실시간 내 위치 GPS 확인"
+              title={language === 'ko' ? '실시간 내 위치 GPS 확인' : language === 'ja' ? '現在地 GPS 確認' : language === 'fr' ? 'Vérifier la position GPS en direct' : language === 'zh' ? '检查实时 GPS 位置' : language === 'es' ? 'Verificar GPS en tiempo real' : 'Check Live GPS Location'}
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-[#18181b] border border-zinc-800 hover:border-emerald-500/60 text-xs text-zinc-300 hover:text-emerald-400 transition-all cursor-pointer shadow-xs"
             >
               <MapPin className={`w-3.5 h-3.5 ${userLocation ? 'text-emerald-400 animate-bounce' : locating ? 'text-amber-400 animate-spin' : 'text-zinc-400'}`} />
               <span className="hidden lg:inline text-[11px] font-bold">
                 {locating
-                  ? '위치 확인 중...'
+                  ? (language === 'ko' ? '위치 확인 중...' : language === 'ja' ? '位置確認中...' : language === 'fr' ? 'Localisation...' : language === 'zh' ? '正在定位...' : language === 'es' ? 'Localizando...' : 'Locating...')
                   : userLocation
                   ? `${userLocation.city}`
-                  : '내 위치 GPS'}
+                  : (language === 'ko' ? '내 위치 GPS' : language === 'ja' ? '現在地 GPS' : language === 'fr' ? 'Mon GPS' : language === 'zh' ? '我的 GPS' : language === 'es' ? 'Mi GPS' : 'My GPS')}
               </span>
             </button>
 
@@ -233,7 +233,7 @@ export default function Navbar() {
                         className="w-full px-4 py-2 text-xs text-orange-300 hover:text-white hover:bg-orange-950/50 flex items-center gap-2 transition-colors font-bold border-y border-zinc-800/80 my-0.5"
                       >
                         <ShieldCheck className="w-4 h-4 text-orange-400 animate-pulse" />
-                        <span>회원 관리 (Admin)</span>
+                        <span>{language === 'ko' ? '회원 관리 (Admin)' : language === 'ja' ? '会員管理 (Admin)' : language === 'fr' ? 'Gestion Utilisateurs (Admin)' : language === 'zh' ? '用户管理 (Admin)' : language === 'es' ? 'Gestión de Usuarios (Admin)' : 'User Management (Admin)'}</span>
                       </Link>
 
                       <button
@@ -336,7 +336,7 @@ export default function Navbar() {
           }`}
         >
           <UserIcon className="w-5 h-5" />
-          <span>{user ? '프로필' : t('signIn')}</span>
+          <span>{user ? (language === 'ko' ? '프로필' : language === 'ja' ? 'マイページ' : language === 'fr' ? 'Profil' : language === 'zh' ? '个人资料' : language === 'es' ? 'Perfil' : 'Profile') : t('signIn')}</span>
         </Link>
       </nav>
 
@@ -370,7 +370,7 @@ export default function Navbar() {
                 disabled={deleteLoading}
                 className="flex-1 py-2 px-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs shadow-md shadow-rose-600/30 transition-all disabled:opacity-50"
               >
-                {deleteLoading ? '처리 중...' : t('deleteAccount')}
+                {deleteLoading ? (language === 'ko' ? '처리 중...' : language === 'ja' ? '処理中...' : language === 'fr' ? 'Traitement...' : language === 'zh' ? '处理中...' : language === 'es' ? 'Procesando...' : 'Processing...') : t('deleteAccount')}
               </button>
             </div>
           </div>

@@ -106,13 +106,13 @@ export default function SpotMap({
                   window.dispatchEvent(event);
                 }
               } catch (e) {
-                alert('GPS 위치 권한을 확인해 주세요.');
+                alert(language === 'ko' ? 'GPS 위치 권한을 확인해 주세요.' : language === 'ja' ? 'GPS位置の権限を確認してください。' : language === 'fr' ? 'Veuillez vérifier les autorisations GPS.' : language === 'zh' ? '请检查 GPS 位置权限。' : language === 'es' ? 'Por favor verifique los permisos de GPS.' : 'Please check GPS location permissions.');
               }
             }}
             className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-400 hover:to-amber-500 text-white font-extrabold text-xs py-1.5 px-3 rounded-2xl flex items-center gap-1.5 shadow-lg shadow-orange-500/20 cursor-pointer transition-all shrink-0"
           >
             <MapPin className="w-3.5 h-3.5 animate-pulse text-white" />
-            <span className="hidden sm:inline">내 GPS 위치</span>
+            <span className="hidden sm:inline">{language === 'ko' ? '내 GPS 위치' : language === 'ja' ? '現在地 GPS' : language === 'fr' ? 'Mon GPS' : language === 'zh' ? '我的 GPS' : language === 'es' ? 'Mi GPS' : 'My GPS'}</span>
           </button>
 
           <div className="bg-zinc-950/90 backdrop-blur-md p-2 rounded-2xl border border-zinc-800 flex items-center gap-2 shadow-lg">
@@ -206,6 +206,7 @@ function LeafletMapEngine({
   initialLat?: number;
   initialLng?: number;
 }) {
+  const { language } = useLanguage();
   const mapRef = useRef<HTMLDivElement>(null);
   const leafletInstance = useRef<any>(null);
 
@@ -308,7 +309,7 @@ function LeafletMapEngine({
           });
           userMarker = L.marker([latitude, longitude], { icon: userIcon })
             .addTo(map)
-            .bindPopup(`<b>내 실시간 GPS 위치</b><br/>${city}, ${country}`, { openPopup: true });
+            .bindPopup(`<b>${language === 'ko' ? '내 실시간 GPS 위치' : language === 'ja' ? '現在地 GPS' : language === 'fr' ? 'Ma position GPS en direct' : language === 'zh' ? '我的实时 GPS 位置' : language === 'es' ? 'Mi ubicación GPS en tiempo real' : 'My Live GPS Location'}</b><br/>${city}, ${country}`, { openPopup: true });
         }
       }
     };
@@ -337,7 +338,7 @@ function LeafletMapEngine({
             position: relative;
             cursor: pointer;
             transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-          " class="hover:scale-125" title="${spot.brand || spot.category} — ${isVerified ? 'Verified Spot (검증된 스팟)' : 'AI Field Spot (현장 스팟)'}">
+          " class="hover:scale-125" title="${spot.brand || spot.category} — ${isVerified ? (language === 'ko' ? 'Verified Spot (검증된 스팟)' : language === 'ja' ? '検証済みスポット' : language === 'fr' ? 'Spot Vérifié' : language === 'zh' ? '已验证空间' : language === 'es' ? 'Espacio Verificado' : 'Verified Spot') : (language === 'ko' ? 'AI Field Spot (현장 스팟)' : language === 'ja' ? 'AI現場スポット' : language === 'fr' ? 'Spot Terrain IA' : language === 'zh' ? 'AI 现场空间' : language === 'es' ? 'Espacio IA' : 'AI Field Spot')}">
             <div style="
               width: 38px;
               height: 38px;

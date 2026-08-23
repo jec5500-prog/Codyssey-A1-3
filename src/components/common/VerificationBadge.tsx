@@ -1,7 +1,8 @@
 'use client';
 
 import React from 'react';
-import { CheckCircle2, Sparkles, AlertCircle } from 'lucide-react';
+import { CheckCircle2, Sparkles } from 'lucide-react';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 interface VerificationBadgeProps {
   isVerified: boolean;
@@ -16,6 +17,8 @@ export default function VerificationBadge({
   size = 'md',
   showConfidence = false,
 }: VerificationBadgeProps) {
+  const { t } = useLanguage();
+
   if (isVerified) {
     return (
       <span
@@ -26,10 +29,10 @@ export default function VerificationBadge({
             ? 'px-3 py-1 text-xs'
             : 'px-2.5 py-0.5 text-[11px]'
         }`}
-        title="Human Verified Data: Attributes confirmed or corrected by spatial architect"
+        title={t('verifiedData')}
       >
         <CheckCircle2 className={size === 'sm' ? 'w-3 h-3' : 'w-3.5 h-3.5'} />
-        <span>Verified Data</span>
+        <span>{t('verifiedData')}</span>
       </span>
     );
   }
@@ -43,10 +46,10 @@ export default function VerificationBadge({
           ? 'px-3 py-1 text-xs'
           : 'px-2.5 py-0.5 text-[11px]'
       }`}
-      title="AI Estimation: Subject to user verification and review"
+      title={t('aiEstimated')}
     >
       <Sparkles className={size === 'sm' ? 'w-3 h-3' : 'w-3.5 h-3.5'} />
-      <span>AI Estimated</span>
+      <span>{t('aiEstimated')}</span>
       {showConfidence && confidence !== undefined && (
         <span className="opacity-80 font-mono text-[10px] ml-0.5">
           ({Math.round(confidence * 100)}%)

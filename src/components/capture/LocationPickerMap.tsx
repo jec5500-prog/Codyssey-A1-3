@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { MapPin, Search } from 'lucide-react';
 import { reverseGeocode, geocodeCityOrAddress } from '@/lib/services/geoService';
+import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 interface LocationPickerMapProps {
   latitude: number;
@@ -15,6 +16,7 @@ export default function LocationPickerMap({
   longitude,
   onLocationSelect,
 }: LocationPickerMapProps) {
+  const { language } = useLanguage();
   const mapRef = useRef<HTMLDivElement>(null);
   const leafletInstance = useRef<any>(null);
   const markerRef = useRef<any>(null);
@@ -176,7 +178,7 @@ export default function LocationPickerMap({
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="도시나 장소를 검색하세요 (예: 서울 강남, Tokyo Ginza, Paris)"
+            placeholder={language === 'ko' ? '도시나 장소를 검색하세요 (예: 서울 강남, Tokyo Ginza, Paris)' : language === 'ja' ? '都市や場所を検索 (例: Tokyo Ginza, Paris)' : language === 'fr' ? 'Rechercher une ville ou un lieu (ex: Paris, Tokyo)' : language === 'zh' ? '搜索城市或地点（例如：北京, Tokyo, Paris）' : language === 'es' ? 'Buscar ciudad o lugar (ej: Madrid, Paris)' : 'Search city or address (e.g. Tokyo Ginza, Paris)'}
             className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 pl-9 pr-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 font-medium"
           />
         </form>
@@ -186,7 +188,7 @@ export default function LocationPickerMap({
           disabled={loading}
           className="py-2 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white font-extrabold text-xs border border-zinc-700 cursor-pointer shrink-0"
         >
-          {loading ? '검색 중...' : '검색'}
+          {loading ? (language === 'ko' ? '검색 중...' : language === 'ja' ? '検索中...' : language === 'fr' ? 'Recherche...' : language === 'zh' ? '搜索中...' : language === 'es' ? 'Buscando...' : 'Searching...') : (language === 'ko' ? '검색' : language === 'ja' ? '検索' : language === 'fr' ? 'Chercher' : language === 'zh' ? '搜索' : language === 'es' ? 'Buscar' : 'Search')}
         </button>
         <button
           type="button"
@@ -195,7 +197,7 @@ export default function LocationPickerMap({
           className="py-2 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white font-extrabold text-xs shadow-md shadow-emerald-500/20 cursor-pointer shrink-0 flex items-center gap-1"
         >
           <MapPin className="w-3.5 h-3.5" />
-          <span>내 GPS</span>
+          <span>{language === 'ko' ? '내 GPS' : language === 'ja' ? '現在地 GPS' : language === 'fr' ? 'Mon GPS' : language === 'zh' ? '我的 GPS' : language === 'es' ? 'Mi GPS' : 'My GPS'}</span>
         </button>
       </div>
 
@@ -203,7 +205,7 @@ export default function LocationPickerMap({
       <div className="relative w-full h-56 rounded-2xl overflow-hidden border border-zinc-800 bg-[#121214]">
         <div ref={mapRef} className="w-full h-full z-10" />
         <div className="absolute top-2 left-2 z-20 px-2.5 py-1 rounded-lg bg-[#18181b]/90 text-orange-400 border border-zinc-700 text-[11px] font-bold shadow-md pointer-events-none">
-          👆 지도를 터치/클릭하거나 [내 GPS] 버튼을 누르세요
+          👆 {language === 'ko' ? '지도를 터치/클릭하거나 [내 GPS] 버튼을 누르세요' : language === 'ja' ? 'マップをタップ/クリックするか [現在地 GPS] を選択' : language === 'fr' ? 'Touchez la carte ou cliquez sur [Mon GPS]' : language === 'zh' ? '点击/触摸地图或选择 [我的 GPS]' : language === 'es' ? 'Toque el mapa o haga clic en [Mi GPS]' : 'Tap/click map or press [My GPS]'}
         </div>
       </div>
     </div>

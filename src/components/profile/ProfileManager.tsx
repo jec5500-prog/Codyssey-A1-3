@@ -84,13 +84,13 @@ export default function ProfileManager() {
       try {
         const compressedBase64 = await compressImageFile(file, 600, 600, 0.85);
         setAvatar(compressedBase64);
-        setSuccessMsg('이미지가 등록되었습니다. [프로필 정보 저장] 버튼을 누르세요.');
+        setSuccessMsg(language === 'ko' ? '이미지가 등록되었습니다. [프로필 정보 저장] 버튼을 누르세요.' : language === 'ja' ? '画像が登録されました。[プロファイル保存] を押してください。' : language === 'fr' ? 'Image enregistrée. Cliquez sur Enregistrer.' : language === 'zh' ? '图片已注册。请点击保存按钮。' : language === 'es' ? 'Imagen registrada. Haga clic en Guardar.' : 'Image loaded. Click Save Profile.');
       } catch (err) {
         const reader = new FileReader();
         reader.onload = (event) => {
           if (event.target?.result) {
             setAvatar(event.target.result as string);
-            setSuccessMsg('이미지가 로드되었습니다. [프로필 정보 저장] 버튼을 누르세요.');
+            setSuccessMsg(language === 'ko' ? '이미지가 로드되었습니다. [프로필 정보 저장] 버튼을 누르세요.' : language === 'ja' ? '画像が読み込まれました。[プロファイル保存] を押してください。' : language === 'fr' ? 'Image chargée. Cliquez sur Enregistrer.' : language === 'zh' ? '图片已加载。请点击保存按钮。' : language === 'es' ? 'Imagen cargada. Haga clic en Guardar.' : 'Image loaded. Click Save Profile.');
           }
         };
         reader.readAsDataURL(file);
@@ -118,7 +118,7 @@ export default function ProfileManager() {
       setNewPassword('');
       setTimeout(() => setSuccessMsg(null), 4000);
     } else {
-      setErrorMsg(res.error || '프로필 업데이트에 실패했습니다.');
+      setErrorMsg(res.error || (language === 'ko' ? '프로필 업데이트에 실패했습니다.' : language === 'ja' ? 'プロファイルの更新に失敗しました。' : language === 'fr' ? 'Échec de la mise à jour du profil.' : language === 'zh' ? '更新个人资料失败。' : language === 'es' ? 'Error al actualizar el perfil.' : 'Failed to update profile.'));
     }
   };
 
@@ -164,10 +164,10 @@ export default function ProfileManager() {
           </div>
           <p className="text-xs text-zinc-400 flex items-center justify-center sm:justify-start gap-1 font-medium">
             <Mail className="w-3.5 h-3.5 text-orange-400" />
-            <span>{user.email || '등록된 이메일 없음'}</span>
+            <span>{user.email || (language === 'ko' ? '등록된 이메일 없음' : language === 'ja' ? '登録メールなし' : language === 'fr' ? 'Aucun email enregistré' : language === 'zh' ? '未注册邮箱' : language === 'es' ? 'Sin correo registrado' : 'No registered email')}</span>
           </p>
           <p className="text-xs text-zinc-400 font-mono pt-1">
-            가입일: {formatDate(user.created_at, language)}
+            {language === 'ko' ? '가입일' : language === 'ja' ? '登録日' : language === 'fr' ? 'Inscrit le' : language === 'zh' ? '注册日期' : language === 'es' ? 'Fecha de registro' : 'Joined'}: {formatDate(user.created_at, language)}
           </p>
 
           <div className="pt-2">
@@ -177,7 +177,7 @@ export default function ProfileManager() {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-zinc-800/90 hover:bg-zinc-700 border border-zinc-700 text-orange-300 text-xs font-bold transition-all shadow-xs"
             >
               <Upload className="w-3.5 h-3.5 text-orange-400" />
-              <span>JPG / PNG 이미지 파일 선택</span>
+              <span>{language === 'ko' ? 'JPG / PNG 이미지 파일 선택' : language === 'ja' ? 'JPG/PNG画像ファイル選択' : language === 'fr' ? 'Sélectionner une image JPG / PNG' : language === 'zh' ? '选择 JPG / PNG 图片文件' : language === 'es' ? 'Seleccionar archivo JPG / PNG' : 'Select JPG / PNG Image'}</span>
             </button>
           </div>
         </div>
@@ -225,7 +225,7 @@ export default function ProfileManager() {
           {/* Email (Readonly) */}
           <div>
             <label className="block text-xs font-bold text-zinc-400 mb-1.5 uppercase tracking-wider">
-              {t('emailLabel')} (변경 불가)
+              {t('emailLabel')} ({language === 'ko' ? '변경 불가' : language === 'ja' ? '変更不可' : language === 'fr' ? 'non modifiable' : language === 'zh' ? '不可修改' : language === 'es' ? 'no modificable' : 'read-only'})
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-zinc-600 absolute left-3.5 top-3 pointer-events-none" />
@@ -249,7 +249,6 @@ export default function ProfileManager() {
                 type="text"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                placeholder="예: Spatial VMD Architect, Retail Store Designer"
                 className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2.5 pl-10 pr-4 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
               />
             </div>
@@ -258,7 +257,7 @@ export default function ProfileManager() {
           {/* Avatar JPG/PNG File Upload & URL Picker Section */}
           <div className="space-y-3">
             <label className="block text-xs font-bold text-zinc-300 uppercase tracking-wider">
-              프로필 이미지 등록 (JPG / PNG 파일 업로드 또는 이미지 URL)
+              {language === 'ko' ? '프로필 이미지 등록 (JPG / PNG 파일 업로드 또는 이미지 URL)' : language === 'ja' ? 'プロファイル画像登録 (JPG/PNGアップロードまたはURL)' : language === 'fr' ? 'Image de profil (Fichier JPG / PNG ou URL)' : language === 'zh' ? '个人头像注册 (JPG / PNG 文件上传或图片 URL)' : language === 'es' ? 'Imagen de perfil (Subir JPG / PNG o URL)' : 'Profile Image (Upload JPG / PNG or URL)'}
             </label>
 
             {/* Direct File Upload Dropzone */}
@@ -271,10 +270,10 @@ export default function ProfileManager() {
               </div>
               <div className="text-left">
                 <p className="text-xs font-bold text-white group-hover:text-orange-300 transition-colors">
-                  내 PC에서 JPG / PNG 사진 파일 선택하여 등록
+                  {language === 'ko' ? '내 PC에서 JPG / PNG 사진 파일 선택하여 등록' : language === 'ja' ? '端末からJPG/PNG画像を選択' : language === 'fr' ? 'Choisir une photo JPG / PNG depuis votre appareil' : language === 'zh' ? '从本地选择 JPG / PNG 照片文件' : language === 'es' ? 'Seleccionar foto JPG / PNG desde su dispositivo' : 'Select JPG / PNG photo from device'}
                 </p>
                 <p className="text-[10px] text-zinc-400">
-                  컴퓨터나 스마트폰의 프로필 사진(.jpg, .jpeg, .png)을 클릭하여 업로드하세요
+                  {language === 'ko' ? '컴퓨터나 스마트폰의 프로필 사진(.jpg, .jpeg, .png)을 클릭하여 업로드하세요' : language === 'ja' ? '端末のプロファイル写真(.jpg, .jpeg, .png)をクリックしてアップロード' : language === 'fr' ? 'Cliquez pour télécharger votre photo de profil (.jpg, .png)' : language === 'zh' ? '点击上传您的个人头像照片 (.jpg, .jpeg, .png)' : language === 'es' ? 'Haga clic para subir su foto de perfil (.jpg, .png)' : 'Click to upload your profile photo (.jpg, .jpeg, .png)'}
                 </p>
               </div>
             </div>
@@ -286,14 +285,14 @@ export default function ProfileManager() {
                 type="text"
                 value={avatar}
                 onChange={(e) => setAvatar(e.target.value)}
-                placeholder="또는 이미지 URL 직접 입력 (https://...)"
+                placeholder={language === 'ko' ? '또는 이미지 URL 직접 입력 (https://...)' : language === 'ja' ? 'または画像URLを直接入力 (https://...)' : language === 'fr' ? 'ou entrez l\'URL de l\'image (https://...)' : language === 'zh' ? '或直接输入图片 URL (https://...)' : language === 'es' ? 'o ingrese URL de imagen (https://...)' : 'or enter image URL directly (https://...)'}
                 className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2.5 pl-10 pr-4 text-xs text-white focus:outline-none focus:border-orange-500"
               />
             </div>
 
             {/* Avatar Presets */}
             <div className="space-y-1.5 pt-1">
-              <span className="text-[11px] text-zinc-400 font-semibold block">또는 추천 아바타 이미지 선택:</span>
+              <span className="text-[11px] text-zinc-400 font-semibold block">{language === 'ko' ? '또는 추천 아바타 이미지 선택:' : language === 'ja' ? 'または推奨アバター画像を選択:' : language === 'fr' ? 'ou choisissez un avatar recommandé :' : language === 'zh' ? '或选择推荐的头像图片：' : language === 'es' ? 'o elija un avatar recomendado:' : 'or choose a preset avatar:'}</span>
               <div className="flex items-center gap-2 flex-wrap">
                 {AVATAR_PRESETS.map((presetUrl, idx) => (
                   <button
@@ -322,7 +321,7 @@ export default function ProfileManager() {
               <Lock className="w-4 h-4 text-zinc-500 absolute left-3.5 top-3 pointer-events-none" />
               <input
                 type="password"
-                placeholder="•••••••• (변경 시에만 입력)"
+                placeholder={language === 'ko' ? '•••••••• (변경 시에만 입력)' : language === 'ja' ? '•••••••• (変更時のみ入力)' : language === 'fr' ? '•••••••• (si changement uniquement)' : language === 'zh' ? '•••••••• (仅在修改时填写)' : language === 'es' ? '•••••••• (solo si cambia)' : '•••••••• (leave blank to keep current)'}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2.5 pl-10 pr-4 text-xs text-white focus:outline-none focus:border-orange-500"
@@ -339,7 +338,7 @@ export default function ProfileManager() {
             className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-400 hover:to-amber-500 text-white font-extrabold text-xs shadow-lg shadow-orange-500/30 transition-all disabled:opacity-50"
           >
             <Save className="w-4 h-4" />
-            <span>{saving ? '저장 중...' : t('updateProfileBtn')}</span>
+            <span>{saving ? (language === 'ko' ? '저장 중...' : language === 'ja' ? '保存中...' : language === 'fr' ? 'Enregistrement...' : language === 'zh' ? '保存中...' : language === 'es' ? 'Guardando...' : 'Saving...') : t('updateProfileBtn')}</span>
           </button>
         </div>
       </form>
@@ -350,10 +349,10 @@ export default function ProfileManager() {
           <div>
             <h3 className="text-sm font-bold text-rose-400 uppercase tracking-wider flex items-center gap-1.5">
               <UserX className="w-4 h-4 text-rose-400" />
-              위험 구역 (Account Deletion)
+              {language === 'ko' ? '위험 구역 (Account Deletion)' : language === 'ja' ? '危険ゾーン (Account Deletion)' : language === 'fr' ? 'Zone Dangereuse' : language === 'zh' ? '危险区域 (Account Deletion)' : language === 'es' ? 'Zona de Peligro' : 'Danger Zone'}
             </h3>
             <p className="text-xs text-zinc-400 mt-1">
-              계정을 삭제하면 모든 회원 정보와 개인 세션 기록이 영구적으로 제거됩니다.
+              {language === 'ko' ? '계정을 삭제하면 모든 회원 정보와 개인 세션 기록이 영구적으로 제거됩니다.' : language === 'ja' ? 'アカウントを削除すると、すべての情報とセッション記録が永久に消去されます。' : language === 'fr' ? 'La suppression du compte efface définitivement toutes vos données.' : language === 'zh' ? '删除账户将永久清除所有会员信息与个人会话记录。' : language === 'es' ? 'Eliminar la cuenta borrará permanentemente toda su información y sesiones.' : 'Deleting your account permanently removes all your member information and session logs.'}
             </p>
           </div>
           <button
@@ -396,7 +395,7 @@ export default function ProfileManager() {
                 disabled={deleteLoading}
                 className="flex-1 py-2 px-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs shadow-md shadow-rose-600/30 transition-all disabled:opacity-50"
               >
-                {deleteLoading ? '처리 중...' : t('deleteAccount')}
+                {deleteLoading ? (language === 'ko' ? '처리 중...' : language === 'ja' ? '処理中...' : language === 'fr' ? 'Traitement...' : language === 'zh' ? '处理中...' : language === 'es' ? 'Procesando...' : 'Processing...') : t('deleteAccount')}
               </button>
             </div>
           </div>

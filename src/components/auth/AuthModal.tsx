@@ -7,7 +7,7 @@ import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export default function AuthModal() {
   const { isAuthModalOpen, closeAuthModal, authMode, login, signUp } = useAuth();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const [mode, setMode] = useState<'login' | 'signup'>(authMode);
   const [email, setEmail] = useState('');
@@ -91,7 +91,9 @@ export default function AuthModal() {
                 {mode === 'login' ? t('loginTitle') : t('signUpTitle')}
               </h2>
               <p className="text-xs text-zinc-400">
-                {mode === 'login' ? '등록한 회원 계정으로 로그인하세요' : '새로운 VMD 아키텍트 계정을 생성하세요'}
+                {mode === 'login'
+                  ? (language === 'ko' ? '등록한 회원 계정으로 로그인하세요' : language === 'ja' ? '登録したアカウントでログイン' : language === 'fr' ? 'Connectez-vous à votre compte' : language === 'zh' ? '使用注册的会员账户登录' : language === 'es' ? 'Inicie sesión con su cuenta' : 'Sign in to your registered account')
+                  : (language === 'ko' ? '새로운 VMD 아키텍트 계정을 생성하세요' : language === 'ja' ? '新しいVMDアーキテクトアカウントを作成' : language === 'fr' ? 'Créer un compte architecte VMD' : language === 'zh' ? '创建新的 VMD 建筑师账户' : language === 'es' ? 'Crear una nueva cuenta de arquitecto VMD' : 'Create a new VMD Architect account')}
               </p>
             </div>
           </div>
@@ -164,7 +166,7 @@ export default function AuthModal() {
                     <UserIcon className="w-4 h-4 text-zinc-500 absolute left-3 top-3 pointer-events-none" />
                     <input
                       type="text"
-                      placeholder="예: 홍길동 (비워두면 이메일명 사용)"
+                      placeholder={language === 'ko' ? '예: 홍길동 (비워두면 이메일명 사용)' : language === 'ja' ? '例: 山田太郎 (空欄の場合はメール名を使用)' : language === 'fr' ? 'ex: Jean Dupont' : language === 'zh' ? '例：张伟（留空使用邮箱名）' : language === 'es' ? 'ej: Juan Pérez' : 'e.g. Alex Smith'}
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2.5 pl-9 pr-3 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500 font-medium"
@@ -174,7 +176,7 @@ export default function AuthModal() {
 
                 <div>
                   <label className="block text-xs font-bold text-zinc-300 mb-1.5 uppercase">
-                    <span>전문 분야 / 역할 (Role)</span>
+                    <span>{t('roleLabel')}</span>
                   </label>
                   <div className="relative">
                     <Briefcase className="w-4 h-4 text-zinc-400 absolute left-3 top-3 pointer-events-none" />
@@ -183,10 +185,10 @@ export default function AuthModal() {
                       onChange={(e) => setRole(e.target.value)}
                       className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2.5 pl-9 pr-3 text-xs text-white focus:outline-none focus:border-orange-500 font-medium cursor-pointer"
                     >
-                      <option value="Spatial VMD Architect">📐 Spatial VMD Architect (아키텍트)</option>
-                      <option value="Lead Store Planner">🏢 Lead Store Planner (스토어 플래너)</option>
-                      <option value="Retail Spatial Strategist">📊 Retail Spatial Strategist (공간 전략가)</option>
-                      <option value="Visual Merchandiser">🎨 Visual Merchandiser (VMD)</option>
+                      <option value="Spatial VMD Architect">📐 Spatial VMD Architect</option>
+                      <option value="Lead Store Planner">🏢 Lead Store Planner</option>
+                      <option value="Retail Spatial Strategist">📊 Retail Spatial Strategist</option>
+                      <option value="Visual Merchandiser">🎨 Visual Merchandiser</option>
                     </select>
                   </div>
                 </div>
@@ -232,7 +234,7 @@ export default function AuthModal() {
               className="w-full py-3 px-4 mt-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-400 hover:to-amber-500 text-white font-extrabold text-xs shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2 transition-all disabled:opacity-50 cursor-pointer"
             >
               {loading ? (
-                <span>처리 중...</span>
+                <span>{language === 'ko' ? '처리 중...' : language === 'ja' ? '処理中...' : language === 'fr' ? 'Traitement...' : language === 'zh' ? '处理中...' : language === 'es' ? 'Procesando...' : 'Processing...'}</span>
               ) : (
                 <>
                   <span>{mode === 'login' ? t('signIn') : t('signUp')}</span>
