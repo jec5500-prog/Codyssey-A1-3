@@ -147,7 +147,7 @@ export default function Navbar() {
                 }`}
               >
                 <ShieldCheck className="w-4 h-4 text-orange-400" />
-                <span>{language === 'ko' ? '관리자' : language === 'ja' ? '管理者' : language === 'fr' ? 'Admin' : language === 'zh' ? '管理员' : language === 'es' ? 'Admin' : 'Admin'}</span>
+                <span>{t('adminTag')}</span>
               </Link>
             ) : null}
           </nav>
@@ -201,7 +201,7 @@ export default function Navbar() {
                   />
                   <div className="hidden lg:block text-left">
                     <p className="text-xs font-bold text-zinc-100">{user.name}</p>
-                    <p className="text-[10px] text-zinc-400">{user.role || 'Spatial VMD Architect'}</p>
+                    <p className="text-[10px] text-zinc-400">{user.role || t('defaultRole')}</p>
                   </div>
                   <ChevronDown className="w-3.5 h-3.5 text-zinc-400 hidden lg:block" />
                 </button>
@@ -213,7 +213,7 @@ export default function Navbar() {
                       <p className="text-xs font-bold text-zinc-100">{user.name}</p>
                       {user.email && <p className="text-[11px] text-zinc-400 truncate">{user.email}</p>}
                       <span className="inline-block mt-1 px-2 py-0.5 rounded text-[10px] font-bold bg-orange-950/80 text-orange-300 border border-orange-800/60">
-                        {user.role || 'Spatial VMD Architect'}
+                        {user.role || t('defaultRole')}
                       </span>
                     </div>
 
@@ -233,7 +233,7 @@ export default function Navbar() {
                         className="w-full px-4 py-2 text-xs text-orange-300 hover:text-white hover:bg-orange-950/50 flex items-center gap-2 transition-colors font-bold border-y border-zinc-800/80 my-0.5"
                       >
                         <ShieldCheck className="w-4 h-4 text-orange-400 animate-pulse" />
-                        <span>{language === 'ko' ? '회원 관리 (Admin)' : language === 'ja' ? '会員管理 (Admin)' : language === 'fr' ? 'Gestion Utilisateurs (Admin)' : language === 'zh' ? '用户管理 (Admin)' : language === 'es' ? 'Gestión de Usuarios (Admin)' : 'User Management (Admin)'}</span>
+                        <span>{t('adminManagement')}</span>
                       </Link>
 
                       <button

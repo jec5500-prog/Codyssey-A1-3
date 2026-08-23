@@ -106,7 +106,7 @@ export default function SpotCard({ spot, onSelect, isSavedInitial = false }: Spo
           <div className="space-y-1">
             <div className="flex items-center justify-between gap-2">
               <h3 className="font-extrabold text-base text-white group-hover:text-orange-400 transition-colors line-clamp-1">
-                {spot.brand || 'Unbranded Spatial Design'}
+                {spot.brand || t('unbrandedSpot')}
               </h3>
             </div>
             {spot.attributes?.style && (
@@ -130,7 +130,7 @@ export default function SpotCard({ spot, onSelect, isSavedInitial = false }: Spo
               {cardColors && cardColors.length > 0 && (
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-[10px] text-zinc-400 uppercase font-bold tracking-wider">
-                    {language === 'ko' ? '컬러 팔레트' : language === 'ja' ? 'パレット' : language === 'fr' ? 'Palette' : language === 'zh' ? '色彩搭配' : language === 'es' ? 'Paleta de Colores' : 'Palette'}
+                    {t('colorPalette')}
                   </span>
                   <div className="flex items-center gap-1.5">
                     {cardColors.slice(0, 4).map((hex, idx) => (
@@ -167,7 +167,7 @@ export default function SpotCard({ spot, onSelect, isSavedInitial = false }: Spo
       {/* Action Footer */}
       <div className="px-4 pb-4 pt-1 flex items-center justify-between border-t border-zinc-800/80 text-xs font-bold text-orange-400 group-hover:text-orange-300">
         <span className="text-[11px] text-zinc-500 font-mono">
-          {spot.is_verified ? 'Verified Spot' : 'AI Spot'}
+          {spot.is_verified ? t('verifiedSpotTag') : t('aiSpotTag')}
         </span>
         <span className="flex items-center gap-1 group-hover:translate-x-1 transition-transform">
           {t('viewDetails')}

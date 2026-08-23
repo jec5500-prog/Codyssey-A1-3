@@ -247,7 +247,7 @@ export default function SpotDetailModal({
                 <Camera className="w-6 h-6" />
               </div>
               <span className="text-xs font-bold bg-zinc-900/90 px-3 py-1.5 rounded-xl border border-zinc-700">
-                📱 다른 사진으로 변경 (갤러리 / 카메라)
+                {t('changePhoto')}
               </span>
             </button>
           )}
@@ -284,20 +284,20 @@ export default function SpotDetailModal({
               <div className="flex items-center justify-between border-b border-zinc-800 pb-3">
                 <h3 className="text-sm font-extrabold text-orange-400 flex items-center gap-2">
                   <Edit className="w-4 h-4" />
-                  공간디자인 기록 수정
+                  {t('editSpotRecordTitle')}
                 </h3>
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
                   className="text-zinc-400 hover:text-white text-xs font-semibold"
                 >
-                  취소
+                  {t('cancel')}
                 </button>
               </div>
 
               {/* Edit Brand */}
               <div>
-                <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">브랜드명</label>
+                <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">{t('brandName')}</label>
                 <input
                   type="text"
                   value={editBrand}
@@ -308,7 +308,7 @@ export default function SpotDetailModal({
 
               {/* Edit Category */}
               <div>
-                <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">카테고리</label>
+                <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">{t('spatialCategory')}</label>
                 <select
                   value={editCategory}
                   onChange={(e) => setEditCategory(e.target.value as SpotCategory)}
@@ -318,14 +318,14 @@ export default function SpotDetailModal({
                   <option value="Store Interior">Store Interior</option>
                   <option value="Store Exterior">Store Exterior</option>
                   <option value="Pop-up Store">Pop-up Store</option>
-                  <option value="Street">Street Facade</option>
+                  <option value="Street">Street / Urban</option>
                   <option value="Exhibition">Exhibition Space</option>
                 </select>
               </div>
 
               {/* Edit Description */}
               <div>
-                <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">디자인 설명</label>
+                <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">{t('spatialDesc')}</label>
                 <textarea
                   rows={3}
                   value={editDescription}
@@ -337,7 +337,7 @@ export default function SpotDetailModal({
               {/* Edit City & Country */}
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">도시명</label>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">{t('cityLabel')}</label>
                   <input
                     type="text"
                     value={editCity}
@@ -346,7 +346,7 @@ export default function SpotDetailModal({
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">국가명</label>
+                  <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">{t('countryLabel')}</label>
                   <input
                     type="text"
                     value={editCountry}
@@ -358,7 +358,7 @@ export default function SpotDetailModal({
 
               {/* Edit Style */}
               <div>
-                <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">디자인 스타일</label>
+                <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase">{t('designStyle')}</label>
                 <input
                   type="text"
                   value={editStyle}
@@ -374,7 +374,7 @@ export default function SpotDetailModal({
                   onClick={() => setIsEditing(false)}
                   className="flex-1 py-2.5 px-4 rounded-xl bg-zinc-800 text-zinc-300 font-bold text-xs hover:bg-zinc-700"
                 >
-                  취소
+                  {t('cancel')}
                 </button>
                 <button
                   type="button"
@@ -383,7 +383,7 @@ export default function SpotDetailModal({
                   className="flex-1 py-2.5 px-4 rounded-xl bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-400 hover:to-amber-500 text-white font-extrabold text-xs shadow-lg shadow-orange-500/30 flex items-center justify-center gap-2"
                 >
                   <Save className="w-4 h-4" />
-                  <span>{updateLoading ? '저장 중...' : '수정 사항 저장'}</span>
+                  <span>{updateLoading ? t('savingProgress') : t('saveChanges')}</span>
                 </button>
               </div>
             </div>
@@ -423,7 +423,7 @@ export default function SpotDetailModal({
                     className="flex-1 py-1.5 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-orange-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                   >
                     <Edit className="w-3.5 h-3.5 text-orange-400" />
-                    <span>정보 수정</span>
+                    <span>{t('editSpot')}</span>
                   </button>
                   <button
                     type="button"
@@ -431,7 +431,7 @@ export default function SpotDetailModal({
                     className="flex-1 py-1.5 px-3 rounded-xl bg-rose-950/70 hover:bg-rose-900 border border-rose-800/80 text-rose-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5 text-rose-400" />
-                    <span>기록 삭제</span>
+                    <span>{t('deleteSpot')}</span>
                   </button>
                 </div>
               )}
@@ -446,17 +446,7 @@ export default function SpotDetailModal({
                 <div className="space-y-3 pt-2">
                   <h3 className="text-xs font-bold text-orange-400 uppercase tracking-wider flex items-center gap-1.5">
                     <Sparkles className="w-4 h-4 text-orange-400" />
-                    {language === 'ko'
-                      ? 'AI 멀티모달 공간 정보 (Spatial Attributes)'
-                      : language === 'ja'
-                      ? 'AIマルチモーダル空間情報'
-                      : language === 'fr'
-                      ? 'Informations Spatiales IA'
-                      : language === 'zh'
-                      ? 'AI 多模态空间属性'
-                      : language === 'es'
-                      ? 'Atributos Espaciales Multimodales IA'
-                      : 'AI Multimodal Spatial Attributes'}
+                    {t('aiEstimated')}
                   </h3>
 
                   <div className="grid grid-cols-1 gap-2 text-xs">
@@ -465,7 +455,7 @@ export default function SpotDetailModal({
                       <div className="p-2.5 rounded-xl bg-[#121214] border border-zinc-800 flex items-center justify-between">
                         <span className="text-zinc-400 flex items-center gap-1.5 font-bold">
                           <Layers className="w-3.5 h-3.5 text-orange-400" />
-                          {language === 'ko' ? '스타일 (Style)' : language === 'ja' ? 'スタイル' : language === 'fr' ? 'Style' : language === 'zh' ? '风格' : language === 'es' ? 'Estilo' : 'Style'}
+                          {t('designStyle')}
                         </span>
                         <span className="font-bold text-white">
                           {translateAttribute(spot.attributes.style, language)}
@@ -478,7 +468,7 @@ export default function SpotDetailModal({
                       <div className="p-2.5 rounded-xl bg-[#121214] border border-zinc-800 flex items-center justify-between">
                         <span className="text-zinc-400 flex items-center gap-1.5 font-bold">
                           <Sun className="w-3.5 h-3.5 text-orange-400" />
-                          {language === 'ko' ? '조명 (Lighting)' : language === 'ja' ? 'ライティング' : language === 'fr' ? 'Éclairage' : language === 'zh' ? '照明' : language === 'es' ? 'Iluminación' : 'Lighting'}
+                          {t('lightingScheme')}
                         </span>
                         <span className="font-semibold text-white">
                           {translateAttribute(spot.attributes.lighting, language)}
@@ -491,7 +481,7 @@ export default function SpotDetailModal({
                       <div className="p-2.5 rounded-xl bg-[#121214] border border-zinc-800 flex items-center justify-between">
                         <span className="text-zinc-400 flex items-center gap-1.5 font-bold">
                           <Box className="w-3.5 h-3.5 text-orange-400" />
-                          {language === 'ko' ? '구도 (Composition)' : language === 'ja' ? '構図' : language === 'fr' ? 'Composition' : language === 'zh' ? '构图' : language === 'es' ? 'Composición' : 'Composition'}
+                          {t('compositionTheme')}
                         </span>
                         <span className="font-semibold text-white">
                           {translateAttribute(spot.attributes.composition, language)}
@@ -505,17 +495,7 @@ export default function SpotDetailModal({
                         <div className="flex items-center justify-between">
                           <span className="text-zinc-400 flex items-center gap-1.5 font-bold">
                             <Palette className="w-3.5 h-3.5 text-orange-400" />
-                            {language === 'ko'
-                              ? '컬러 팔레트 및 점유 비중 (%)'
-                              : language === 'ja'
-                              ? 'カラーパレットと占有比率 (%)'
-                              : language === 'fr'
-                              ? 'Palette de Couleurs (%)'
-                              : language === 'zh'
-                              ? '色彩搭配与占比 (%)'
-                              : language === 'es'
-                              ? 'Paleta de Colores y Proporciones (%)'
-                              : 'Color Palette & Proportions (%)'}
+                            {t('colorPalette')}
                           </span>
                           <span className="text-[10px] text-zinc-500 font-mono">Pixel Distribution</span>
                         </div>
@@ -555,7 +535,7 @@ export default function SpotDetailModal({
                       <div className="p-2.5 rounded-xl bg-[#121214] border border-zinc-800 space-y-1.5">
                         <span className="text-zinc-400 flex items-center gap-1.5 font-bold">
                           <Tag className="w-3.5 h-3.5 text-orange-400" />
-                          {language === 'ko' ? '사용 자재 (Materials)' : language === 'ja' ? '使用資材' : language === 'fr' ? 'Matériaux Utilisés' : language === 'zh' ? '主要材质' : language === 'es' ? 'Materiales Utilizados' : 'Materials & Elements'}
+                          {t('keyMaterials')}
                         </span>
                         <div className="flex items-center gap-1.5 flex-wrap">
                           {spot.attributes.materials.map((mat, idx) => (
@@ -598,7 +578,7 @@ export default function SpotDetailModal({
                 className="py-2.5 px-4 rounded-xl bg-[#121214] hover:bg-zinc-800 text-white border border-zinc-800 text-xs font-bold flex items-center gap-1.5 transition-colors"
               >
                 <Share2 className="w-4 h-4 text-orange-400" />
-                <span>{copied ? '복사됨!' : '공유'}</span>
+                <span>{copied ? t('copiedToast') : t('shareSpot')}</span>
               </button>
             </div>
           )}
@@ -614,9 +594,9 @@ export default function SpotDetailModal({
             </div>
 
             <div className="space-y-1">
-              <h3 className="text-base font-bold text-white">공간디자인 기록 삭제</h3>
+              <h3 className="text-base font-bold text-white">{t('deleteSpotRecordTitle')}</h3>
               <p className="text-xs text-zinc-400 leading-relaxed">
-                정말로 이 공간디자인 수집 기록({spot.brand})을 완전히 삭제하시겠습니까? 삭제된 기록은 복구할 수 없습니다.
+                {t('confirmDeleteSpotText')}
               </p>
             </div>
 
@@ -635,7 +615,7 @@ export default function SpotDetailModal({
                 disabled={deleteLoading}
                 className="flex-1 py-2 px-3 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs shadow-md shadow-rose-600/30 transition-all disabled:opacity-50"
               >
-                {deleteLoading ? '삭제 중...' : '기록 삭제'}
+                {deleteLoading ? t('deletingProgress') : t('deleteSpot')}
               </button>
             </div>
           </div>
