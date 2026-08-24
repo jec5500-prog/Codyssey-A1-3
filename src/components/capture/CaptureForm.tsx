@@ -28,6 +28,7 @@ import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useAuth } from '@/lib/auth/AuthContext';
 import LocationPickerMap from './LocationPickerMap';
 import { extractDominantColorsFromImage, calculateColorPercentages } from '@/lib/utils/colorExtractor';
+import { translateCity, translateCountry } from '@/lib/i18n/translationUtils';
 
 const SAMPLE_CAPTURES = [
   {
@@ -471,7 +472,6 @@ export default function CaptureForm() {
                 </div>
               </button>
             </div>
-          </div>
 
             {/* Interactive Map Location Picker Component */}
             {locationMode === 'map' && (
@@ -489,11 +489,12 @@ export default function CaptureForm() {
                 <div className="mt-2 p-2.5 rounded-xl bg-orange-950/40 border border-orange-800/60 text-xs text-orange-300 flex items-center justify-between font-mono">
                   <span>{language === 'ko' ? '선택된 좌표 및 장소:' : language === 'ja' ? '選択された座標と場所:' : language === 'fr' ? 'Coordonnées et lieu sélectionnés :' : language === 'zh' ? '已选择的坐标与地点：' : language === 'es' ? 'Coordenadas y lugar seleccionados:' : 'Selected Coordinates & Location:'}</span>
                   <span className="font-bold text-white">
-                    {city}, {country} ({latitude.toFixed(4)}, {longitude.toFixed(4)})
+                    {translateCity(city, language)}, {translateCountry(country, language)} ({latitude.toFixed(4)}, {longitude.toFixed(4)})
                   </span>
                 </div>
               </div>
             )}
+          </div>
 
           {/* File Dropzone & Mobile Camera Button */}
           <div className="space-y-4">
@@ -586,7 +587,7 @@ export default function CaptureForm() {
                   />
                   <div className="p-2.5 bg-[#18181b] text-xs">
                     <p className="font-semibold text-zinc-200 group-hover:text-orange-300">{sample.name}</p>
-                    <p className="text-[11px] text-zinc-500">{sample.city}, {sample.country}</p>
+                    <p className="text-[11px] text-zinc-500">{translateCity(sample.city, language)}, {translateCountry(sample.country, language)}</p>
                   </div>
                 </div>
               ))}
@@ -634,6 +635,9 @@ export default function CaptureForm() {
                 <span className="text-orange-400 font-bold flex items-center gap-1">
                   <MapPin className="w-3.5 h-3.5" />
                   {language === 'ko' ? '등록 위치 및 좌표 정보' : language === 'ja' ? '登録位置および座標情報' : language === 'fr' ? 'Localisation et coordonnées' : language === 'zh' ? '注册位置与坐标信息' : language === 'es' ? 'Ubicación y coordenadas' : 'Location & Coordinates'}
+                </span>
+                <span className="font-semibold text-white text-xs">
+                  {translateCity(city, language)}, {translateCountry(country, language)}
                 </span>
                 <span className="font-mono text-zinc-400 text-[11px]">
                   ({latitude.toFixed(4)}, {longitude.toFixed(4)})
