@@ -28,7 +28,13 @@ import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useAuth } from '@/lib/auth/AuthContext';
 import LocationPickerMap from './LocationPickerMap';
 import { extractDominantColorsFromImage, calculateColorPercentages } from '@/lib/utils/colorExtractor';
-import { translateCity, translateCountry } from '@/lib/i18n/translationUtils';
+import {
+  translateCategory,
+  translateCountry,
+  translateCity,
+  translateAttribute,
+  translateDescription,
+} from '@/lib/i18n/translationUtils';
 
 const SAMPLE_CAPTURES = [
   {
@@ -709,12 +715,12 @@ export default function CaptureForm() {
                   onChange={(e) => setCategory(e.target.value as SpotCategory)}
                   className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold cursor-pointer"
                 >
-                  <option value="Window">Window Display</option>
-                  <option value="Store Interior">Store Interior</option>
-                  <option value="Store Exterior">Store Exterior</option>
-                  <option value="Pop-up Store">Pop-up Store</option>
-                  <option value="Street">Street / Urban</option>
-                  <option value="Exhibition">Exhibition Space</option>
+                  <option value="Window">{translateCategory('Window', language)}</option>
+                  <option value="Store Interior">{translateCategory('Store Interior', language)}</option>
+                  <option value="Store Exterior">{translateCategory('Store Exterior', language)}</option>
+                  <option value="Pop-up Store">{translateCategory('Pop-up Store', language)}</option>
+                  <option value="Street">{translateCategory('Street', language)}</option>
+                  <option value="Exhibition">{translateCategory('Exhibition', language)}</option>
                 </select>
               </div>
 
@@ -725,7 +731,7 @@ export default function CaptureForm() {
                 </label>
                 <textarea
                   rows={2}
-                  value={description}
+                  value={translateDescription(description, language)}
                   onChange={(e) => setDescription(e.target.value)}
                   className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-medium"
                 />
@@ -738,7 +744,7 @@ export default function CaptureForm() {
                 </label>
                 <input
                   type="text"
-                  value={style}
+                  value={translateAttribute(style, language)}
                   onChange={(e) => setStyle(e.target.value)}
                   placeholder={language === 'ko' ? '예: Minimalist Brutalism' : language === 'ja' ? '例: Minimalist Brutalism' : language === 'fr' ? 'ex: Minimalist Brutalism' : language === 'zh' ? '例：Minimalist Brutalism' : language === 'es' ? 'ej: Minimalist Brutalism' : 'e.g. Minimalist Brutalism'}
                   className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
@@ -796,7 +802,7 @@ export default function CaptureForm() {
               <div>
                 <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase flex items-center gap-1">
                   <Tag className="w-3.5 h-3.5 text-orange-400" />
-                  Materials & Elements
+                  {language === 'ko' ? '주요 자재/소재 (Materials)' : language === 'ja' ? '使用資材' : language === 'fr' ? 'Matériaux Utilisés' : language === 'zh' ? '主要材质' : language === 'es' ? 'Materiales Utilizados' : 'Materials & Elements'}
                 </label>
                 <div className="flex items-center gap-1.5 flex-wrap mb-2">
                   {materials.map((mat, idx) => (
@@ -804,7 +810,7 @@ export default function CaptureForm() {
                       key={idx}
                       className="px-2 py-1 rounded bg-[#121214] border border-zinc-700 text-xs font-bold flex items-center gap-1 text-white"
                     >
-                      {mat}
+                      {translateAttribute(mat, language)}
                       <button onClick={() => removeMaterial(idx)} className="text-zinc-400 hover:text-white">
                         <X className="w-3 h-3" />
                       </button>
@@ -838,7 +844,7 @@ export default function CaptureForm() {
                   </label>
                   <input
                     type="text"
-                    value={lighting}
+                    value={translateAttribute(lighting, language)}
                     onChange={(e) => setLighting(e.target.value)}
                     placeholder={language === 'ko' ? '예: Warm Cove Ambient' : language === 'ja' ? '例: Warm Cove Ambient' : language === 'fr' ? 'ex: Warm Cove Ambient' : language === 'zh' ? '例：Warm Cove Ambient' : language === 'es' ? 'ej: Warm Cove Ambient' : 'e.g. Warm Cove Ambient'}
                     className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
@@ -850,7 +856,7 @@ export default function CaptureForm() {
                   </label>
                   <input
                     type="text"
-                    value={composition}
+                    value={translateAttribute(composition, language)}
                     onChange={(e) => setComposition(e.target.value)}
                     placeholder={language === 'ko' ? '예: Asymmetrical Monolithic Grid' : language === 'ja' ? '例: Asymmetrical Monolithic Grid' : language === 'fr' ? 'ex: Asymmetrical Monolithic Grid' : language === 'zh' ? '例：Asymmetrical Monolithic Grid' : language === 'es' ? 'ej: Asymmetrical Monolithic Grid' : 'e.g. Asymmetrical Monolithic Grid'}
                     className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
@@ -862,7 +868,7 @@ export default function CaptureForm() {
               <div>
                 <label className="block text-xs font-bold text-zinc-300 mb-1 uppercase flex items-center gap-1">
                   <Tag className="w-3.5 h-3.5 text-orange-400" />
-                  Objects & Display Props
+                  {language === 'ko' ? '오브제 및 집기 (Objects & Props)' : language === 'ja' ? 'ディスプレイ什器・オブジェクト' : language === 'fr' ? 'Objets et Accessoires' : language === 'zh' ? '陈列道具与物件' : language === 'es' ? 'Objetos y Accesorios' : 'Objects & Display Props'}
                 </label>
                 <div className="flex items-center gap-1.5 flex-wrap mb-2">
                   {objects.map((obj, idx) => (
@@ -870,7 +876,7 @@ export default function CaptureForm() {
                       key={idx}
                       className="px-2 py-1 rounded bg-[#121214] border border-zinc-700 text-xs font-bold flex items-center gap-1 text-white"
                     >
-                      {obj}
+                      {translateAttribute(obj, language)}
                       <button onClick={() => removeObject(idx)} className="text-zinc-400 hover:text-white">
                         <X className="w-3 h-3" />
                       </button>
@@ -903,7 +909,7 @@ export default function CaptureForm() {
                 </label>
                 <input
                   type="text"
-                  value={theme}
+                  value={translateAttribute(theme, language)}
                   onChange={(e) => setTheme(e.target.value)}
                   placeholder={language === 'ko' ? '예: Organic Heritage Craftsmanship' : language === 'ja' ? '例: Organic Heritage Craftsmanship' : language === 'fr' ? 'ex: Organic Heritage Craftsmanship' : language === 'zh' ? '例：Organic Heritage Craftsmanship' : language === 'es' ? 'ej: Organic Heritage Craftsmanship' : 'e.g. Organic Heritage Craftsmanship'}
                   className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
