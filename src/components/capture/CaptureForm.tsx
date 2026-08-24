@@ -649,7 +649,7 @@ export default function CaptureForm() {
                   <label className="block text-[11px] font-bold text-zinc-400 mb-1">{language === 'ko' ? '도시 (City) *' : language === 'ja' ? '都市 (City) *' : language === 'fr' ? 'Ville (City) *' : language === 'zh' ? '城市 (City) *' : language === 'es' ? 'Ciudad (City) *' : 'City *'}</label>
                   <input
                     type="text"
-                    value={city}
+                    value={translateCity(city, language)}
                     onChange={(e) => handleCityChange(e.target.value)}
                     className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-1.5 px-2.5 text-xs text-white font-bold focus:border-orange-500 focus:outline-none"
                   />
@@ -658,7 +658,7 @@ export default function CaptureForm() {
                   <label className="block text-[11px] font-bold text-zinc-400 mb-1">{language === 'ko' ? '국가 (Country) *' : language === 'ja' ? '国 (Country) *' : language === 'fr' ? 'Pays (Country) *' : language === 'zh' ? '国家 (Country) *' : language === 'es' ? 'País (Country) *' : 'Country *'}</label>
                   <input
                     type="text"
-                    value={country}
+                    value={translateCountry(country, language)}
                     onChange={(e) => handleCountryChange(e.target.value)}
                     className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-1.5 px-2.5 text-xs text-white font-bold focus:border-orange-500 focus:outline-none"
                   />
