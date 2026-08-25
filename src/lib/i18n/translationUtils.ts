@@ -9,42 +9,56 @@ const CATEGORY_MAP: Record<string, Partial<Record<Language, string>>> = {
     en: 'All Categories',
     ja: 'すべてのカテゴリー',
     fr: 'Toutes les catégories',
+    zh: '全部分类',
+    es: 'Todas las Categorías',
   },
   Window: {
     ko: '윈도우 디스플레이',
     en: 'Window Display',
     ja: 'ウィンドウディスプレイ',
     fr: 'Vitrine',
+    zh: '橱窗陈列',
+    es: 'Escaparate',
   },
   'Store Interior': {
     ko: '매장 인테리어',
     en: 'Store Interior',
     ja: '店舗内装',
     fr: 'Intérieur de Magasin',
+    zh: '店铺室内',
+    es: 'Interior de Tienda',
   },
   'Store Exterior': {
     ko: '매장 파사드 (익스테리어)',
     en: 'Store Exterior (Facade)',
     ja: '店舗外観',
     fr: 'Façade de Magasin',
+    zh: '店铺外观',
+    es: 'Exterior de Tienda',
   },
   'Pop-up Store': {
     ko: '팝업 스토어',
     en: 'Pop-up Store',
     ja: 'ポップアップストア',
     fr: 'Boutique Éphémère',
+    zh: '快闪店',
+    es: 'Tienda Pop-up',
   },
   Street: {
     ko: '스트리트 씬',
     en: 'Street Scene',
     ja: 'ストリート',
     fr: 'Scène de Rue',
+    zh: '街景/都市',
+    es: 'Calle / Urbano',
   },
   Exhibition: {
     ko: '전시 공간',
     en: 'Exhibition',
     ja: '展示空間',
     fr: 'Exposition',
+    zh: '展览空间',
+    es: 'Espacio de Exposición',
   },
 };
 
@@ -190,60 +204,80 @@ const ATTRIBUTE_MAP: Record<string, Partial<Record<Language, string>>> = {
     en: 'Cyberpunk Industrial',
     ja: 'サイバーパンク・インダストリアル',
     fr: 'Industriel Cyberpunk',
+    zh: '赛博朋克工业风',
+    es: 'Industrial Cyberpunk',
   },
   'Biophilic Luxury': {
     ko: '바이오필릭 럭셔리',
     en: 'Biophilic Luxury',
     ja: 'バイオフィリック・ラグジュアリー',
     fr: 'Luxe Biophilique',
+    zh: '亲自然奢华风',
+    es: 'Lujo Biofílico',
   },
   'Minimalist Brutalism': {
     ko: '미니멀리스트 브루탈리즘',
     en: 'Minimalist Brutalism',
     ja: 'ミニマリスト・ブルータリズム',
     fr: 'Brutalisme Minimaliste',
+    zh: '极简野兽主义',
+    es: 'Brutalismo Minimalista',
   },
   'Soft Sculptural Surrealism': {
     ko: '소프트 조형 초현실주의',
     en: 'Soft Sculptural Surrealism',
     ja: 'ソフト彫刻超現実主義',
     fr: 'Surréalisme Sculptural Doux',
+    zh: '柔和雕塑超现实主义',
+    es: 'Surrealismo Escultórico Suave',
   },
   'Neo-Heritage Expressionism': {
     ko: '네오 헤리티지 표현주의',
     en: 'Neo-Heritage Expressionism',
     ja: 'ネオ・ヘリテージ表現主義',
     fr: 'Expressionnisme Néotraditionnel',
+    zh: '新传统表现主义',
+    es: 'Expresionismo Neo-Patrimonial',
   },
   'Craft Rationalism': {
     ko: '크래프트 합리주의',
     en: 'Craft Rationalism',
     ja: 'クラフト・ラショナリズム',
     fr: 'Rationalisme Artisanal',
+    zh: '匠心理性主义',
+    es: 'Racionalismo Artesanal',
   },
   'Minimalist Oriental Modernism': {
     ko: '미니멀 동양 모더니즘',
     en: 'Minimalist Oriental Modernism',
     ja: 'ミニマル東洋モダニズム',
     fr: 'Modernisme Oriental Minimaliste',
+    zh: '极简东方现代主义',
+    es: 'Modernismo Oriental Minimalista',
   },
   'Surrealist Pop Minimalism': {
     ko: '초현실 팝 미니멀리즘',
     en: 'Surrealist Pop Minimalism',
     ja: 'シュルレアリスム・ポップ',
     fr: 'Minimalisme Pop Surréaliste',
+    zh: '超现实波普极简主义',
+    es: 'Minimalismo Pop Surrealista',
   },
   'Minimalist Asian Serenity': {
     ko: '미니멀 아시안 동양미',
     en: 'Minimalist Asian Serenity',
     ja: '東洋の静寂ミニマリズム',
     fr: 'Sérénité Asiatique Minimaliste',
+    zh: '极简东方禅意',
+    es: 'Serenidad Asiática Minimalista',
   },
   'Monumental Art Deco Modernism': {
     ko: '웅장한 아르데코 모더니즘',
     en: 'Monumental Art Deco Modernism',
     ja: 'モニュメンタル・アールデコ',
     fr: 'Modernisme Art Déco Monumental',
+    zh: '宏伟装饰艺术现代主义',
+    es: 'Modernismo Art Déco Monumental',
   },
 
   // Lighting
@@ -622,33 +656,59 @@ export function getLocale(lang: Language): string {
 }
 
 /**
+ * Generic Bidirectional / Multi-language Lookup Helper
+ */
+function lookupTranslation(
+  map: Record<string, Partial<Record<Language, string>>>,
+  term: string,
+  lang: Language
+): string {
+  if (!term || typeof term !== 'string') return term;
+  const trimmed = term.trim();
+  if (!trimmed) return term;
+
+  // 1. Direct Key Match (e.g. term === 'Minimalist Brutalism')
+  if (map[trimmed]) {
+    const entry = map[trimmed];
+    if (entry && entry[lang]) return entry[lang]!;
+    if (entry && entry.en) return entry.en!;
+  }
+
+  // 2. Bidirectional / Reverse Match across any language value (e.g. term === '野兽主义工业风' or '미니멀리스트 브루탈리즘')
+  const lowerTerm = trimmed.toLowerCase();
+  for (const key of Object.keys(map)) {
+    const entry = map[key];
+    if (!entry) continue;
+    for (const val of Object.values(entry)) {
+      if (val && val.toLowerCase() === lowerTerm) {
+        if (entry[lang]) return entry[lang]!;
+        if (entry.en) return entry.en!;
+      }
+    }
+  }
+
+  return term;
+}
+
+/**
  * Translate Category
  */
 export function translateCategory(cat: string, lang: Language): string {
-  if (CATEGORY_MAP[cat] && CATEGORY_MAP[cat][lang]) {
-    return CATEGORY_MAP[cat][lang];
-  }
-  return cat;
+  return lookupTranslation(CATEGORY_MAP, cat, lang);
 }
 
 /**
  * Translate Country
  */
 export function translateCountry(country: string, lang: Language): string {
-  if (COUNTRY_MAP[country] && COUNTRY_MAP[country][lang]) {
-    return COUNTRY_MAP[country][lang];
-  }
-  return country;
+  return lookupTranslation(COUNTRY_MAP, country, lang);
 }
 
 /**
  * Translate City
  */
 export function translateCity(city: string, lang: Language): string {
-  if (CITY_MAP[city] && CITY_MAP[city][lang]) {
-    return CITY_MAP[city][lang];
-  }
-  return city;
+  return lookupTranslation(CITY_MAP, city, lang);
 }
 
 /**
@@ -667,10 +727,7 @@ export function translateLocation(city: string, country: string, lang: Language)
  * Translate Design Attribute (Style, Material, Lighting, Composition)
  */
 export function translateAttribute(term: string, lang: Language): string {
-  if (ATTRIBUTE_MAP[term] && ATTRIBUTE_MAP[term][lang]) {
-    return ATTRIBUTE_MAP[term][lang];
-  }
-  return term;
+  return lookupTranslation(ATTRIBUTE_MAP, term, lang);
 }
 
 /**
@@ -860,10 +917,7 @@ const DESCRIPTION_MAP: Record<string, Partial<Record<Language, string>>> = {
 };
 
 export function translateDescription(desc: string, lang: Language): string {
-  if (DESCRIPTION_MAP[desc] && DESCRIPTION_MAP[desc][lang]) {
-    return DESCRIPTION_MAP[desc][lang];
-  }
-  return desc;
+  return lookupTranslation(DESCRIPTION_MAP, desc, lang);
 }
 
 /**
