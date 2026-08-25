@@ -609,36 +609,6 @@ const ATTRIBUTE_MAP: Record<string, Partial<Record<Language, string>>> = {
     ja: '天然トラバーチン石材',
     fr: 'Pierre de Travertin Naturelle',
   },
-  'Custom Faceted Glass Tiles': {
-    ko: '입체 칼라 유리 커튼월',
-    en: 'Custom Faceted Glass Tiles',
-    ja: '立体ファセットガラス',
-    fr: 'Tuiles en Verre Facetté',
-  },
-  'Polished Platinum Rim': {
-    ko: '폴리싱 플래티넘 몰딩',
-    en: 'Polished Platinum Rim',
-    ja: '研磨プラチナマージン',
-    fr: 'Rebord en Platine Poli',
-  },
-  'White Indiana Limestone': {
-    ko: '화이트 인디애나 라임스톤',
-    en: 'White Indiana Limestone',
-    ja: 'ホワイト・インディアナライムストーン',
-    fr: 'Pierre Calcaire d\'Indiana Blanche',
-  },
-  'Brushed Steel': {
-    ko: '브러시드 스틸',
-    en: 'Brushed Steel',
-    ja: 'ブラッシュドスチール',
-    fr: 'Acier Brossé',
-  },
-  Glass: {
-    ko: '유리',
-    en: 'Glass',
-    ja: 'ガラス',
-    fr: 'Verre',
-  },
 };
 
 /**
@@ -730,99 +700,134 @@ export function translateAttribute(term: string, lang: Language): string {
   return lookupTranslation(ATTRIBUTE_MAP, term, lang);
 }
 
-/**
- * Description & Notes Multilingual Translation Map
- */
 const DESCRIPTION_MAP: Record<string, Partial<Record<Language, string>>> = {
   'Hyper-real kinetic sculpture installation integrated with brushed steel retail counters in Ginza.': {
     ko: '긴자 매장에 설치된 극실사 키네틱 조형물 및 헤어라인 스틸 전시대의 미래지향적 공간 디스플레이.',
     en: 'Hyper-real kinetic sculpture installation integrated with brushed steel retail counters in Ginza.',
     ja: '銀座店舗に設置されたハイパーリアルなキネティック彫刻とヘアラインスチール什器の近未来空間。',
     fr: 'Installation de sculpture cinétique hyperréaliste intégrée à des comptoirs en acier brossé à Ginza.',
+    zh: '银座店铺中结合拉丝钢陈列台的超写实动态雕塑装置。',
+    es: 'Instalación de escultura cinética hiperrealista integrada con mostradores de acero cepillado en Ginza.',
   },
   'Champs-Élysées summer window concept featuring multi-layered organic timber arcs with warm spotlighting.': {
     ko: '샹젤리제 메인 윈도우에 연출된 곡면 유기적 원목 아치와 따뜻한 골드 황동 핀조명 연출.',
     en: 'Champs-Élysées summer window concept featuring multi-layered organic timber arcs with warm spotlighting.',
     ja: 'シャンゼリゼ通りのメインウィンドウに演出された曲面木製アーチと温かみのある真鍮照明。',
     fr: 'Concept de vitrine estivale aux Champs-Élysées avec des arcs en bois massif et un éclairage laiton chaud.',
+    zh: '香榭丽舍大街夏季橱窗，采用多层有机木弧与暖色射灯。',
+    es: 'Concepto de escaparate de verano en los Campos Elíseos con arcos de madera orgánica e iluminación cálida.',
   },
   'Raw concrete flagship façade in Seongsu with dramatic suspended botanical installation and LED wall.': {
     ko: '성수 플래그십 파사드에 적용된 노출 콘크리트 구조와 공중 식물 캐노피의 웅장한 연출.',
     en: 'Raw concrete flagship façade in Seongsu with dramatic suspended botanical installation and LED wall.',
     ja: '聖水（ソンス）フラッグシップ外観に適用された打ち放しコンクリート構造と吊り下げ植物キャノピー。',
     fr: 'Façade en béton brut à Seongsu avec une spectaculaire installation botanique suspendue et mur LED.',
+    zh: '圣水洞旗舰店外立面，采用清水混凝土结构与悬挂植物装置及LED墙。',
+    es: 'Fachada insignia de hormigón en Seongsu con una dramática instalación botánica suspendida y pared LED.',
   },
   'SoHo flagship interior featuring soft millennial pink plaster walls, oversized foam pedestals, and chrome detailing.': {
     ko: '소호 플래그십 내부에 적용된 은은한 핑크 스투코 플라스터와 대형 폼 전시대 및 크롬 포인트.',
     en: 'SoHo flagship interior featuring soft millennial pink plaster walls, oversized foam pedestals, and chrome detailing.',
     ja: 'SOHOフラッグシップ内に適用されたピンクスタッコ仕上げと大型フォーム什器、クロームのアクセント。',
     fr: 'Intérieur du magasin phare de SoHo avec des murs en plâtre rose doux, des piédestaux en mousse et des détails en chrome.',
+    zh: 'SoHo 旗舰店室内，带有柔和千禧粉抹灰墙、超大泡沫展台与镀铬细节。',
+    es: 'Interior de la tienda insignia de SoHo con paredes de yeso rosa suave, pedestales de espuma y detalles en cromo.',
   },
   'Bond Street flagship façade completely wrapped in dynamic mirrored check tiles that reflect heritage London brickwork.': {
     ko: '리젠트 스트리트 파사드를 감싼 거울 체크 미러 타일과 헤리티지 런던 벽돌의 입체 반사 연출.',
     en: 'Bond Street flagship façade completely wrapped in dynamic mirrored check tiles that reflect heritage London brickwork.',
     ja: 'ボンドストリート外観を包み込む鏡面チェックタイルとロンドンの伝統的なレンガ造りの反射。',
     fr: 'Façade du magasin phare de Bond Street enveloppée de carreaux miroirs à carreaux réfléchissant la brique londonienne.',
+    zh: '邦德街旗舰店外立面，完全包覆在镜像格纹砖中，反射出伦敦传统砖墙。',
+    es: 'Fachada insignia de Bond Street envuelta en azulejos de espejo a cuadros que reflejan los ladrillos tradicionales de Londres.',
   },
   'Salone del Mobile immersive lounge pavilion constructed with woven leather acoustic panels and volcanic stone seats.': {
     ko: '밀라노 가구박람회에 연출된 인트레치아토 가죽 아쿠스틱 패널과 화산석 라운지 쉼터.',
     en: 'Salone del Mobile immersive lounge pavilion constructed with woven leather acoustic panels and volcanic stone seats.',
     ja: 'ミラノサローネに展示されたイントレチャートレザー壁面パネルと火山岩ラウンジチェア。',
     fr: 'Pavillon d\'exposition au Salone del Mobile avec des panneaux muraux en cuir tressé et des sièges en pierre volcanique.',
+    zh: '米兰家具展沉浸式休息亭，由编织皮革吸音板与火山石座椅打造。',
+    es: 'Pabellón de exposición en Salone del Mobile construido con paneles acústicos de cuero tejido y asientos de piedra volcánica.',
   },
   'Omotesando storefront window utilizing traditional Japanese Washi paper lanterns with modern geometric brass wireframes.': {
     ko: '오모테산도 윈도우 디스플레이에 연출된 은은한 전통 한지 등과 프레임 입체 조형물.',
     en: 'Omotesando storefront window utilizing traditional Japanese Washi paper lanterns with modern geometric brass wireframes.',
     ja: '表参道ウィンドウディスプレイに演出された和紙提灯と現代的な真鍮フレーム。',
     fr: 'Vitrine d\'Omotesando utilisant des lanternes traditionnelles en papier Washi et des structures en laiton.',
+    zh: '表参道临街橱窗，结合传统和纸灯笼与现代几何黄铜线框。',
+    es: 'Escaparate en Omotesando con linternas de papel Washi tradicionales y marcos geométricos de latón.',
   },
   'Le Marais pop-up concept featuring monochromatic butter yellow foam structures and curved retail racks.': {
     ko: '르 마레 팝업 공간을 채운 단색 버터 옐로우 폼 조형물과 유선형 행거 구조.',
     en: 'Le Marais pop-up concept featuring monochromatic butter yellow foam structures and curved retail racks.',
     ja: 'マレ地区のポップアップ空間を彩るバターイエローのフォーム造形と曲面ハンガーラック。',
     fr: 'Concept éphémère au Marais avec des structures en mousse jaune beurre et des portants à vêtements cintrés.',
+    zh: '玛黑区快闪店概念，特色为单色奶油黄泡沫结构与弧形陈列架。',
+    es: 'Concepto pop-up en Le Marais con estructuras de espuma amarillo mantequilla y estantes curvados.',
   },
   'Hannam-dong boutique interior displaying warm micro-cement plaster walls, hand-carved hanji light shades, and minimalist stainless hangers.': {
     ko: '한남동 부티크 내부에 연출된 따뜻한 마이크로시멘트 질감과 손수 만든 한지 등, 트라버틴 카운터.',
     en: 'Hannam-dong boutique interior displaying warm micro-cement plaster walls, hand-carved hanji light shades, and minimalist stainless hangers.',
     ja: '漢南洞ブティック内に演出された温かみのあるマイクロセメント仕上げと手作り韓紙照明、トラバーチンカウンター。',
     fr: 'Intérieur de la boutique de Hannam-dong avec des murs en béton ciré chaud, des suspensions en papier Hanji et un comptoir en travertin.',
-  },
-  'Fifth Avenue landmark façade featuring multi-faceted glass curtain wall with custom robin-egg blue lighting at dusk.': {
-    ko: '5번가 플래그십 파사드 입면에 연출된 입체 글래스 커튼월과 티파니 블루 아키텍처 글로우.',
-    en: 'Fifth Avenue landmark façade featuring multi-faceted glass curtain wall with custom robin-egg blue lighting at dusk.',
-    ja: '5番街ランドマーク外観の立体ガラスカーテンウォールとティファニーブルーの建築照明。',
-    fr: 'Façade emblématique de la Cinquième Avenue avec un mur-rideau en verre facetté et un éclairage bleu Tiffany.',
-  },
-  'Minimalist noir marble showroom with mirror polished steel racks on Rue Saint-Honoré.': {
-    ko: '생토노레 거리에 위치한 생로랑 매장의 마이크로 흑대리석 럭셔리 쇼룸.',
-    en: 'Minimalist noir marble showroom with mirror polished steel racks on Rue Saint-Honoré.',
-    ja: 'サントノレ通りのサンローラン店舗内の黒大理石とクローム什器。',
-    fr: 'Showroom en marbre noir minimaliste avec des portants en acier poli miroir.',
+    zh: '汉南洞精品店室内，展示暖色微水泥墙面、手工韩纸灯罩与极简不锈钢衣架。',
+    es: 'Interior de boutique en Hannam-dong con paredes de microcemento cálido, pantallas de papel hanji y colgadores de acero.',
   },
   'Jonathan Anderson curated Casa Loewe interior featuring ceramic art, oak shelves, and custom hand-woven rugs.': {
     ko: '오모테산도 카사 로에베 내부에 연출된 조형 도자기 아트와 오크 원목 선반.',
     en: 'Jonathan Anderson curated Casa Loewe interior featuring ceramic art, oak shelves, and custom hand-woven rugs.',
     ja: 'カサ・ロエベ表参道内部のセラミックアートとオーク材什器の空間。',
     fr: 'Intérieur de Casa Loewe présentant de l\'art céramique, des étagères en chêne et des tapis tissés main.',
+    zh: '乔纳森·安德森策划的 Casa Loewe 室内，呈现陶瓷艺术、橡木货架与手工地毯。',
+    es: 'Interior de Casa Loewe con arte cerámico, estantes de roble y alfombras tejidas a mano.',
   },
   'Fifth Avenue neo-renaissance mansion storefront with gold panther sculpture accents.': {
     ko: '5번가 까르띠에 랜드마크 맨션 파사드와 골드 팬더 조형물 연출.',
     en: 'Fifth Avenue neo-renaissance mansion storefront with gold panther sculpture accents.',
     ja: '5番街カルティエ・マンション外観の金色のパンサー彫刻。',
     fr: 'Façade de manoir néo-renaissance de la Cinquième Avenue avec des sculptures de panthères dorées.',
+    zh: '第五大道新文艺复兴大厦门面，带有金色猎豹雕塑装饰。',
+    es: 'Escaparate de mansión neorenacentista en la Quinta Avenida con esculturas de panteras doradas.',
   },
   'Pastel yellow damask silk window nook with brass framing in the Milan fashion quadrant.': {
     ko: '밀라노 미우미우 윈도우의 패스텔 옐로우 실크 다마스크 쇼케이스.',
     en: 'Pastel yellow damask silk window nook with brass framing in the Milan fashion quadrant.',
     ja: 'ミラノ・ミウミウのパステルイエローの絹ダマスク布地ウィンドウ。',
     fr: 'Vitrine en soie damassée jaune pastel avec cadre en laiton dans le quartier de la mode à Milan.',
+    zh: '米兰时尚区柔黄色织锦缎丝绸橱窗，配黄铜边框。',
+    es: 'Vitrine de seda damascada amarillo pastel con marco de latón en el distrito de la moda de Milán.',
   },
   'Ginza Maison Hermès paper origami installation window with golden sunlight projections.': {
     ko: '긴자 메종 에르메스 윈도우의 입체 종이 오리가미 조형물과 골드 햇살 투사 연출.',
     en: 'Ginza Maison Hermès paper origami installation window with golden sunlight projections.',
     ja: '銀座メゾンエルメスのウィンドウに飾られた和紙折り紙インスタレーションと黄金の光。',
     fr: 'Vitrine de Maison Hermès à Ginza avec installation d\'origami en papier et projections dorées.',
+    zh: '银座爱马仕之家折纸艺术橱窗，伴有金色日光投影。',
+    es: 'Escaparate con instalación de origami de papel en Maison Hermès Ginza con proyecciones doradas.',
+  },
+  'Sculptural marble podiums with brass mirror panels.': {
+    ko: '조각 같은 마블 포디움과 황동 미러 패널이 조화를 이루는 프리미엄 쇼룸.',
+    en: 'Sculptural marble podiums with brass mirror panels.',
+    ja: '彫刻的な大理石ポディウムと真鍮ミラーパネルで構成された空間。',
+    fr: 'Piédestaux en marbre sculpturaux avec des panneaux miroir en laiton.',
+    zh: '雕塑大理石展台与黄铜镜面板。',
+    es: 'Podios de mármol esculpidos con paneles de espejo de latón.',
+  },
+  'Custom footwear archway constructed from 500 cast white sneaker molds with marble countertops.': {
+    ko: '뉴욕 키스(Kith) 매장에 설치된 500개의 스니커즈 백색 석고 몰드 아치 및 마블 전시대.',
+    en: 'Custom footwear archway constructed from 500 cast white sneaker molds with marble countertops.',
+    ja: 'ニューヨークKith店舗内の500個のスニーカー金型で作られた彫刻アーチ。',
+    fr: 'Arche de chaussures sur mesure construite à partir de 500 moules de baskets blanches en plâtre.',
+    zh: '由500个白色球鞋铸模构成的定制鞋履拱门，配大理石台面。',
+    es: 'Arco de calzado personalizado construido con 500 moldes de zapatillas blancas con mostradores de mármol.',
+  },
+  'Sneaker mold archway retail layout in Williamsburg.': {
+    ko: '윌리엄스버그 매장의 스니커즈 캐스팅 몰드 아치 입체 디스플레이.',
+    en: 'Sneaker mold archway retail layout in Williamsburg.',
+    ja: 'ウィリアムズバーグの500個のスニーカー金型アーチディスプレイ。',
+    fr: 'Présentation commerciale d\'arche en moule de basket à Williamsburg.',
+    zh: '威廉斯堡球鞋铸模拱门零售布局。',
+    es: 'Diseño comercial con arco de moldes de zapatillas en Williamsburg.',
   },
   'Golden paper origami installation in Ginza window display.': {
     ko: '긴자 윈도우 디스플레이에 연출된 황금빛 한지 종이 오리가미 디스플레이.',
@@ -895,24 +900,6 @@ const DESCRIPTION_MAP: Record<string, Partial<Record<Language, string>>> = {
     en: 'Sculptural Grand Antique marble podiums set against mirrored brass panels and muted plaster.',
     ja: 'パリ・セリーヌ店内のグランドアンティーク大理石ポディウムと真鍮ミラー。',
     fr: 'Piédestaux sculpturaux en marbre Grand Antique sur fond de panneaux en laiton miroir.',
-  },
-  'Sculptural marble podiums with brass mirror panels.': {
-    ko: '조각 같은 마블 포디움과 황동 미러 패널이 조화를 이루는 프리미엄 쇼룸.',
-    en: 'Sculptural marble podiums with brass mirror panels.',
-    ja: '彫刻的な大理石ポディウムと真鍮ミラーパネルで構成された空間。',
-    fr: 'Piédestaux en marbre sculpturaux avec des panneaux miroir en laiton.',
-  },
-  'Custom footwear archway constructed from 500 cast white sneaker molds with marble countertops.': {
-    ko: '뉴욕 키스(Kith) 매장에 설치된 500개의 스니커즈 백색 석고 몰드 아치 및 마블 전시대.',
-    en: 'Custom footwear archway constructed from 500 cast white sneaker molds with marble countertops.',
-    ja: 'ニューヨークKith店舗内の500個のスニーカー金型で作られた彫刻アーチ。',
-    fr: 'Arche de chaussures sur mesure construite à partir de 500 moules de baskets blanches en plâtre.',
-  },
-  'Sneaker mold archway retail layout in Williamsburg.': {
-    ko: '윌리엄스버그 매장의 스니커즈 캐스팅 몰드 아치 입체 디스플레이.',
-    en: 'Sneaker mold archway retail layout in Williamsburg.',
-    ja: 'ウィリアムズバーグの500個のスニーカー金型アーチディスプレイ。',
-    fr: 'Présentation commerciale d\'arche en moule de basket à Williamsburg.',
   },
 };
 
