@@ -59,29 +59,37 @@ class handler(BaseHTTPRequestHandler):
             target_lang = lang_map.get(str(lang).lower(), 'Korean')
 
             # Call Gemini AI Client (Server Side Only)
+            # Call Gemini AI Client (Server Side Only)
             client = genai.Client(api_key=api_key)
-            prompt = f"""You are a world-class Spatial Design & Retail Visual Merchandising (VMD) AI Architect.
+            prompt = """You are a world-class Spatial Design & Retail Visual Merchandising (VMD) AI Architect & Translator.
 Analyze this spatial design photo and output strict valid JSON only with no markdown formatting.
 
-CRITICAL LANGUAGE INSTRUCTIONS:
-1. 'brand': Keep in original international proper noun format in English / Latin / original brand name (e.g. 'Gentle Monster', 'Chanel', 'Acne Studios', 'Independent Design'). Do NOT translate brand names.
-2. All other natural language text fields ('category', 'description', 'style', 'materials', 'lighting', 'composition', 'objects', 'theme'): Output fluently and professionally in {target_lang}. Ensure that 'category' and 'style' are fully translated into {target_lang} (do NOT leave them in English).
-3. Non-text data (e.g., 'colors' HEX codes, 'confidence' numeric scores) must retain standard format.
+CRITICAL INSTRUCTIONS:
+1. Canonical Master Fields: Output 'category', 'description', 'style', 'materials', 'lighting', 'composition', 'objects', and 'theme' in English canonical format.
+2. 'brand': Keep in original proper noun format in English / Latin (e.g. 'Gentle Monster', 'Chanel', 'Acne Studios', 'Independent Design'). Do NOT translate brand names.
+3. 'translations': Provide fluent professional translations for 'category', 'description', 'style', 'materials', 'lighting', 'composition', 'objects', and 'theme' into Korean ('ko'), Japanese ('ja'), French ('fr'), Chinese ('zh'), and Spanish ('es').
 
 JSON Schema:
-{{
+{
   "category": "Window" | "Store Interior" | "Store Exterior" | "Pop-up Store" | "Street" | "Exhibition",
   "brand": "Estimated Brand name or 'Independent Design'",
-  "description": "2-sentence concise professional summary of the architectural and spatial design concept",
-  "style": "Exact style term (e.g. Minimalist Brutalism, Biophilic Luxury, Cyberpunk Industrial, Neo-Heritage Expressionism)",
+  "description": "2-sentence concise professional summary in English",
+  "style": "Exact style term in English (e.g. Minimalist Brutalism, Biophilic Luxury)",
   "colors": ["#HEX1", "#HEX2", "#HEX3", "#HEX4"],
-  "materials": ["Material 1", "Material 2", "Material 3"],
-  "lighting": "Lighting setup description (e.g. Dynamic Spot Accent, Warm Ambient Cove, Linear LED Outline)",
-  "composition": "Compositional balance (e.g. Monolithic Center, Asymmetrical Grid, Layered Depth)",
-  "objects": ["Object/Prop 1", "Object/Prop 2", "Object/Prop 3"],
-  "theme": "Spatial Design Theme Title",
-  "confidence": 0.92
-}}"""
+  "materials": ["Material 1 in English", "Material 2 in English"],
+  "lighting": "Lighting setup description in English",
+  "composition": "Compositional balance in English",
+  "objects": ["Object 1 in English", "Object 2 in English"],
+  "theme": "Spatial Design Theme Title in English",
+  "confidence": 0.92,
+  "translations": {
+    "ko": { "category": "매장 인테리어", "description": "...", "style": "...", "materials": [...], "lighting": "...", "composition": "...", "objects": [...], "theme": "..." },
+    "ja": { "category": "店舗内装", "description": "...", "style": "...", "materials": [...], "lighting": "...", "composition": "...", "objects": [...], "theme": "..." },
+    "fr": { "category": "Intérieur de Magasin", "description": "...", "style": "...", "materials": [...], "lighting": "...", "composition": "...", "objects": [...], "theme": "..." },
+    "zh": { "category": "店铺室内", "description": "...", "style": "...", "materials": [...], "lighting": "...", "composition": "...", "objects": [...], "theme": "..." },
+    "es": { "category": "Interior de Tienda", "description": "...", "style": "...", "materials": [...], "lighting": "...", "composition": "...", "objects": [...], "theme": "..." }
+  }
+}"""
 
             t_before_api = time.time()
             print(f"[TIMING 2/5] Gemini API call starting: elapsed={t_before_api - t_start:.3f}s")
@@ -145,6 +153,7 @@ JSON Schema:
                         "objects": [str(o) for o in parsed_json["objects"]],
                         "theme": str(parsed_json["theme"]),
                         "confidence": float(parsed_json["confidence"]),
+                        "translations": parsed_json.get("translations", {}),
                     }
                     t_before_send = time.time()
                     print(f"[TIMING 5/5] Sending final HTTP 200 response: total_handler_duration={t_before_send - t_start:.3f}s")

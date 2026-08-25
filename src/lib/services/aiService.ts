@@ -12,6 +12,16 @@ export interface SpatialAIAnalysisResult {
   objects: string[];
   theme: string;
   confidence: number;
+  translations?: Record<string, {
+    category?: string;
+    description?: string;
+    style?: string;
+    materials?: string[];
+    lighting?: string;
+    composition?: string;
+    objects?: string[];
+    theme?: string;
+  }>;
 }
 
 /**

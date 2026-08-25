@@ -34,6 +34,8 @@ import {
   translateCity,
   translateAttribute,
   translateDescription,
+  translateAnalysisField,
+  translateAnalysisList,
 } from '@/lib/i18n/translationUtils';
 
 const SAMPLE_CAPTURES = [
@@ -745,7 +747,7 @@ export default function CaptureForm() {
                 </label>
                 <textarea
                   rows={2}
-                  value={translateDescription(rawAnalysis?.description || description, language)}
+                  value={translateAnalysisField(rawAnalysis, 'description', description, language)}
                   onChange={(e) => {
                     const v = e.target.value;
                     setDescription(v);
@@ -762,7 +764,7 @@ export default function CaptureForm() {
                 </label>
                 <input
                   type="text"
-                  value={translateAttribute(rawAnalysis?.style || style, language)}
+                  value={translateAnalysisField(rawAnalysis, 'style', style, language)}
                   onChange={(e) => {
                     const v = e.target.value;
                     setStyle(v);
@@ -827,12 +829,12 @@ export default function CaptureForm() {
                   {language === 'ko' ? '주요 자재/소재 (Materials)' : language === 'ja' ? '使用資材' : language === 'fr' ? 'Matériaux Utilisés' : language === 'zh' ? '主要材质' : language === 'es' ? 'Materiales Utilizados' : 'Materials & Elements'}
                 </label>
                 <div className="flex items-center gap-1.5 flex-wrap mb-2">
-                  {(rawAnalysis?.materials || materials).map((mat, idx) => (
+                  {translateAnalysisList(rawAnalysis, 'materials', materials, language).map((mat, idx) => (
                     <span
                       key={idx}
                       className="px-2 py-1 rounded bg-[#121214] border border-zinc-700 text-xs font-bold flex items-center gap-1 text-white"
                     >
-                      {translateAttribute(mat, language)}
+                      {mat}
                       <button onClick={() => removeMaterial(idx)} className="text-zinc-400 hover:text-white">
                         <X className="w-3 h-3" />
                       </button>
@@ -866,7 +868,7 @@ export default function CaptureForm() {
                   </label>
                   <input
                     type="text"
-                    value={translateAttribute(rawAnalysis?.lighting || lighting, language)}
+                    value={translateAnalysisField(rawAnalysis, 'lighting', lighting, language)}
                     onChange={(e) => {
                       const v = e.target.value;
                       setLighting(v);
@@ -882,7 +884,7 @@ export default function CaptureForm() {
                   </label>
                   <input
                     type="text"
-                    value={translateAttribute(rawAnalysis?.composition || composition, language)}
+                    value={translateAnalysisField(rawAnalysis, 'composition', composition, language)}
                     onChange={(e) => {
                       const v = e.target.value;
                       setComposition(v);
@@ -901,12 +903,12 @@ export default function CaptureForm() {
                   {language === 'ko' ? '오브제 및 집기 (Objects & Props)' : language === 'ja' ? 'ディスプレイ什器・オブジェクト' : language === 'fr' ? 'Objets et Accessoires' : language === 'zh' ? '陈列道具与物件' : language === 'es' ? 'Objetos y Accesorios' : 'Objects & Display Props'}
                 </label>
                 <div className="flex items-center gap-1.5 flex-wrap mb-2">
-                  {(rawAnalysis?.objects || objects).map((obj, idx) => (
+                  {translateAnalysisList(rawAnalysis, 'objects', objects, language).map((obj, idx) => (
                     <span
                       key={idx}
                       className="px-2 py-1 rounded bg-[#121214] border border-zinc-700 text-xs font-bold flex items-center gap-1 text-white"
                     >
-                      {translateAttribute(obj, language)}
+                      {obj}
                       <button onClick={() => removeObject(idx)} className="text-zinc-400 hover:text-white">
                         <X className="w-3 h-3" />
                       </button>
@@ -939,7 +941,7 @@ export default function CaptureForm() {
                 </label>
                 <input
                   type="text"
-                  value={translateAttribute(rawAnalysis?.theme || theme, language)}
+                  value={translateAnalysisField(rawAnalysis, 'theme', theme, language)}
                   onChange={(e) => {
                     const v = e.target.value;
                     setTheme(v);

@@ -1,4 +1,5 @@
 import { Language } from './translations';
+import type { SpatialAIAnalysisResult } from '../services/aiService';
 
 /**
  * Category Translations
@@ -905,6 +906,52 @@ const DESCRIPTION_MAP: Record<string, Partial<Record<Language, string>>> = {
 
 export function translateDescription(desc: string, lang: Language): string {
   return lookupTranslation(DESCRIPTION_MAP, desc, lang);
+}
+
+export function translateAnalysisField(
+  rawAnalysis: SpatialAIAnalysisResult | null,
+  field: 'category' | 'description' | 'style' | 'lighting' | 'composition' | 'theme',
+  fallbackValue: string,
+  lang: Language
+): string {
+  if (!rawAnalysis) {
+    if (field === 'description') return translateDescription(fallbackValue, lang);
+    if (field === 'category') return translateCategory(fallbackValue, lang);
+    return translateAttribute(fallbackValue, lang);
+  }
+
+  if (lang !== 'en' && rawAnalysis.translations?.[lang]?.[field]) {
+    const aiTr = rawAnalysis.translations[lang]![field];
+    if (aiTr && typeof aiTr === 'string' && aiTr.trim().length > 0) {
+      return aiTr;
+    }
+  }
+
+  const rawText = rawAnalysis[field] || fallbackValue;
+  if (field === 'description') return translateDescription(rawText, lang);
+  if (field === 'category') return translateCategory(rawText, lang);
+  return translateAttribute(rawText, lang);
+}
+
+export function translateAnalysisList(
+  rawAnalysis: SpatialAIAnalysisResult | null,
+  field: 'materials' | 'objects',
+  fallbackList: string[],
+  lang: Language
+): string[] {
+  if (!rawAnalysis) {
+    return fallbackList.map((item) => translateAttribute(item, lang));
+  }
+
+  if (lang !== 'en' && rawAnalysis.translations?.[lang]?.[field] && Array.isArray(rawAnalysis.translations[lang]![field])) {
+    const aiList = rawAnalysis.translations[lang]![field] as string[];
+    if (aiList && aiList.length > 0) {
+      return aiList;
+    }
+  }
+
+  const rawList = rawAnalysis[field] || fallbackList;
+  return rawList.map((item) => translateAttribute(item, lang));
 }
 
 /**
