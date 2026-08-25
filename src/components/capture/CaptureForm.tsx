@@ -267,26 +267,36 @@ export default function CaptureForm() {
 
   // Material Tag actions
   const addMaterial = () => {
-    if (newMaterialInput.trim() && !materials.includes(newMaterialInput.trim())) {
-      setMaterials([...materials, newMaterialInput.trim()]);
+    const trimmed = newMaterialInput.trim();
+    if (trimmed && !materials.includes(trimmed)) {
+      const next = [...materials, trimmed];
+      setMaterials(next);
+      if (rawAnalysis) setRawAnalysis({ ...rawAnalysis, materials: next });
       setNewMaterialInput('');
     }
   };
 
   const removeMaterial = (index: number) => {
-    setMaterials(materials.filter((_, i) => i !== index));
+    const next = materials.filter((_, i) => i !== index);
+    setMaterials(next);
+    if (rawAnalysis) setRawAnalysis({ ...rawAnalysis, materials: next });
   };
 
   // Object & Prop Tag actions
   const addObject = () => {
-    if (newObjectInput.trim() && !objects.includes(newObjectInput.trim())) {
-      setObjects([...objects, newObjectInput.trim()]);
+    const trimmed = newObjectInput.trim();
+    if (trimmed && !objects.includes(trimmed)) {
+      const next = [...objects, trimmed];
+      setObjects(next);
+      if (rawAnalysis) setRawAnalysis({ ...rawAnalysis, objects: next });
       setNewObjectInput('');
     }
   };
 
   const removeObject = (index: number) => {
-    setObjects(objects.filter((_, i) => i !== index));
+    const next = objects.filter((_, i) => i !== index);
+    setObjects(next);
+    if (rawAnalysis) setRawAnalysis({ ...rawAnalysis, objects: next });
   };
 
   // City & Country Change Handler with Coordinate Sync
@@ -736,7 +746,11 @@ export default function CaptureForm() {
                 <textarea
                   rows={2}
                   value={translateDescription(rawAnalysis?.description || description, language)}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setDescription(v);
+                    if (rawAnalysis) setRawAnalysis({ ...rawAnalysis, description: v });
+                  }}
                   className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-medium"
                 />
               </div>
@@ -749,7 +763,11 @@ export default function CaptureForm() {
                 <input
                   type="text"
                   value={translateAttribute(rawAnalysis?.style || style, language)}
-                  onChange={(e) => setStyle(e.target.value)}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setStyle(v);
+                    if (rawAnalysis) setRawAnalysis({ ...rawAnalysis, style: v });
+                  }}
                   placeholder={language === 'ko' ? '예: Minimalist Brutalism' : language === 'ja' ? '例: Minimalist Brutalism' : language === 'fr' ? 'ex: Minimalist Brutalism' : language === 'zh' ? '例：Minimalist Brutalism' : language === 'es' ? 'ej: Minimalist Brutalism' : 'e.g. Minimalist Brutalism'}
                   className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
                 />
@@ -849,7 +867,11 @@ export default function CaptureForm() {
                   <input
                     type="text"
                     value={translateAttribute(rawAnalysis?.lighting || lighting, language)}
-                    onChange={(e) => setLighting(e.target.value)}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setLighting(v);
+                      if (rawAnalysis) setRawAnalysis({ ...rawAnalysis, lighting: v });
+                    }}
                     placeholder={language === 'ko' ? '예: Warm Cove Ambient' : language === 'ja' ? '例: Warm Cove Ambient' : language === 'fr' ? 'ex: Warm Cove Ambient' : language === 'zh' ? '例：Warm Cove Ambient' : language === 'es' ? 'ej: Warm Cove Ambient' : 'e.g. Warm Cove Ambient'}
                     className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
                   />
@@ -861,7 +883,11 @@ export default function CaptureForm() {
                   <input
                     type="text"
                     value={translateAttribute(rawAnalysis?.composition || composition, language)}
-                    onChange={(e) => setComposition(e.target.value)}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setComposition(v);
+                      if (rawAnalysis) setRawAnalysis({ ...rawAnalysis, composition: v });
+                    }}
                     placeholder={language === 'ko' ? '예: Asymmetrical Monolithic Grid' : language === 'ja' ? '例: Asymmetrical Monolithic Grid' : language === 'fr' ? 'ex: Asymmetrical Monolithic Grid' : language === 'zh' ? '例：Asymmetrical Monolithic Grid' : language === 'es' ? 'ej: Asymmetrical Monolithic Grid' : 'e.g. Asymmetrical Monolithic Grid'}
                     className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
                   />
@@ -914,7 +940,11 @@ export default function CaptureForm() {
                 <input
                   type="text"
                   value={translateAttribute(rawAnalysis?.theme || theme, language)}
-                  onChange={(e) => setTheme(e.target.value)}
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    setTheme(v);
+                    if (rawAnalysis) setRawAnalysis({ ...rawAnalysis, theme: v });
+                  }}
                   placeholder={language === 'ko' ? '예: Organic Heritage Craftsmanship' : language === 'ja' ? '例: Organic Heritage Craftsmanship' : language === 'fr' ? 'ex: Organic Heritage Craftsmanship' : language === 'zh' ? '例：Organic Heritage Craftsmanship' : language === 'es' ? 'ej: Organic Heritage Craftsmanship' : 'e.g. Organic Heritage Craftsmanship'}
                   className="w-full bg-[#121214] border border-zinc-800 rounded-xl py-2 px-3 text-xs text-white focus:outline-none focus:border-orange-500 font-bold"
                 />
