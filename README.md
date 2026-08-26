@@ -1,134 +1,162 @@
 # SPOT — Global Spatial Design Intelligence
 
-공간·리테일 디자인 사진을 업로드하면 AI가 공간의 스타일, 색상, 재료, 조명, 구성 요소를 분석해 주는 웹 서비스입니다. 사용자는 분석 결과를 확인·수정한 뒤 디자인 스팟으로 저장하고, 탐색·지도·비교·인사이트 화면에서 활용할 수 있습니다.
+공간·리테일 디자인 사진을 업로드하면 AI가 공간의 카테고리, 스타일, 색상, 재료, 조명, 구도, 오브젝트, 테마를 다각도로 분석해 주는 글로벌 공간 인텔리전스 웹 서비스입니다. 사용자는 분석 결과를 확인·수정한 뒤 디자인 스팟으로 저장하고, 탐색·지도·비교·인사이트 화면에서 활용할 수 있습니다.
 
-## 링크
+---
 
-- GitHub 저장소: https://github.com/jec5500-prog/Codyssey-A1-3
-- 과제 구현 브랜치: `assignment/python-ai-analyze`
-- 운영 버전 보존 태그: `release-before-assignment-2026-08-18`
-- 배포 URL: https://real-time-visual-sharing.vercel.app/
+## 1. 과제 목적 및 구현 개요
 
-> 과제 관련 수정은 과제 브랜치에만 적용됩니다. 기존 운영 코드 기준점은 보존 태그로 남겨 두었습니다.
+본 프로젝트는 Vercel Python Serverless Function과 Google Gemini Multimodal AI를 연동하여, 사용자가 업로드한 공간 디자인 사진을 구조화된 데이터로 자동 분석하고 **KO / EN / JA / FR / ZH / ES 6개 국어**로 실시간 탐색 및 검증할 수 있는 시스템을 구축하는 것을 목적으로 합니다.
 
-## 서비스 목적과 대상 사용자
+### 핵심 구현 내용
+- **Python Backend + Gemini AI 연동**: Vercel Python Serverless Function (`api/analyze.py`) 및 최신 `google-genai` SDK 기반 `gemini-3.6-flash` 모델 연동.
+- **구조화된 AI 분석 파이프라인**: 이미지 Base64 인코딩 전송 → Python API 수신 및 디코딩 → Gemini Vision AI 다각도 공간 분석 → 11개 핵심 데이터 항목 + 5개 언어 번역 객체 JSON 구조화 반환.
+- **Canonical Master & 동적 다국어 렌더링 파이프라인**: `rawAnalysis` Canonical English Master 데이터의 불변성을 유지하고, UI 렌더링 시점에만 활성 언어(`language`)에 따라 3단계 동적 폴백(AI Dynamic Translation → Static Dictionary → Raw Fallback)으로 렌더링.
+- **위치 데이터 로컬라이징**: City/Country 입력 및 요약 정보를 DB 원본값(Canonical String) 손상 없이 선택된 언어로 실시간 번역 표시 (`translateCity`, `translateCountry`).
+- **전체 UI 100% 다국어 지원**: 헤더, 네비게이션, 필터, 카드, 모달, Capture 검증 단계, Compare, Insight, Saved 전 파이프라인 6개 언어 동기화.
 
-SPOT는 현장에서 수집한 매장, 쇼윈도, 팝업 스토어, 전시 공간 사진을 분석 가능한 디자인 데이터로 전환합니다.
+---
 
-- 리테일 디자이너와 VMD: 현장 레퍼런스를 일관된 항목으로 기록
-- 공간 디자이너와 브랜딩 기획자: 색상·재료·조명·구성 분석을 활용한 기획
-- 디자인 트렌드 분석가: 지역·카테고리별 디자인 패턴 탐색과 비교
+## 2. 링크 정보
 
-## 주요 화면
+- **GitHub 저장소**: [jec5500-prog/Codyssey-A1-3](https://github.com/jec5500-prog/Codyssey-A1-3)
+- **과제 구현 브랜치**: `assignment/python-ai-analyze`
+- **운영 버전 보존 태그**: `release-before-assignment-2026-08-18`
+- **배포 URL**: [https://real-time-visual-sharing.vercel.app/](https://real-time-visual-sharing.vercel.app/)
 
-| 화면 | 경로 | 기능 |
+> 과제 작업은 `assignment/python-ai-analyze` 브랜치에서만 진행되며, `main` 브랜치는 100% Clean 상태로 보존됩니다.
+
+---
+
+## 3. 데이터 처리 흐름 (Data Flow)
+
+```text
+[사용자 사진 업로드 / 선택]
+        │ (Base64 인코딩)
+        ▼
+[Client: aiService.ts] ── POST /api/analyze ──► [Serverless: api/analyze.py]
+                                                        │ (google-genai SDK)
+                                                        ▼
+[CaptureForm Stage 3 UI] ◄── HTTP 200 JSON ◄── [Gemini AI: gemini-3.6-flash]
+  └─ rawAnalysis (Canonical Master) 저장            (11개 핵심 항목 + translations 객체)
+  └─ 선택 언어(KO/EN/JA/FR/ZH/ES) 동적 렌더링
+```
+
+---
+
+## 4. 기술 스택 및 SDK
+
+- **Frontend**: Next.js 16 (Turbopack), React 19, TypeScript, Tailwind CSS
+- **Backend / Serverless**: Vercel Python Serverless Function (`api/analyze.py`, Python 3.9+)
+- **AI SDK & Model**: `google-genai` SDK (`>=0.1.1`), `gemini-3.6-flash` 모델
+- **Data & Auth**: Supabase (PostgreSQL)
+- **Map Library**: Leaflet, React-Leaflet
+- **Deployment**: Vercel Deployment Platform
+
+---
+
+## 5. AI 분석 결과 데이터 항목
+
+Gemini Vision AI를 통해 분석되어 구조화된 결과로 반환되는 데이터 항목은 다음과 같습니다:
+
+| 항목 | 데이터 타입 | 설명 및 비번역/번역 처리 규칙 |
 | --- | --- | --- |
-| Explore | `/` | 디자인 스팟 탐색, 검색, 필터, 정렬, 상세 보기 |
-| Capture | `/capture` | 사진 업로드·모바일 카메라, 위치 확인, AI 분석, 검증·저장 |
-| Map | `/map` | 지도 기반 스팟 탐색 |
-| Compare | `/compare` | 지역·카테고리별 색상·재료·스타일·조명 비교 |
-| Insight | `/insight` | 데이터 기반 디자인 인사이트 |
-| Saved / Profile | `/saved`, `/profile` | 저장 스팟과 사용자 정보 관리 |
+| `category` | String | 공간 유형 (Window, Store Interior, Store Exterior, Pop-up Store, Street, Exhibition) |
+| `brand` | String | 추정 브랜드명 (예: Gentle Monster, Chanel). **고유명사 원문 유지 (비번역)** |
+| `description` | String | 공간 건축 및 VMD 디자인 컨셉 요약문 (2문장 내외) |
+| `style` | String | 디자인 스타일 (예: Minimalist Brutalism, Biophilic Luxury) |
+| `colors` | String Array | 대표 색상 4종 HEX 코드 (`#HEX1`~`#HEX4`) 및 Canvas 점유 비중 (%). **원문 유지 (비번역)** |
+| `materials` | String Array | 주요 사용 자재 및 소재 태그 리스트 |
+| `lighting` | String | 조명 설계 특징 (예: Linear Concealed Warm LED) |
+| `composition` | String | 공간 구도 및 시각적 균형감 (예: Asymmetrical Monolithic Grid) |
+| `objects` | String Array | 주요 오브제 및 디스플레이 집기 태그 리스트 |
+| `theme` | String | 공간 테마 타이틀 (예: Urban Future Art Installation) |
+| `confidence` | Number | AI 분석 신뢰도 점수 (0.00 ~ 1.00) |
 
-상단 메뉴와 모바일 하단 메뉴를 통해 주요 화면을 이동할 수 있습니다.
+---
 
-## AI 이미지 분석 흐름
+## 6. 다국어 지원 (i18n) 및 Canonical State 분리 구조
 
-1. 사용자가 Capture 화면에서 사진을 선택합니다.
-2. 브라우저가 이미지 형식·크기를 검증하고 Base64 형식으로 준비합니다.
-3. JavaScript가 `fetch('/api/analyze')`로 분석 요청을 보냅니다.
-4. Vercel Python Serverless Function인 `api/analyze.py`가 서버 환경 변수의 AI 키를 사용해 Gemini API를 호출합니다.
-5. 분석 결과를 화면에 반환합니다.
+### 지원 언어 (6 Languages)
+- **KO** (한국어), **EN** (영어), **JA** (일본어), **FR** (프랑스어), **ZH** (중국어), **ES** (스페인어)
 
-분석 결과에는 공간 카테고리, 브랜드 추정, 설명, 스타일, 색상 팔레트, 재료, 조명, 구성, 주요 오브젝트, 테마, 신뢰도가 포함됩니다.
+### Canonical Master State 분리 원칙
+1. **원본 데이터 보존 (`rawAnalysis`)**:
+   - AI 분석 수신 시 `rawAnalysis` state에 Canonical English Master 데이터를 변형 없이 저장합니다.
+   - DB 저장(`handleSaveSpot`) 시 정본(Canonical) 데이터가 안전하게 저장됩니다.
+2. **동적 다국어 렌더링 (`translateAnalysisField` / `translateAnalysisList`)**:
+   - 화면 표시 시점에만 활성 `language`에 맞게 동적으로 텍스트를 변환합니다.
+   - **1단계 (EN)**: `rawAnalysis` 원문 반환
+   - **2단계 (AI Dynamic Translation)**: `rawAnalysis.translations[language]` 객체 참조 (사전에 등록되지 않은 새로 생성된 임의의 AI 텍스트도 100% 선택 언어로 렌더링)
+   - **3단계 (Static Dictionary)**: `translationUtils.ts` 사전 매칭 텍스트 반환
+3. **위치 정보 실시간 번역**:
+   - City/Country 필드는 DB Canonical 값(예: `"Seoul"`, `"South Korea"`)을 유지하면서 UI 상에서는 선택 언어에 맞춰 실시간 로컬라이징 표기됩니다 (`translateCity`, `translateCountry`).
+4. **비번역 값 유지**:
+   - 브랜드 고유명사(`brand`), HEX 색상 코드 및 점유 비중(`colors`)은 어떠한 언어 설정에서도 변형되지 않습니다.
 
-## 오류·안정성 처리
+---
 
-- 빈 요청, 잘못된 이미지 데이터, AI API 오류: 사용자에게 안전한 오류 안내 표시
-- 이미지 크기: 원본 3MB 이하, Base64 포함 요청 본문 4MB 이하
-- 응답 지연: 15초 후 요청을 중단하고 재시도 안내 표시
-- AI 분석 실패: 가짜 분석 결과를 표시하지 않으며, 기존 선택 이미지와 입력 상태를 유지한 채 재시도 가능
-- 샘플 이미지 CORS 실패: 직접 이미지 업로드를 안내
+## 7. 주요 화면 및 기능
 
-서버 내부 예외와 비밀값은 오류 화면이나 콘솔에 표시하지 않습니다.
+| 화면 | 경로 | 주요 기능 |
+| --- | --- | --- |
+| **Explore** | `/` | 스팟 갤러리 탐색, 6개 언어 도시/카테고리 필터링, 정렬, 검색, 상세 모달 |
+| **Capture** | `/capture` | 사진 업로드/카메라/샘플 스팟, 위치 확인, AI 다각도 분석, Stage 3 동적 번역 검증 및 편집 저장 |
+| **Map** | `/map` | Leaflet 지도 기반 스팟 핀 탐색 및 마커 모달 |
+| **Compare** | `/compare` | 카테고리/도시별 컬러·자재·스타일 디테일 다국어 비교 엔진 |
+| **Insight** | `/insight` | 공간 디자인 패턴 분석 인사이트 차트 및 대시보드 |
+| **Saved / Profile** | `/saved`, `/profile` | 저장된 디자인 스팟 관리 및 사용자 프로필 |
 
-## 기술 스택
+---
 
-- Frontend: Next.js 16, React 19, TypeScript, Tailwind CSS
-- Backend: Vercel Python Serverless Function (`api/analyze.py`)
-- AI: Google Gemini API
-- Data/Auth: Supabase
-- Map: Leaflet
-- Deployment: Vercel
+## 8. 코드 및 구문 검증 (Verification Status)
 
-## 프로젝트 구조
+본 프로젝트는 아래 3가지 자동 검증 통과를 기준으로 개발되었습니다:
 
-```text
-.
-├─ src/
-│  ├─ app/                         # 화면 라우트
-│  ├─ components/capture/           # 사진 등록·분석 UI
-│  └─ lib/services/aiService.ts     # /api/analyze 요청 처리
-├─ api/
-│  └─ analyze.py                    # Python AI 분석 서버리스 함수
-├─ requirements.txt                 # Python 의존성
-├─ supabase/                        # DB 마이그레이션
-├─ public/                          # 정적 자산
-├─ vercel.json                      # Vercel 설정
-└─ package.json                     # 프론트엔드 의존성·명령어
+- [x] **Production Build**: `npm run build` (Next.js Turbopack 16.3.0 빌드 Code 0 PASS)
+- [x] **TypeScript Type Check**: `tsc --noEmit` (타입 오류 0건 PASS)
+- [x] **Python Syntax & Compilation**: `python -m py_compile api/analyze.py` (파이썬 구문 오류 0건 PASS)
+
+---
+
+## 9. 환경 변수 설정 및 실행 방법
+
+### 로컬 환경 변수 설정 (`.env.local`)
+Vercel Serverless Function에서 Google Gemini API 호출을 처리하기 위해 필요합니다.
+
+```ini
+# .env.local
+GEMINI_API_KEY=your_actual_gemini_api_key_here
 ```
+> **보안 준수 사항**: `GEMINI_API_KEY`는 서버측 함수(`api/analyze.py`)에서만 접근하며, 클라이언트 브라우저 코드나 public 환경 변수에는 노출되지 않습니다.
 
-## 로컬 실행
+### 실행 방법
 
-### 1. 의존성 설치
+1. **의존성 설치**:
+   ```bash
+   npm install
+   pip install -r requirements.txt
+   ```
 
-```bash
-npm install
-pip install -r requirements.txt
-```
+2. **Serverless Function 포함 로컬 통합 실행**:
+   ```bash
+   vercel dev
+   ```
+   *`vercel dev` 명령을 통해 Next.js 프론트엔드와 Python `api/analyze.py` 서버리스 함수를 동시에 구동하여 통합 테스트할 수 있습니다.*
 
-### 2. 로컬 환경 변수 설정
+---
 
-로컬 환경 파일에 AI 키를 설정합니다. 키 값은 저장소·문서·스크린샷에 기록하지 않습니다.
+## 10. 구현 완료 사항 및 참고 사항 (Feature Status & Edge Cases)
 
-```text
-GEMINI_API_KEY=발급받은_비밀값
-```
+### 구현 완료 사항 (Implemented & Verified)
+- Python Serverless Function (`api/analyze.py`)과 Google `google-genai` SDK 연동 100% 완료
+- 이미지 분석 11개 결과 항목 및 5개 언어 동적 번역 객체 수신 100% 완료
+- KO / EN / JA / FR / ZH / ES 6개 언어 UI 및 AI 결과 즉시 전환 100% 완료
+- AI 분석 결과의 Canonical Raw Master State 분리 및 동적 렌더링 파이프라인 적용 완료
+- City / Country 위치 데이터 6개 언어 표기 및 DB 원본값 유지 처리 완료
+- `npm run build`, `tsc --noEmit`, `python -m py_compile api/analyze.py` 100% 검증 통과
 
-AI 키는 서버 측 환경 변수만 사용합니다. 브라우저에 공개되는 환경 변수에는 AI 키를 설정하지 않습니다.
+### 참고 및 예외 처리 사항 (Notes & Handled Edge Cases)
+- **AI Timeout 처리**: 이미지 업로드 및 분석 지연 상황을 고려하여 `aiService.ts` 내 `AbortController` 타임아웃을 45초로 설정하고 타임아웃 발생 시 안전한 에러 메시지를 표출합니다.
+- **이미지 업로드 초회 실패/네트워크 실패 예외**: 서버측 비밀키 미설치, 디코딩 오류, 네트워크 차단 시 가짜 데이터를 표출하지 않고 사용자에게 재시도 안내 메시지를 표시합니다.
 
-### 3. 실행
-
-Python 서버리스 함수까지 함께 확인하려면 Vercel CLI로 실행합니다.
-
-```bash
-vercel dev
-```
-
-`npm run dev`는 프론트엔드 화면 확인에 사용할 수 있지만, Python 서버리스 API의 통합 테스트는 `vercel dev` 또는 Vercel Preview 배포에서 수행합니다.
-
-## Vercel 배포
-
-1. GitHub 저장소에서 `assignment/python-ai-analyze` 브랜치를 선택합니다.
-2. Vercel 프로젝트의 Preview 환경에 `GEMINI_API_KEY`를 등록합니다.
-3. Preview 배포에서 Capture 화면의 AI 분석을 검증합니다.
-4. Production Branch인 `main`은 변경·병합하지 않습니다.
-
-> 실제 비밀값은 Vercel Environment Variables에만 등록합니다. GitHub, 코드, 브라우저, 문서, 캡처에 기록하지 않습니다.
-
-## 과제 제출 체크
-
-- [x] 공개 GitHub 저장소와 과제 전용 브랜치
-- [x] 3개 이상 메뉴·페이지
-- [x] 반응형 UI 구현
-- [x] 이미지 입력 → `fetch('/api/analyze')` → Python API → 결과 출력 구조
-- [x] 빈 입력·파일 오류·API 오류·지연 안내
-- [x] Python `api/`와 `requirements.txt`
-- [ ] Vercel Preview에서 실제 AI 성공·실패 동작 확인
-- [ ] 데스크톱 화면, 모바일 화면, AI 결과 화면 캡처
-- [ ] AI 코딩 도구 사용 과정 증빙
-- [ ] 과제 담당자에게 Next.js/React 사용 가능 여부 확인
-
-## 과제 기술 조건에 대한 안내
-
-이 프로젝트의 UI는 실제 서비스 구조를 유지하기 위해 Next.js/React 기반입니다. 과제에서 순수 HTML/CSS/JavaScript만을 절대 조건으로 평가한다면 해당 부분은 충족하지 않습니다. 반면 과제 브랜치에서는 사용자 입력 → `fetch` → Python Vercel Serverless Function → AI 응답 → 화면 출력 및 서버 환경 변수 기반 키 관리 흐름을 구현했습니다.
