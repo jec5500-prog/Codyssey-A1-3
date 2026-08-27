@@ -22,7 +22,7 @@
 - **GitHub 저장소**: [jec5500-prog/Codyssey-A1-3](https://github.com/jec5500-prog/Codyssey-A1-3)
 - **과제 구현 브랜치**: `assignment/python-ai-analyze`
 - **운영 버전 보존 태그**: `release-before-assignment-2026-08-18`
-- **배포 URL**: [https://real-time-visual-sharing.vercel.app/](https://real-time-visual-sharing.vercel.app/)
+- **배포 URL**: [[https://real-time-visual-sharing.vercel.app/](https://real-time-visual-sharing-51enlphk2-won-ai-lab.vercel.app/)]
 
 > 과제 작업은 `assignment/python-ai-analyze` 브랜치에서만 진행되며, `main` 브랜치는 100% Clean 상태로 보존됩니다.
 
