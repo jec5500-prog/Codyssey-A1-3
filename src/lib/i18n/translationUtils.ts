@@ -1,5 +1,6 @@
 import { Language } from './translations';
 import type { SpatialAIAnalysisResult } from '../services/aiService';
+import type { SpotCategory, ComparisonMetrics } from '../types';
 
 /**
  * Category Translations
@@ -969,5 +970,275 @@ export function formatDate(dateStr: string, lang: Language, options?: Intl.DateT
     return new Intl.DateTimeFormat(locale, defaultOptions).format(d);
   } catch {
     return dateStr;
+  }
+}
+
+/**
+ * Dynamic Composite Text Helpers for Compare & AI Insight
+ */
+
+export function formatCompareSummary(metrics: ComparisonMetrics, lang: Language): string {
+  const locA = translateCity(metrics.entityA.name, lang) !== metrics.entityA.name
+    ? translateCity(metrics.entityA.name, lang)
+    : translateCountry(metrics.entityA.name, lang);
+
+  const locB = translateCity(metrics.entityB.name, lang) !== metrics.entityB.name
+    ? translateCity(metrics.entityB.name, lang)
+    : translateCountry(metrics.entityB.name, lang);
+
+  const topA = metrics.entityA.topMaterials[0]?.name || 'Architectural Concrete';
+  const topB = metrics.entityB.topMaterials[0]?.name || 'Organic Timber';
+
+  const matA = translateAttribute(topA, lang);
+  const matB = translateAttribute(topB, lang);
+
+  const totalSpots = metrics.entityA.count + metrics.entityB.count;
+
+  switch (lang) {
+    case 'ko':
+      return `데이터베이스에 축적된 ${totalSpots}개의 검증된 현장 스팟을 분석한 결과, ${locA}은(는) ${matA}의 비중이 높은 반면, ${locB}은(는) ${matB} 위주의 자재 활용이 두드러집니다.`;
+    case 'ja':
+      return `データベースに蓄積された${totalSpots}件の検証済みスポットを分析した結果、${locA}では${matA}の比率が高く、${locB}では${matB}の活用が顕著です。`;
+    case 'fr':
+      return `D'après ${totalSpots} spots enregistrés dans la base de données, ${locA} présente une forte densité de ${matA}, tandis que ${locB} privilégie l'utilisation de ${matB}.`;
+    case 'zh':
+      return `基于数据库中 ${totalSpots} 个已验证的实地空间记录，${locA} 展现出较高密度的 ${matA}，而 ${locB} 则以 ${matB} 的使用为主。`;
+    case 'es':
+      return `Basado en ${totalSpots} espacios verificados en la base de datos, ${locA} muestra una alta densidad de ${matA}, mientras que ${locB} presenta un uso dominante de ${matB}.`;
+    default:
+      return `Based on ${totalSpots} verified field spots in the database, ${locA} showcases a high density of ${matA}, whereas ${locB} features dominant usage of ${matB}.`;
+  }
+}
+
+export function translateCommonTrait(trait: string, lang: Language): string {
+  if (trait.startsWith('High reliance on')) {
+    const rawMat = trait.replace('High reliance on ', '').replace(' for structural displays', '').trim();
+    const matTr = translateAttribute(rawMat, lang);
+    switch (lang) {
+      case 'ko': return `${matTr} 자재를 활용한 구조적 디스플레이 높은 의존도`;
+      case 'ja': return `${matTr}構造ディスプレイへの高い依存度`;
+      case 'fr': return `Forte dépendance au ${matTr} pour les présentoirs structurels`;
+      case 'zh': return `结构化陈列对 ${matTr} 材质的高度依赖`;
+      case 'es': return `Alta dependencia de ${matTr} para expositores estructurales`;
+      default: return `High reliance on ${matTr} for structural displays`;
+    }
+  }
+
+  if (trait.includes('high architectural finish accuracy')) {
+    switch (lang) {
+      case 'ko': return '두 지역 모두 높은 건축적 마감 정밀도와 정교한 조명을 최우선으로 고려함';
+      case 'ja': return '両地域とも高い建築仕上げの精度と精密なライティングを優先';
+      case 'fr': return 'Les deux régions privilégient une haute précision de finition architecturale et un éclairage de précision.';
+      case 'zh': return '两个地区均优先考虑高建筑完成度与精确照明';
+      case 'es': return 'Ambas regiones priorizan una alta precisión en acabados arquitectónicos e iluminación de precisión.';
+      default: return trait;
+    }
+  }
+
+  if (trait.includes('Frequent utilization of glass')) {
+    switch (lang) {
+      case 'ko': return '공간적 투명성을 확보하기 위해 유리와 금속 프레임워크를 빈번하게 활용함';
+      case 'ja': return '空間の透明性を高めるため、ガラスと金属フレームを頻繁に活用';
+      case 'fr': return 'Utilisation fréquente de verre et d\'armatures métalliques pour la transparence spatiale.';
+      case 'zh': return '频繁使用玻璃与金属框架以提升空间透明感';
+      case 'es': return 'Uso frecuente de vidrio y estructuras metálicas para lograr transparencia espacial.';
+      default: return trait;
+    }
+  }
+
+  return translateAttribute(trait, lang);
+}
+
+export function translateKeyDifference(diff: string, entityA: string, entityB: string, topA: string, topB: string, lang: Language): string {
+  const locA = translateCity(entityA, lang) !== entityA ? translateCity(entityA, lang) : translateCountry(entityA, lang);
+  const locB = translateCity(entityB, lang) !== entityB ? translateCity(entityB, lang) : translateCountry(entityB, lang);
+  const matA = translateAttribute(topA, lang);
+  const matB = translateAttribute(topB, lang);
+
+  if (diff.includes('emphasizes') || diff.includes('high-tech kinetic')) {
+    switch (lang) {
+      case 'ko': return `${locA}은(는) ${matA} 자재와 날카로운 하이테크 키네틱 구도를 강조함.`;
+      case 'ja': return `${locA}は${matA}とシャープなハイテク・キネティック構図を強調。`;
+      case 'fr': return `${locA} met l'accent sur le ${matA} et des compositions cinétiques high-tech épurées.`;
+      case 'zh': return `${locA} 强调 ${matA} 材质与干练的高科技动态构图。`;
+      case 'es': return `${locA} enfatiza el ${matA} y composiciones cinéticas de alta tecnología.`;
+      default: return `${locA} emphasizes ${matA} and sharp, high-tech kinetic compositions.`;
+    }
+  }
+
+  if (diff.includes('leans towards') || diff.includes('biophilic textures')) {
+    switch (lang) {
+      case 'ko': return `${locB}은(는) 헤리티지에서 영감을 받은 따뜻한 바이오필릭 질감과 ${matB} 자재를 선호함.`;
+      case 'ja': return `${locB}はヘリテージに着想を得た温かみのあるバイオフィリックな質感と${matB}を好む傾向。`;
+      case 'fr': return `${locB} penche pour le ${matB} avec des textures biophiliques chaleureuses d'inspiration patrimoniale.`;
+      case 'zh': return `${locB} 偏向于结合传统灵感与温暖亲自然纹理的 ${matB} 材质。`;
+      case 'es': return `${locB} se inclina hacia el ${matB} con texturas biofílicas cálidas e inspiradas en la herencia.`;
+      default: return `${locB} leans towards ${matB} with heritage-inspired, warm biophilic textures.`;
+    }
+  }
+
+  return translateAttribute(diff, lang);
+}
+
+export function formatInsightScope(country?: string, category?: SpotCategory | 'All', lang?: Language): string {
+  const l = lang || 'en';
+  const cTr = !country || country === 'All' ? translateCountry('All', l) : translateCountry(country, l);
+  const catTr = !category || category === 'All' ? translateCategory('All', l) : translateCategory(category, l);
+
+  switch (l) {
+    case 'ko': return `${cTr} ${catTr} Q3 2026 트렌드 리포트`;
+    case 'ja': return `${cTr} ${catTr} Q3 2026 インテリジェンス`;
+    case 'fr': return `Intelligence ${cTr} ${catTr} T3 2026`;
+    case 'zh': return `${cTr} ${catTr} 2026年第三季度智能报告`;
+    case 'es': return `Inteligencia de ${cTr} ${catTr} Q3 2026`;
+    default: return `${cTr} ${catTr} Q3 2026 Intelligence`;
+  }
+}
+
+export function translateTakeaway(takeaway: string, spotCount: number, topMaterial: string, lang: Language): string {
+  const matTr = translateAttribute(topMaterial, lang);
+
+  if (takeaway.includes('Aggregated strictly from')) {
+    switch (lang) {
+      case 'ko': return `${spotCount}개의 검증된 공간 디자인 기록에서 엄격하게 집계됨.`;
+      case 'ja': return `${spotCount}件の検証済み空間デザイン記録から厳密に集計。`;
+      case 'fr': return `Agrégé strictement à partir de ${spotCount} enregistrements de design spatial vérifiés.`;
+      case 'zh': return `严格汇总自 ${spotCount} 条已验证的空间设计记录。`;
+      case 'es': return `Agregado estrictamente de ${spotCount} registros de diseño espacial verificados.`;
+      default: return `Aggregated strictly from ${spotCount} verified spatial design records.`;
+    }
+  }
+
+  if (takeaway.includes('Top dominant material:')) {
+    switch (lang) {
+      case 'ko': return `최고 점유율 자재: ${matTr}.`;
+      case 'ja': return `最多占有素材: ${matTr}。`;
+      case 'fr': return `Matériau le plus dominant : ${matTr}.`;
+      case 'zh': return `主要占有材质：${matTr}。`;
+      case 'es': return `Material más dominante: ${matTr}.`;
+      default: return `Top dominant material: ${matTr}.`;
+    }
+  }
+
+  if (takeaway.includes('Heightened demand for tactile')) {
+    switch (lang) {
+      case 'ko': return '정밀한 간접 조명과 결합된 촉각적이고 원초적인 오프라인 표면에 대한 수요 증가.';
+      case 'ja': return '高精度な間接照明と組み合わせた、触感的で素朴な物理表面への需要の高まり。';
+      case 'fr': return 'Demande accrue pour des surfaces physiques brutes et tactiles associées à un éclairage indirect de précision.';
+      case 'zh': return '对与高精度间接照明结合的具有触感和原始质感物理表面的需求增加。';
+      case 'es': return 'Creciente demanda de superficies físicas táctiles y brutas combinadas con iluminación indirecta de alta precisión.';
+      default: return takeaway;
+    }
+  }
+
+  if (takeaway.includes('Clear spatial segmentation')) {
+    switch (lang) {
+      case 'ko': return '도쿄/서울의 테크 중심 부르탈리즘 공간과 파리/밀라노의 바이오필릭 공예 럭셔리 간의 명확한 공간적 분화.';
+      case 'ja': return '東京・ソウルのハイテク主導ブルータリズム空間とパリ・ミラノのバイオフィリック・クラフトラグジュアリーとの明確な分化。';
+      case 'fr': return 'Segmentation spatiale claire entre espaces brutalistes axés sur la technologie à Tokyo/Séoul et luxe biophilique à Paris/Milan.';
+      case 'zh': return '东京/首尔的科技主导重构主义空间与巴黎/米兰的亲自然工艺奢华之间存在明显的空间分化。';
+      case 'es': return 'Clara segmentación espacial entre espacios brutalistas tecnológicos en Tokio/Seúl y lujo biofílico en París/Milán.';
+      default: return takeaway;
+    }
+  }
+
+  if (takeaway.includes('Insufficient data for reliable')) {
+    switch (lang) {
+      case 'ko': return '신뢰할 수 있는 AI 공간 인사이트를 도출하기에 데이터가 부족합니다.';
+      case 'ja': return '信頼できるAI空間インサイトを抽出するにはデータが不足しています。';
+      case 'fr': return 'Données insuffisantes pour un aperçu spatial IA fiable.';
+      case 'zh': return '数据不足，无法生成可靠的 AI 空间洞察。';
+      case 'es': return 'Datos insuficientes para un análisis espacial confiable por IA.';
+      default: return takeaway;
+    }
+  }
+
+  if (takeaway.includes('At least 2 verified field photo')) {
+    switch (lang) {
+      case 'ko': return '데이터셋 기반 트렌드 추출을 위해 최소 2개 이상의 검증된 현장 사진 등록이 필요합니다.';
+      case 'ja': return 'データセットに基づくトレンド抽出には、少なくとも2件の検証済み写真の登録が必要です。';
+      case 'fr': return 'Au moins 2 enregistrements de photos sur le terrain vérifiés sont requis.';
+      case 'zh': return '基于数据集进行趋势提取至少需要 2 条已验证的实地照片记录。';
+      case 'es': return 'Se requieren al menos 2 registros de fotos verificadas para extraer tendencias.';
+      default: return takeaway;
+    }
+  }
+
+  if (takeaway.includes('Upload more field photos')) {
+    switch (lang) {
+      case 'ko': return 'Capture 모드에서 더 많은 현장 사진을 업로드하여 AI 인텔리전스 분석을 활성화하세요.';
+      case 'ja': return 'Captureモードでより多くの写真をアップロードして、AIインテリジェンス分析を有効にしてください。';
+      case 'fr': return 'Téléchargez plus de photos dans le mode Capture pour activer la synthèse IA.';
+      case 'zh': return '请在 Capture 模式下上传更多实地照片以启用 AI 智能综合分析。';
+      case 'es': return 'Sube más fotos en el modo Capture para habilitar el síntesis de inteligencia de IA.';
+      default: return takeaway;
+    }
+  }
+
+  return translateAttribute(takeaway, lang);
+}
+
+export function translateMaterialInsight(insight: string, lang: Language): string {
+  if (insight.includes('Increasing usage across')) {
+    switch (lang) {
+      case 'ko': return '최근 플래그십 리테일 공간 전반에서 점유율 증가 추세.';
+      case 'ja': return 'フラッグシップ・リテール空間全体で増加傾向。';
+      case 'fr': return 'Utilisation croissante dans les espaces de vente phares contemporains.';
+      case 'zh': return '在当代旗舰零售空间中呈增加趋势。';
+      case 'es': return 'Uso creciente en espacios comerciales insignia contemporáneos.';
+      default: return insight;
+    }
+  }
+
+  if (insight.includes('Dominant in industrial cyberpunk')) {
+    switch (lang) {
+      case 'ko': return '인더스트리얼 사이버펑크 및 미니멀리스트 부르탈리즘 공간 컨셉에서 주도적.';
+      case 'ja': return 'インダストリアル・サイバーパンクおよびミニマリスト・ブルータリズム空間で主導的。';
+      case 'fr': return 'Dominant dans les concepts spatiaux cyberpunk industriels et brutalistes minimalistes.';
+      case 'zh': return '在工业赛博朋克与极简重构主义空间概念中占主导地位。';
+      case 'es': return 'Dominante en conceptos espaciales cyberpunk industriales y brutalistas minimalistas.';
+      default: return insight;
+    }
+  }
+
+  if (insight.includes('Preferred choice for biophilic')) {
+    switch (lang) {
+      case 'ko': return '바이오필릭 럭셔리 및 유기적이고 따뜻한 촉감 환경에 선호되는 선택.';
+      case 'ja': return 'バイオフィリック・ラグジュアリーや有機的で温かみのある触感環境に好まれる選択。';
+      case 'fr': return 'Choix privilégié pour le luxe biophilique et les environnements tactiles organiques et chaleureux.';
+      case 'zh': return '亲自然奢华与有机温暖触感环境的首选材质。';
+      case 'es': return 'Opción preferida para el lujo biofílico y entornos táctiles cálidos y orgánicos.';
+      default: return insight;
+    }
+  }
+
+  return translateAttribute(insight, lang);
+}
+
+export function formatStyleShift(shiftText: string, lang: Language): string {
+  const match = shiftText.match(/Represented in (\d+) verified field entry \((\d+)% share\)/);
+  if (match) {
+    const count = match[1];
+    const percentage = match[2];
+    switch (lang) {
+      case 'ko': return `${count}개 검증 스팟에 적용됨 (점유율 ${percentage}%)`;
+      case 'ja': return `${count}件の検証済みスポットに適用 (${percentage}% シェア)`;
+      case 'fr': return `Présent dans ${count} enregistrement(s) (part de ${percentage}%)`;
+      case 'zh': return `应用于 ${count} 个已验证的空间记录 (占比 ${percentage}%)`;
+      case 'es': return `Representado en ${count} registro(s) (${percentage}% de cuota)`;
+      default: return shiftText;
+    }
+  }
+  return translateAttribute(shiftText, lang);
+}
+
+export function formatSpotCountText(count: number, lang: Language): string {
+  switch (lang) {
+    case 'ko': return `${count}개 공간 수집됨`;
+    case 'ja': return `${count}件のスポットが記録されました`;
+    case 'fr': return `${count} spots enregistrés`;
+    case 'zh': return `${count}个已记录空间`;
+    case 'es': return `${count} espacios registrados`;
+    default: return `${count} Field Spots Recorded`;
   }
 }

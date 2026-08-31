@@ -93,6 +93,10 @@ export const translations = {
     commonTraits: '공통 공간 특성 (공통점)',
     keyDifferences: '지역적 공간 대비 및 차이점 (차이점)',
     representativeCases: '대표 공간 사례',
+    dualMatrix: '듀얼 공간 인텔리전스 비교 매트릭스',
+    analyzingMatrix: '글로벌 데이터베이스 매트릭스 분석 중...',
+    spotsRecorded: '개 공간 수집됨',
+    noMaterialData: '기록된 자재 데이터가 없습니다.',
 
     // Insight
     insightTitle: 'DB 기반 AI 공간 인사이트 엔진',
@@ -106,6 +110,11 @@ export const translations = {
     styleShare: '공간 스타일 점유율',
     lightingDistribution: '조명 구성 비율',
     executiveTakeaways: '핵심 트렌드 요약',
+    dbGroundedTitle: 'DB 검증 기반 공간 디자인 인텔리전스',
+    analyzingDBRecords: '데이터베이스 기록을 분석 중입니다...',
+    dataGuardTriggered: '데이터 가드 작동됨 (데이터 부족)',
+    trendReportTitle: '글로벌 공간디자인 트렌드 분석 리포트',
+    aggregatedVerifiedRecords: '총 {count}개 검증 데이터 집계',
 
     // Saved
     savedTitle: '저장된 공간 컬렉션',
@@ -249,6 +258,10 @@ export const translations = {
     commonTraits: 'Shared Spatial Commonalities',
     keyDifferences: 'Regional Contrasts & Differences',
     representativeCases: 'Representative Case Studies',
+    dualMatrix: 'Dual Spatial Intelligence Matrix',
+    analyzingMatrix: 'Aggregating field database metrics...',
+    spotsRecorded: 'Field Spots Recorded',
+    noMaterialData: 'No material data recorded yet.',
 
     // Insight
     insightTitle: 'DB-Driven AI Spatial Insight Engine',
@@ -262,6 +275,11 @@ export const translations = {
     styleShare: 'Spatial Style Share',
     lightingDistribution: 'Lighting Scheme Distribution',
     executiveTakeaways: 'Executive Trend Takeaways',
+    dbGroundedTitle: 'DB-Grounded Spatial Design Intelligence',
+    analyzingDBRecords: 'Analyzing database records...',
+    dataGuardTriggered: 'Data Guard Triggered',
+    trendReportTitle: 'Spatial Design Trend Report',
+    aggregatedVerifiedRecords: 'Aggregated from {count} DB Records',
 
     // Saved
     savedTitle: 'Saved Spatial Collection',
@@ -405,6 +423,10 @@ export const translations = {
     commonTraits: '共通の空間的特徴 (共通点)',
     keyDifferences: '地域的対比と相違点 (相違点)',
     representativeCases: '代表空間事例',
+    dualMatrix: 'デュアル空間インテリジェンス比較マトリクス',
+    analyzingMatrix: 'グローバルデータベースの比較メトリクスを収集中...',
+    spotsRecorded: '件のスポットが記録されました',
+    noMaterialData: '記録された素材データはありません。',
 
     // Insight
     insightTitle: 'DB基盤 AI空間インサイトエンジン',
@@ -418,6 +440,11 @@ export const translations = {
     styleShare: 'スタイルシェア',
     lightingDistribution: '照明パターン構成比',
     executiveTakeaways: '主要トレンドサマリー',
+    dbGroundedTitle: 'DB検証に基づく空間デザインインテリジェンス',
+    analyzingDBRecords: 'データベースの記録を分析中...',
+    dataGuardTriggered: 'データガード起動 (データ不足)',
+    trendReportTitle: 'グローバル空間デザイントレンド分析レポート',
+    aggregatedVerifiedRecords: '計{count}件の検証済みデータを集計',
 
     // Saved
     savedTitle: '保存済みコレクション',
@@ -561,6 +588,10 @@ export const translations = {
     commonTraits: 'Points Communs Spatiaux',
     keyDifferences: 'Contrastes Régionaux',
     representativeCases: 'Cas Représentatifs',
+    dualMatrix: 'Matrice d\'Intelligence Spatiale Duale',
+    analyzingMatrix: 'Agrégation des métriques en cours...',
+    spotsRecorded: 'spots enregistrés',
+    noMaterialData: 'Aucune donnée de matériau.',
 
     // Insight
     insightTitle: 'Moteur d\'Analyse Spatiale IA',
@@ -574,6 +605,11 @@ export const translations = {
     styleShare: 'Part des Styles',
     lightingDistribution: 'Répartition de l\'Éclairage',
     executiveTakeaways: 'Points Clés',
+    dbGroundedTitle: 'Intelligence de Design Spatial Basée sur DB',
+    analyzingDBRecords: 'Analyse des données en cours...',
+    dataGuardTriggered: 'Garde de Données Déclenchée',
+    trendReportTitle: 'Rapport de Tendances du Design Spatial Global',
+    aggregatedVerifiedRecords: 'Agrégé à partir de {count} enregistrements',
 
     // Saved
     savedTitle: 'Collections Spatiales Enregistrées',
@@ -717,6 +753,10 @@ export const translations = {
     commonTraits: '共同空间特征 (相同点)',
     keyDifferences: '区域空间差异 (不同点)',
     representativeCases: '代表性案例',
+    dualMatrix: '双重空间智能对比矩阵',
+    analyzingMatrix: '正在聚合全球数据库对比指标...',
+    spotsRecorded: '个已记录空间',
+    noMaterialData: '暂无记录的材质数据。',
 
     // Insight
     insightTitle: '基于数据库的 AI 空间洞察引擎',
@@ -730,6 +770,11 @@ export const translations = {
     styleShare: '空间风格占比',
     lightingDistribution: '照明方案占比',
     executiveTakeaways: '核心趋势摘要',
+    dbGroundedTitle: '基于数据库验证的空间设计智能',
+    analyzingDBRecords: '正在分析数据库记录...',
+    dataGuardTriggered: '数据保护已触发 (数据不足)',
+    trendReportTitle: '全球空间设计趋势分析报告',
+    aggregatedVerifiedRecords: '已汇总 {count} 条验证数据',
 
     // Saved
     savedTitle: '已保存的空间收藏',
@@ -873,10 +918,14 @@ export const translations = {
     commonTraits: 'Rasgos Espaciales Compartidos',
     keyDifferences: 'Contrastes y Diferencias Regionales',
     representativeCases: 'Casos Representativos',
+    dualMatrix: 'Matriz de Inteligencia Espacial Dual',
+    analyzingMatrix: 'Agregando métricas comparativas...',
+    spotsRecorded: 'espacios registrados',
+    noMaterialData: 'Sin datos de materiales aún.',
 
     // Insight
     insightTitle: 'Motor de Insights Espaciales IA',
-    insightDesc: 'Extraiga inteligencia de tendencias estrictamente derivada de registros verificados de la base de datos.',
+    insightDesc: 'Extraiga inteligencia de tendencias strictly derivada de registros verificados de la base de datos.',
     insufficientDataTitle: 'Datos Insuficientes',
     insufficientDataDesc: 'Se requieren al menos 2 registros verificados para generar insights respaldados por datos.',
     captureCTA: 'Capturar Nueva Foto de Campo',
@@ -886,6 +935,11 @@ export const translations = {
     styleShare: 'Cuota de Estilos Espaciales',
     lightingDistribution: 'Distribución de Iluminación',
     executiveTakeaways: 'Puntos Clave Ejecutivos',
+    dbGroundedTitle: 'Inteligencia de Diseño Espacial Basada en BD',
+    analyzingDBRecords: 'Analizando registros de base de datos...',
+    dataGuardTriggered: 'Protector de Datos Activado',
+    trendReportTitle: 'Informe de Tendencias de Diseño Espacial Global',
+    aggregatedVerifiedRecords: 'Agregado de {count} registros verificados',
 
     // Saved
     savedTitle: 'Colección Espacial Guardada',

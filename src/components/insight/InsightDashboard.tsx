@@ -20,6 +20,11 @@ import {
   translateCategory,
   translateCountry,
   translateAttribute,
+  formatInsightScope,
+  translateTakeaway,
+  translateMaterialInsight,
+  formatStyleShift,
+  formatSpotCountText,
 } from '@/lib/i18n/translationUtils';
 
 interface InsightDashboardProps {
@@ -61,7 +66,7 @@ export default function InsightDashboard({ availableCountries }: InsightDashboar
       <div className="text-center space-y-2 max-w-2xl mx-auto">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-800 text-cyan-400 text-xs font-semibold">
           <Sparkles className="w-3.5 h-3.5" />
-          DB-Grounded Spatial Design Intelligence
+          {t('dbGroundedTitle')}
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
           {t('insightTitle')}
@@ -111,7 +116,7 @@ export default function InsightDashboard({ availableCountries }: InsightDashboar
       {/* LOADING */}
       {loading && (
         <div className="p-12 text-center text-zinc-500 bg-zinc-900/50 rounded-3xl border border-zinc-800 font-medium">
-          {language === 'ko' ? '데이터베이스 기록을 분석 중입니다...' : language === 'ja' ? 'データベースの記録を分析中...' : language === 'fr' ? 'Analyse des données en cours...' : language === 'zh' ? '正在分析数据库记录...' : language === 'es' ? 'Analizando registros de base de datos...' : 'Analyzing database records...'}
+          {t('analyzingDBRecords')}
         </div>
       )}
 
@@ -124,7 +129,7 @@ export default function InsightDashboard({ availableCountries }: InsightDashboar
 
           <div className="max-w-md mx-auto space-y-2">
             <span className="text-xs font-mono font-bold uppercase text-amber-400 tracking-wider">
-              Data Guard Triggered
+              {t('dataGuardTriggered')}
             </span>
             <h3 className="text-2xl font-extrabold text-white">
               {t('insufficientDataTitle')}
@@ -154,16 +159,16 @@ export default function InsightDashboard({ availableCountries }: InsightDashboar
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-zinc-800 pb-4">
               <div>
                 <span className="text-xs font-mono font-bold uppercase text-orange-400">
-                  {report.scope}
+                  {formatInsightScope(selectedCountry, selectedCategory, language)}
                 </span>
                 <h2 className="text-2xl font-extrabold text-white tracking-tight mt-0.5">
-                  {language === 'ko' ? '글로벌 공간디자인 트렌드 분석 리포트' : language === 'ja' ? 'グローバル空間デザイントレンド分析レポート' : language === 'fr' ? 'Rapport de Tendances du Design Spatial Global' : language === 'zh' ? '全球空间设计趋势分析报告' : language === 'es' ? 'Informe de Tendencias de Diseño Espacial Global' : 'Spatial Design Trend Report'}
+                  {t('trendReportTitle')}
                 </h2>
               </div>
               <div className="flex items-center gap-2 bg-zinc-950 px-3 py-1.5 rounded-xl border border-zinc-800 text-xs text-zinc-300">
                 <CheckCircle2 className="w-4 h-4 text-emerald-400" />
                 <span>
-                  {language === 'ko' ? `총 ${report.spotCount}개 검증 데이터 집계` : language === 'ja' ? `計${report.spotCount}件の検証済みデータを集計` : language === 'fr' ? `Agrégé à partir de ${report.spotCount} enregistrements` : language === 'zh' ? `已汇总 ${report.spotCount} 条验证数据` : language === 'es' ? `Agregado de ${report.spotCount} registros verificados` : `Aggregated from ${report.spotCount} DB Records`}
+                  {formatSpotCountText(report.spotCount, language)}
                 </span>
               </div>
             </div>
@@ -177,7 +182,7 @@ export default function InsightDashboard({ availableCountries }: InsightDashboar
                 {report.keyTakeaways.map((takeaway, i) => (
                   <div key={i} className="flex items-start gap-2 bg-zinc-950/80 p-3 rounded-xl border border-zinc-800/80 text-xs text-zinc-300">
                     <span className="w-1.5 h-1.5 rounded-full bg-orange-400 mt-1.5 shrink-0" />
-                    <span>{takeaway}</span>
+                    <span>{translateTakeaway(takeaway, report.spotCount, report.materialTrends[0]?.material || '', language)}</span>
                   </div>
                 ))}
               </div>
@@ -203,7 +208,7 @@ export default function InsightDashboard({ availableCountries }: InsightDashboar
                     <div className="w-full h-2 bg-zinc-900 rounded-full overflow-hidden border border-zinc-800">
                       <div className="h-full bg-gradient-to-r from-orange-500 to-amber-500 rounded-full" style={{ width: `${mat.percentage}%` }} />
                     </div>
-                    <p className="text-xs text-zinc-400 italic">{mat.insight}</p>
+                    <p className="text-xs text-zinc-400 italic">{translateMaterialInsight(mat.insight, language)}</p>
                   </div>
                 ))}
               </div>
@@ -242,7 +247,7 @@ export default function InsightDashboard({ availableCountries }: InsightDashboar
                 {report.styleEvolution.map((st, i) => (
                   <div key={i} className="bg-zinc-950 p-3 rounded-xl border border-zinc-800/80 text-xs">
                     <span className="font-bold text-zinc-200 block">{translateAttribute(st.style, language)}</span>
-                    <span className="text-xs text-zinc-400 mt-0.5 block">{st.shift}</span>
+                    <span className="text-xs text-zinc-400 mt-0.5 block">{formatStyleShift(st.shift, language)}</span>
                   </div>
                 ))}
               </div>
