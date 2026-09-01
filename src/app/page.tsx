@@ -8,6 +8,7 @@ import { getSpots } from '@/lib/services/dbService';
 import FilterBar from '@/components/explore/FilterBar';
 import SpotCard from '@/components/explore/SpotCard';
 import SpotDetailModal from '@/components/explore/SpotDetailModal';
+import LoadingState from '@/components/common/LoadingState';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export default function ExplorePage() {
@@ -273,11 +274,7 @@ export default function ExplorePage() {
       />
 
       {/* Spots Grid View: 3 items per row, 3 rows = 9 spots per grid page */}
-      {loading && (
-        <div className="p-16 text-center text-zinc-500 bg-[#18181b]/80 rounded-3xl border border-zinc-800 animate-pulse font-medium">
-          {language === 'ko' ? '공간디자인 DB 레코드를 불러오는 중...' : language === 'ja' ? '空間デザインDBレコードを読み込み中...' : language === 'fr' ? 'Chargement des enregistrements spatiaux...' : language === 'zh' ? '正在获取空间设计数据库记录...' : language === 'es' ? 'Cargando registros de diseño espacial...' : 'Fetching spatial design records...'}
-        </div>
-      )}
+      {loading && <LoadingState />}
 
       {!loading && spots.length === 0 && (
         <div className="bg-[#18181b] border border-zinc-800 rounded-3xl p-12 text-center space-y-4 max-w-md mx-auto shadow-xl">

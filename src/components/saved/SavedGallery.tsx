@@ -7,6 +7,7 @@ import { Spot } from '@/lib/types';
 import { getSavedSpots } from '@/lib/services/dbService';
 import SpotCard from '../explore/SpotCard';
 import SpotDetailModal from '../explore/SpotDetailModal';
+import LoadingState from '../common/LoadingState';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 
 export default function SavedGallery() {
@@ -78,11 +79,7 @@ export default function SavedGallery() {
       )}
 
       {/* LOADING */}
-      {loading && (
-        <div className="p-12 text-center text-zinc-500 bg-zinc-900/50 rounded-3xl border border-zinc-800">
-          {language === 'ko' ? '저장된 공간을 불러오는 중입니다...' : language === 'ja' ? '保存されたスポットを読み込み中...' : language === 'fr' ? 'Chargement des spots enregistrés...' : language === 'zh' ? '正在加载已保存的空间...' : language === 'es' ? 'Cargando espacios guardados...' : 'Loading saved spatial spots...'}
-        </div>
-      )}
+      {loading && <LoadingState />}
 
       {/* EMPTY STATE */}
       {!loading && savedItems.length === 0 && (

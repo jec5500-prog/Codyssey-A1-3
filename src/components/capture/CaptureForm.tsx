@@ -23,6 +23,7 @@ import { extractExifFromFile, reverseGeocode, getCoordinatesForCity } from '@/li
 import { analyzeSpatialImage, SpatialAIAnalysisResult } from '@/lib/services/aiService';
 import { createSpot } from '@/lib/services/dbService';
 import VerificationBadge from '../common/VerificationBadge';
+import LoadingState from '../common/LoadingState';
 import { compressImageFile } from '@/lib/utils/imageCompressor';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import { useAuth } from '@/lib/auth/AuthContext';
@@ -620,19 +621,10 @@ export default function CaptureForm() {
 
       {/* STAGE 2: AI ANALYZING */}
       {stage === 'analyzing' && (
-        <div className="bg-[#18181b] border border-zinc-800 rounded-3xl p-12 text-center space-y-6 shadow-2xl">
-          <div className="w-20 h-20 rounded-full bg-orange-950/80 border border-orange-800/80 flex items-center justify-center mx-auto text-orange-400 animate-bounce">
-            <Loader2 className="w-10 h-10 animate-spin" />
-          </div>
-          <div className="space-y-2">
-            <h2 className="text-xl font-bold text-white">
-              {language === 'ko' ? 'AI 멀티모달 공간 분석 진행 중' : language === 'ja' ? 'AIマルチモーダル空間解析進行中' : language === 'fr' ? 'Analyse Spatiale IA en Cours' : language === 'zh' ? 'AI 多模态空间分析进行中' : language === 'es' ? 'Análisis Espacial IA en Proceso' : 'AI Multimodal Spatial Analysis in Progress'}
-            </h2>
-            <p className="text-xs text-zinc-400 max-w-sm mx-auto">
-              {language === 'ko' ? '이미지에서 카테고리, 자재, 조명, 구도, 컬러 팔레트 및 공간 컨셉을 추출하는 중입니다...' : language === 'ja' ? '画像からカテゴリ、資材、ライティング、構図、カラーパレット、空間コンセプトを抽出中...' : language === 'fr' ? 'Extraction de la catégorie, des matériaux, de l\'éclairage, du style et de la palette...' : language === 'zh' ? '正在从图片中提取类别、材质、照明、构图、色彩搭配与空间概念...' : language === 'es' ? 'Extrayendo categoría, materiales, iluminación, composición y paleta de colores...' : 'Extracting category, materials, lighting, style, color palette, and spatial concept...'}
-            </p>
-          </div>
-        </div>
+        <LoadingState
+          title={language === 'ko' ? 'AI 멀티모달 공간 분석 진행 중' : language === 'ja' ? 'AIマルチモーダル空間解析進行中' : language === 'fr' ? 'Analyse Spatiale IA en Cours' : language === 'zh' ? 'AI 多模态空间分析进行中' : language === 'es' ? 'Análisis Espacial IA en Proceso' : 'AI Multimodal Spatial Analysis in Progress'}
+          className="p-16 shadow-2xl"
+        />
       )}
 
       {/* STAGE 3: VERIFY & EDIT */}

@@ -6,6 +6,7 @@ import { SpotCategory, ComparisonMetrics, Spot } from '@/lib/types';
 import { getComparisonMetrics } from '@/lib/services/dbService';
 import SpotCard from '../explore/SpotCard';
 import SpotDetailModal from '../explore/SpotDetailModal';
+import LoadingState from '../common/LoadingState';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import {
   translateCategory,
@@ -140,11 +141,7 @@ export default function CompareEngine({ availableLocations }: CompareEngineProps
       </div>
 
       {/* LOADING STATE MATRIX */}
-      {loading && (
-        <div className="w-full py-20 flex items-center justify-center text-sm text-zinc-400 bg-zinc-900/50 rounded-3xl border border-zinc-800 font-medium">
-          {t('analyzingMatrix')}
-        </div>
-      )}
+      {loading && <LoadingState title={t('analyzingMatrix')} />}
 
       {/* COMPARISON RESULTS MATRIX */}
       {!loading && metrics && (

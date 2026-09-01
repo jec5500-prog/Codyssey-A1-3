@@ -81,6 +81,11 @@ export const translations = {
     mapTitle: '글로벌 공간디자인 지도가 구동 중입니다',
     mapSubtitle: '전 세계 주요 디자인 수도의 현장 사진 위치를 확인하세요. 마커를 클릭하면 디자인 속성이 표시됩니다.',
     loadingMap: '글로벌 지도를 로딩 중입니다...',
+    loadingMsg1: '공간의 이야기를 불러오는 중입니다…',
+    loadingMsg2: '전 세계의 디자인을 탐색하고 있습니다…',
+    loadingMsg3: '새로운 공간 레퍼런스를 준비하고 있습니다…',
+    loadingMsg4: '공간의 디테일을 정리하고 있습니다…',
+    loadingMsg5: '좋은 영감을 준비하고 있습니다…',
 
     // Compare
     compareTitle: '글로벌 공간디자인 매트릭스 비교',
@@ -246,6 +251,11 @@ export const translations = {
     mapTitle: 'Global Spatial Intelligence Map',
     mapSubtitle: 'Explore field photo locations across global retail capitals. Click markers to view design attributes.',
     loadingMap: 'Loading Global Map...',
+    loadingMsg1: 'Loading spatial design stories…',
+    loadingMsg2: 'Exploring global design references…',
+    loadingMsg3: 'Preparing new spatial inspirations…',
+    loadingMsg4: 'Organizing fine architectural details…',
+    loadingMsg5: 'Gathering curated design perspectives…',
 
     // Compare
     compareTitle: 'Global Spatial Design Contrast Engine',
@@ -411,6 +421,11 @@ export const translations = {
     mapTitle: 'グローバル空間デザインマップが稼働中',
     mapSubtitle: '世界の主要デザイン都市の現場写真位置を確認できます。マーカーをクリックするとデザイン属性が表示されます。',
     loadingMap: 'グローバルマップを読み込み中...',
+    loadingMsg1: '空間のストーリーを読み込んでいます…',
+    loadingMsg2: '世界中のデザインを探索しています…',
+    loadingMsg3: '新しい空間リファレンスを準備しています…',
+    loadingMsg4: '空間のディテールを整理しています…',
+    loadingMsg5: '素晴らしいインスピレーションを準備しています…',
 
     // Compare
     compareTitle: 'グローバル空間デザイン比較マトリクス',
@@ -576,6 +591,11 @@ export const translations = {
     mapTitle: 'Carte d\'Intelligence Spatiale Globale',
     mapSubtitle: 'Explorez la localisation des photos terrain dans les capitales du design mondial. Cliquez sur un marqueur pour voir les attributs.',
     loadingMap: 'Chargement de la Carte Globale...',
+    loadingMsg1: 'Chargement des histoires de design spatial…',
+    loadingMsg2: 'Exploration des références de design dans le monde…',
+    loadingMsg3: 'Préparation de nouvelles inspirations spatiales…',
+    loadingMsg4: 'Organisation des détails architecturaux…',
+    loadingMsg5: 'Rassemblement d\'inspirations de qualité…',
 
     // Compare
     compareTitle: 'Moteur de Comparaison Spatiale',
@@ -741,6 +761,11 @@ export const translations = {
     mapTitle: '全球空间设计地图运行中',
     mapSubtitle: '在地图上查看全球时尚与零售首都的现场照片位置。点击标记查看设计属性。',
     loadingMap: '正在加载全球地图...',
+    loadingMsg1: '正在加载空间设计故事…',
+    loadingMsg2: '正在探索全球各地的设计灵感…',
+    loadingMsg3: '正在准备全新的空间参考…',
+    loadingMsg4: '正在梳理精致的建筑细节…',
+    loadingMsg5: '正在为您收集优秀的灵感…',
 
     // Compare
     compareTitle: '全球空间设计对比引擎',
@@ -906,6 +931,11 @@ export const translations = {
     mapTitle: 'Mapa de Inteligencia Espacial Global',
     mapSubtitle: 'Explore la ubicación de fotos de campo en capitales globales del diseño. Haga clic en los marcadores para ver atributos.',
     loadingMap: 'Cargando Mapa Global...',
+    loadingMsg1: 'Cargando las historias de diseño espacial…',
+    loadingMsg2: 'Explorando referencias de diseño globales…',
+    loadingMsg3: 'Preparando nuevas inspiraciones espaciales…',
+    loadingMsg4: 'Organizando finos detalles arquitectónicos…',
+    loadingMsg5: 'Reuniendo valiosas inspiraciones…',
 
     // Compare
     compareTitle: 'Motor de Comparación Espacial Global',

@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { SpotCategory, SpatialInsightReport } from '@/lib/types';
 import { getAIInsightReport } from '@/lib/services/dbService';
+import LoadingState from '../common/LoadingState';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 import {
   translateCategory,
@@ -114,11 +115,7 @@ export default function InsightDashboard({ availableCountries }: InsightDashboar
       </div>
 
       {/* LOADING */}
-      {loading && (
-        <div className="p-12 text-center text-zinc-500 bg-zinc-900/50 rounded-3xl border border-zinc-800 font-medium">
-          {t('analyzingDBRecords')}
-        </div>
-      )}
+      {loading && <LoadingState title={t('analyzingDBRecords')} />}
 
       {/* DATA SUFFICIENCY GUARD ALERT (If spotCount < 2) */}
       {!loading && report && !report.isSufficient && (

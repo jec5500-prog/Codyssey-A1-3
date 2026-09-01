@@ -6,6 +6,7 @@ import { Spot } from '@/lib/types';
 import { getSpots } from '@/lib/services/dbService';
 import SpotMapWrapper from '@/components/map/SpotMapWrapper';
 import SpotDetailModal from '@/components/explore/SpotDetailModal';
+import LoadingState from '@/components/common/LoadingState';
 import { MapPin } from 'lucide-react';
 import { useLanguage } from '@/lib/i18n/LanguageContext';
 
@@ -53,9 +54,7 @@ function MapContent() {
 
       {/* Map View */}
       {loading ? (
-        <div className="w-full h-[700px] bg-zinc-900 rounded-3xl border border-zinc-800 flex items-center justify-center text-zinc-500">
-          {t('loadingMap')}
-        </div>
+        <LoadingState variant="container" title={t('loadingMap')} className="h-[700px]" />
       ) : (
         <SpotMapWrapper
           spots={spots}
