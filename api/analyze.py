@@ -6,13 +6,42 @@ from http.server import BaseHTTPRequestHandler
 from google import genai
 from google.genai import types
 
+# Global in-memory IP rate limit store
+RATE_LIMIT_STORE = {}
+RATE_LIMIT_WINDOW = 60.0  # 60 seconds
+MAX_REQUESTS_PER_IP = 15  # Max 15 requests per 60s window per IP
+
+def is_rate_limited(ip_address: str) -> bool:
+    now = time.time()
+    timestamps = RATE_LIMIT_STORE.get(ip_address, [])
+    valid_ts = [ts for ts in timestamps if now - ts < RATE_LIMIT_WINDOW]
+    if len(valid_ts) >= MAX_REQUESTS_PER_IP:
+        RATE_LIMIT_STORE[ip_address] = valid_ts
+        return True
+    valid_ts.append(now)
+    RATE_LIMIT_STORE[ip_address] = valid_ts
+    return False
+
 class handler(BaseHTTPRequestHandler):
     def do_POST(self):
         t_start = time.time()
-        print(f"[TIMING 1/5] API handler started: t=0.000s")
+        client_ip = (
+            self.headers.get('X-Forwarded-For', '').split(',')[0].strip()
+            or self.headers.get('X-Real-IP', '').strip()
+            or (self.client_address[0] if self.client_address else '127.0.0.1')
+        )
+        print(f"[API_LOG] Handler started: ip={client_ip}, path={self.path}, t=0.000s")
+
+        # IP Rate Limit Check
+        if is_rate_limited(client_ip):
+            print(f"[RATE_LIMIT_EXCEEDED] IP: {client_ip} | Path: {self.path} | Time: {time.strftime('%Y-%m-%d %H:%M:%S')}")
+            self._send_json({"error": True, "code": "RATE_LIMIT_EXCEEDED", "message": "API 요청 횟수가 초과되었습니다. 잠시 후 다시 시도해 주세요."}, 429)
+            return
+
         try:
             content_length = int(self.headers.get('Content-Length', 0))
             if content_length <= 0:
+                print(f"[ERROR] Empty request body from IP: {client_ip}")
                 self._send_json({"error": True, "code": "EMPTY_REQUEST", "message": "이미지 데이터가 전달되지 않았습니다."}, 400)
                 return
 
@@ -21,12 +50,14 @@ class handler(BaseHTTPRequestHandler):
             
             image_base64 = payload.get('image', '')
             if not image_base64 or not isinstance(image_base64, str):
+                print(f"[ERROR] Invalid image data payload from IP: {client_ip}")
                 self._send_json({"error": True, "code": "INVALID_IMAGE", "message": "올바른 Base64 이미지 데이터가 필요합니다."}, 400)
                 return
 
             # Check for server-side API Key secret
             api_key = os.environ.get('GEMINI_API_KEY')
             if not api_key:
+                print(f"[ERROR] Missing GEMINI_API_KEY environment variable")
                 self._send_json({"error": True, "code": "MISSING_SERVER_KEY", "message": "서버 환경변수에 API 키가 설정되지 않았습니다. 후속 보안 조치 필요."}, 500)
                 return
 
@@ -42,7 +73,8 @@ class handler(BaseHTTPRequestHandler):
 
             try:
                 img_bytes = base64.b64decode(raw_b64)
-            except Exception:
+            except Exception as e:
+                print(f"[ERROR] Base64 decoding failed for IP: {client_ip} | Exception: {e}")
                 self._send_json({"error": True, "code": "DECODE_ERROR", "message": "이미지 디코딩에 실패했습니다."}, 400)
                 return
 
@@ -58,8 +90,7 @@ class handler(BaseHTTPRequestHandler):
             }
             target_lang = lang_map.get(str(lang).lower(), 'Korean')
 
-            # Call Gemini AI Client (Server Side Only)
-            # Call Gemini AI Client (Server Side Only)
+            # Call Gemini AI Client (Server Side Only) with Forced Structured Output
             client = genai.Client(api_key=api_key)
             prompt = """You are a world-class Spatial Design & Retail Visual Merchandising (VMD) AI Architect & Translator.
 Analyze this spatial design photo and output strict valid JSON only with no markdown formatting.
@@ -94,6 +125,7 @@ JSON Schema:
             t_before_api = time.time()
             print(f"[TIMING 2/5] Gemini API call starting: elapsed={t_before_api - t_start:.3f}s")
 
+            # Force Structured Output via GenerateContentConfig response_mime_type="application/json"
             response = client.models.generate_content(
                 model='gemini-3.6-flash',
                 contents=[
@@ -102,7 +134,10 @@ JSON Schema:
                         mime_type=mime_type,
                     ),
                     prompt,
-                ]
+                ],
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json"
+                )
             )
 
             t_after_api = time.time()
@@ -156,15 +191,18 @@ JSON Schema:
                         "translations": parsed_json.get("translations", {}),
                     }
                     t_before_send = time.time()
-                    print(f"[TIMING 5/5] Sending final HTTP 200 response: total_handler_duration={t_before_send - t_start:.3f}s")
+                    print(f"[TIMING 5/5] Sending final HTTP 200 response: total_handler_duration={t_before_send - t_start:.3f}s, ip={client_ip}")
                     self._send_json(result, 200)
                 else:
+                    print(f"[ERROR] Schema validation failed for JSON response from IP: {client_ip}")
                     self._send_json({"error": True, "code": "PARSE_ERROR", "message": "AI 응답 결과를 파싱할 수 없습니다."}, 500)
             else:
+                print(f"[ERROR] JSON delimiters not found in response for IP: {client_ip}")
                 self._send_json({"error": True, "code": "PARSE_ERROR", "message": "AI 응답 결과를 파싱할 수 없습니다."}, 500)
 
-        except Exception:
-            # Generic safe error message (Never expose internal exception details or key info)
+        except Exception as e:
+            # Generic safe error message with detailed error logging
+            print(f"[ERROR] Exception caught in API handler | IP: {client_ip} | Exception: {type(e).__name__}: {str(e)}")
             self._send_json({"error": True, "code": "AI_SERVER_ERROR", "message": "AI 공간 분석 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."}, 500)
 
     def _send_json(self, data, status_code):
