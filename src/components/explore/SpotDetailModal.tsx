@@ -197,7 +197,7 @@ export default function SpotDetailModal({
   // Confirm Spot Deletion
   const handleDeleteSpot = async () => {
     setDeleteLoading(true);
-    const success = await deleteSpot(spot.id);
+    const success = await deleteSpot(spot.id, user);
     setDeleteLoading(false);
     if (success) {
       onSpotDeleted?.(spot.id);
