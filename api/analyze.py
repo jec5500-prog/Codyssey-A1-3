@@ -2,6 +2,7 @@ import json
 import os
 import base64
 import time
+import random
 from http.server import BaseHTTPRequestHandler
 from google import genai
 from google.genai import types
@@ -10,6 +11,13 @@ from google.genai import types
 RATE_LIMIT_STORE = {}
 RATE_LIMIT_WINDOW = 60.0  # 60 seconds
 MAX_REQUESTS_PER_IP = 15  # Max 15 requests per 60s window per IP
+
+DEFAULT_GEMINI_MODELS = (
+    'gemini-3.6-flash',
+    'gemini-3.5-flash',
+    'gemini-2.5-flash',
+)
+TRANSIENT_STATUS_CODES = {408, 429, 500, 502, 503, 504}
 
 def is_rate_limited(ip_address: str) -> bool:
     now = time.time()
@@ -21,6 +29,78 @@ def is_rate_limited(ip_address: str) -> bool:
     valid_ts.append(now)
     RATE_LIMIT_STORE[ip_address] = valid_ts
     return False
+
+def get_gemini_models():
+    env_model = os.environ.get('GEMINI_MODEL')
+    candidates = []
+    if env_model and env_model.strip():
+        candidates.append(env_model.strip())
+    candidates.extend(DEFAULT_GEMINI_MODELS)
+    models = []
+    for m in candidates:
+        if m not in models:
+            models.append(m)
+    return models
+
+def get_error_status(error):
+    code = getattr(error, 'status_code', None)
+    if code is None:
+        code = getattr(error, 'code', None)
+
+    if isinstance(code, int):
+        return code
+    if isinstance(code, str) and code.isdigit():
+        return int(code)
+
+    err_str = str(error)
+    if 'UNAVAILABLE' in err_str or (isinstance(code, str) and 'UNAVAILABLE' in code):
+        return 503
+    if 'RESOURCE_EXHAUSTED' in err_str or (isinstance(code, str) and 'RESOURCE_EXHAUSTED' in code):
+        return 429
+
+    return None
+
+def generate_with_fallback(client, img_bytes, mime_type, prompt, request_started_at):
+    models = get_gemini_models()
+    total_models = len(models)
+    last_exception = None
+
+    for index, model_name in enumerate(models):
+        attempt = index + 1
+        elapsed = time.time() - request_started_at
+        print(f"[GEMINI_ATTEMPT] Attempt {attempt}/{total_models} using model '{model_name}' | elapsed={elapsed:.3f}s")
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=[
+                    types.Part.from_bytes(
+                        data=img_bytes,
+                        mime_type=mime_type,
+                    ),
+                    prompt,
+                ],
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json"
+                )
+            )
+            elapsed_success = time.time() - request_started_at
+            print(f"[GEMINI_SUCCESS] Model '{model_name}' succeeded on attempt {attempt}/{total_models} | elapsed={elapsed_success:.3f}s")
+            return response
+        except Exception as e:
+            last_exception = e
+            status_code = get_error_status(e)
+            elapsed_fail = time.time() - request_started_at
+            print(f"[GEMINI_FAILURE] Model '{model_name}' failed on attempt {attempt}/{total_models} | status={status_code} | error={type(e).__name__}: {str(e)} | elapsed={elapsed_fail:.3f}s")
+
+            if status_code in TRANSIENT_STATUS_CODES and attempt < total_models:
+                sleep_time = min(0.75 * (2 ** (attempt - 1)) + random.uniform(0, 0.25), 4.0)
+                print(f"[GEMINI_RETRY] Transient error status {status_code} on attempt {attempt}. Retrying next model in {sleep_time:.3f}s...")
+                time.sleep(sleep_time)
+            else:
+                raise e
+
+    if last_exception:
+        raise last_exception
 
 class handler(BaseHTTPRequestHandler):
     def do_POST(self):
@@ -47,7 +127,7 @@ class handler(BaseHTTPRequestHandler):
 
             body = self.rfile.read(content_length)
             payload = json.loads(body.decode('utf-8'))
-            
+
             image_base64 = payload.get('image', '')
             if not image_base64 or not isinstance(image_base64, str):
                 print(f"[ERROR] Invalid image data payload from IP: {client_ip}")
@@ -125,19 +205,8 @@ JSON Schema:
             t_before_api = time.time()
             print(f"[TIMING 2/5] Gemini API call starting: elapsed={t_before_api - t_start:.3f}s")
 
-            # Force Structured Output via GenerateContentConfig response_mime_type="application/json"
-            response = client.models.generate_content(
-                model='gemini-3.6-flash',
-                contents=[
-                    types.Part.from_bytes(
-                        data=img_bytes,
-                        mime_type=mime_type,
-                    ),
-                    prompt,
-                ],
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json"
-                )
+            response = generate_with_fallback(
+                client, img_bytes, mime_type, prompt, t_start
             )
 
             t_after_api = time.time()
@@ -201,9 +270,21 @@ JSON Schema:
                 self._send_json({"error": True, "code": "PARSE_ERROR", "message": "AI 응답 결과를 파싱할 수 없습니다."}, 500)
 
         except Exception as e:
-            # Generic safe error message with detailed error logging
-            print(f"[ERROR] Exception caught in API handler | IP: {client_ip} | Exception: {type(e).__name__}: {str(e)}")
-            self._send_json({"error": True, "code": "AI_SERVER_ERROR", "message": "AI 공간 분석 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."}, 500)
+            status_code = get_error_status(e)
+            print(f"[ERROR] Exception caught in API handler | IP: {client_ip} | status={status_code} | Exception: {type(e).__name__}: {str(e)}")
+            if status_code in TRANSIENT_STATUS_CODES:
+                self._send_json({
+                    "error": True,
+                    "code": "AI_TEMPORARILY_UNAVAILABLE",
+                    "message": "AI 서비스가 일시적으로 혼잡합니다. 잠시 후 다시 시도해 주세요.",
+                    "retryable": True
+                }, 503)
+            else:
+                self._send_json({
+                    "error": True,
+                    "code": "AI_SERVER_ERROR",
+                    "message": "AI 공간 분석 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
+                }, 500)
 
     def _send_json(self, data, status_code):
         self.send_response(status_code)
